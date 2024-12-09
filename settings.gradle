@@ -2,3 +2,4 @@ rootProject.name = 'mohajistudio-developers'
 
 include 'api'
 include 'database'
+include 'authentication'
