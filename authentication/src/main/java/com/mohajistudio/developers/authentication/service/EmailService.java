@@ -16,6 +16,7 @@ import org.thymeleaf.context.Context;
 import org.thymeleaf.spring6.SpringTemplateEngine;
 
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Random;
 
 @Slf4j
@@ -28,9 +29,17 @@ public class EmailService {
 
     @Transactional
     public void sendVerificationEmail(String email) {
+        List<EmailVerification> requestedTodayByEmail = emailVerificationRepository.findAllRequestedTodayByEmail(email);
+
+        // 이미 24시간 동안 3번의 이메일 인증 요청을 보냈을 경우
+        if(requestedTodayByEmail.size() >= 3) {
+            throw new CustomException(ErrorCode.EMAIL_REQUEST_LIMIT_EXCEEDED);
+        }
+
         EmailVerification emailVerification = emailVerificationRepository.findByEmail(email);
 
-        if(emailVerification != null) {
+        // 만료되지 않은 이메일이 존재할 경우
+        if (emailVerification != null) {
             LocalDateTime now = LocalDateTime.now();
             emailVerification.setExpiredAt(now);
             emailVerificationRepository.save(emailVerification);
@@ -72,14 +81,14 @@ public class EmailService {
             throw new CustomException(ErrorCode.INVALID_EMAIL);
         }
 
-        if (emailVerification.getAttempts() >= 3) {
+        if (emailVerification.getAttempts() >= 4) {
             throw new CustomException(ErrorCode.EXCEEDED_VERIFICATION_ATTEMPTS);
         }
 
         LocalDateTime now = LocalDateTime.now();
         emailVerification.setAttempts(emailVerification.getAttempts() + 1);
 
-        if(!emailVerification.getCode().equals(code)) {
+        if (!emailVerification.getCode().equals(code)) {
             throw new CustomException(ErrorCode.INVALID_VERIFICATION_CODE);
         }
 

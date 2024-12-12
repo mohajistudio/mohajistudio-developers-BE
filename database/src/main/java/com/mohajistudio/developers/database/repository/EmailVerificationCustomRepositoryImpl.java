@@ -8,6 +8,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 import static com.mohajistudio.developers.database.entity.QEmailVerification.emailVerification;
 
@@ -15,6 +16,14 @@ import static com.mohajistudio.developers.database.entity.QEmailVerification.ema
 @RequiredArgsConstructor
 public class EmailVerificationCustomRepositoryImpl implements EmailVerificationCustomRepository {
     private final JPAQueryFactory jpaQueryFactory;
+
+    @Override
+    public List<EmailVerification> findAllRequestedTodayByEmail(String email) {
+        LocalDateTime now = LocalDateTime.now();
+
+        return jpaQueryFactory.selectFrom(emailVerification).where(emailVerification.email.eq(email),
+                emailVerification.createdAt.between(now.minusHours(24), now)).fetch();
+    }
 
     public EmailVerification findByEmail(String email) {
         return jpaQueryFactory.selectFrom(emailVerification).where(eqEmail(email), emailVerification.expiredAt.after(LocalDateTime.now())).fetchOne();

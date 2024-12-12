@@ -1,16 +1,14 @@
 package com.mohajistudio.developers.authentication.dto.request;
 
-import jakarta.validation.constraints.Email;
-import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
 import lombok.Setter;
 
 @Getter
 @Setter
-public class EmailRequest {
-    @Email
-    @NotBlank
+public class SetNicknameRequest {
     @NotNull
-    private String email;
+    @NotEmpty
+    private String nickname;
 }
