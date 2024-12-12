@@ -1,5 +1,7 @@
 package com.mohajistudio.developers.authentication.service;
 
+import com.mohajistudio.developers.common.enums.ErrorCode;
+import com.mohajistudio.developers.common.exception.CustomException;
 import com.mohajistudio.developers.database.entity.EmailVerification;
 import com.mohajistudio.developers.database.repository.EmailVerificationRepository;
 import jakarta.mail.MessagingException;
@@ -58,7 +60,7 @@ public class EmailService {
 
             javaMailSender.send(mimeMessage);
         } catch (MessagingException e) {
-            throw new RuntimeException(e);
+            throw new CustomException(ErrorCode.EMAIL_SEND_FAILURE, e.getMessage());
         }
     }
 
@@ -67,14 +69,18 @@ public class EmailService {
         EmailVerification emailVerification = emailVerificationRepository.findByEmail(email);
 
         if (emailVerification == null) {
-            throw new RuntimeException("유효하지 않은 이메일입니다.");
+            throw new CustomException(ErrorCode.INVALID_EMAIL);
+        }
+
+        if (emailVerification.getAttempts() >= 3) {
+            throw new CustomException(ErrorCode.EXCEEDED_VERIFICATION_ATTEMPTS);
         }
 
         LocalDateTime now = LocalDateTime.now();
         emailVerification.setAttempts(emailVerification.getAttempts() + 1);
 
         if(!emailVerification.getCode().equals(code)) {
-            throw new RuntimeException("유효하지 않은 코드입니다.");
+            throw new CustomException(ErrorCode.INVALID_VERIFICATION_CODE);
         }
 
         emailVerification.setVerifiedAt(now);
