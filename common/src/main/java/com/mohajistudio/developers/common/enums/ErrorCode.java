@@ -11,7 +11,8 @@ public enum ErrorCode {
     // Register
     ALREADY_EXIST_USER(HttpStatus.BAD_REQUEST, "R0001", "이미 존재하는 유저"),
     PASSWORD_ALREADY_SET(HttpStatus.BAD_REQUEST, "R0002", "이미 설정된 비밀번호"),
-    NICKNAME_ALREADY_SET(HttpStatus.BAD_REQUEST, "R0002", "이미 설정된 닉네임"),
+    NICKNAME_ALREADY_SET(HttpStatus.BAD_REQUEST, "R0003", "이미 설정된 닉네임"),
+    INCOMPLETE_REGISTRATION(HttpStatus.BAD_REQUEST, "R0004", "회원가입이 완료되지 않은 유저"),
 
     // Email Verification
     EMAIL_SEND_FAILURE(HttpStatus.INTERNAL_SERVER_ERROR, "EV0001", "이메일 전송 실패"),
@@ -19,6 +20,9 @@ public enum ErrorCode {
     INVALID_VERIFICATION_CODE(HttpStatus.BAD_REQUEST, "EV0002", "유효하지 않은 인증 코드"),
     EXCEEDED_VERIFICATION_ATTEMPTS(HttpStatus.BAD_REQUEST, "EV0003", "이메일 인증 횟수 초과"),
     EMAIL_REQUEST_LIMIT_EXCEEDED(HttpStatus.BAD_REQUEST, "EV004", "인증 메일 요청 횟수 초과"),
+
+    // JWT
+    REFRESH_TOKEN_MISMATCH(HttpStatus.UNAUTHORIZED, "T0001", "유효하지 않은 토큰"),
 
     // Common
     INVALID_INPUT_VALUE(HttpStatus.BAD_REQUEST, "C0001", "유효하지 않은 입력 값"),

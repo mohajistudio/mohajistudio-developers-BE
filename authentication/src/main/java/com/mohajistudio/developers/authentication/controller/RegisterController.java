@@ -7,10 +7,8 @@ import com.mohajistudio.developers.authentication.dto.request.SetNicknameRequest
 import com.mohajistudio.developers.authentication.dto.request.SetPasswordRequest;
 import com.mohajistudio.developers.authentication.service.EmailService;
 import com.mohajistudio.developers.authentication.service.RegisterService;
-import com.mohajistudio.developers.authentication.util.JwtUtil;
 import com.mohajistudio.developers.common.enums.ErrorCode;
 import com.mohajistudio.developers.common.exception.CustomException;
-import com.mohajistudio.developers.database.entity.User;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -18,12 +16,11 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/register")
+@RequestMapping("/auth/register")
 @RequiredArgsConstructor
 public class RegisterController {
     private final RegisterService registerService;
     private final EmailService emailService;
-    private final JwtUtil jwtUtil;
 
     @PostMapping("/email/request")
     public void postEmailRequest(@Valid @RequestBody EmailRequest emailRequest) {
@@ -46,9 +43,7 @@ public class RegisterController {
 
         emailService.verifyEmailCode(emailVerifyRequest.getEmail(), emailVerifyRequest.getCode());
 
-        User user = registerService.findOrCreateUser(emailVerifyRequest.getEmail());
-
-        return jwtUtil.generateToken(user.getId(), user.getRole(), user.getEmail());
+        return registerService.registerAndGenerateToken(emailVerifyRequest.getEmail());
     }
 
     @PostMapping("/password")
@@ -78,7 +73,7 @@ public class RegisterController {
     }
 
     @GetMapping("/status")
-    public boolean getRegistrationStatus(@Valid @RequestBody EmailRequest emailRequest) {
+    public boolean getRegistrationStatus(@Valid @RequestParam EmailRequest emailRequest) {
         return registerService.isUserRegistered(emailRequest.getEmail());
     }
 }

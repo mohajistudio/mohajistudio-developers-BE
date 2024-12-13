@@ -1,36 +1,47 @@
 package com.mohajistudio.developers.authentication.service;
 
 import ch.qos.logback.core.util.StringUtil;
+import com.mohajistudio.developers.authentication.dto.GeneratedToken;
+import com.mohajistudio.developers.authentication.util.JwtUtil;
 import com.mohajistudio.developers.common.enums.ErrorCode;
 import com.mohajistudio.developers.common.exception.CustomException;
 import com.mohajistudio.developers.database.entity.User;
 import com.mohajistudio.developers.database.enums.Role;
 import com.mohajistudio.developers.database.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
 
 
-@Slf4j
 @Service
 @RequiredArgsConstructor
 public class RegisterService {
+    private final JwtUtil jwtUtil;
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
 
-    public User findOrCreateUser(String email) {
+    public GeneratedToken registerAndGenerateToken(String email) {
         Optional<User> findUser = userRepository.findByEmail(email);
 
         if (findUser.isPresent()) {
-            return findUser.get();
+            User user = findUser.get();
+
+            GeneratedToken generatedToken = jwtUtil.generateToken(user.getId(), user.getRole(), user.getEmail());
+            user.setRefreshToken(generatedToken.getRefreshToken());
+            userRepository.save(user);
+
+            return generatedToken;
         }
 
         User user = User.builder().email(email).role(Role.ROLE_GUEST).build();
 
-        return userRepository.save(user);
+        GeneratedToken generatedToken = jwtUtil.generateToken(user.getId(), user.getRole(), user.getEmail());
+        user.setRefreshToken(generatedToken.getRefreshToken());
+        userRepository.save(user);
+
+        return generatedToken;
     }
 
     public boolean isUserRegistered(String email) {
@@ -72,7 +83,7 @@ public class RegisterService {
 
         User user = findUser.get();
 
-        if(user.getPassword() != null) {
+        if (user.getPassword() != null) {
             throw new CustomException(ErrorCode.PASSWORD_ALREADY_SET);
         }
 
@@ -91,7 +102,7 @@ public class RegisterService {
 
         User user = findUser.get();
 
-        if(user.getNickname() != null) {
+        if (user.getNickname() != null) {
             throw new CustomException(ErrorCode.ALREADY_EXIST_USER);
         }
 
