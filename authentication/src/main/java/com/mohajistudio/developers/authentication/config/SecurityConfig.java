@@ -49,8 +49,6 @@ public class SecurityConfig {
             // GUEST
             authorizeRequests.requestMatchers(HttpMethod.POST, "/auth/register/password", "/auth/register/nickname").hasAuthority(AUTHORITY_GUEST);
             authorizeRequests.anyRequest().permitAll();
-
-
         });
 
         http.exceptionHandling(exceptionHandling -> {

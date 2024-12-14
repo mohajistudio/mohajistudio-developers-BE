@@ -57,13 +57,13 @@ public class JwtUtil {
                     .parseSignedClaims(token)
                     .getPayload();
         } catch (io.jsonwebtoken.security.SecurityException | MalformedJwtException e) {
-            throw new JwtException("잘못된 JWT 서명");
+            throw new JwtException("잘못된 JWT 서명", e);
         } catch (ExpiredJwtException e) {
-            throw new JwtException("만료된 JWT 토큰");
+            throw new JwtException("만료된 JWT 토큰", e);
         } catch (UnsupportedJwtException e) {
-            throw new JwtException("지원되지 않는 JWT 토큰");
+            throw new JwtException("지원되지 않는 JWT 토큰", e);
         } catch (IllegalArgumentException e) {
-            throw new JwtException("잘못된 JWT 토큰");
+            throw new JwtException("잘못된 JWT 토큰", e);
         }
     }
 }

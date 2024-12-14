@@ -25,6 +25,7 @@ public enum ErrorCode {
 
     // JWT
     REFRESH_TOKEN_MISMATCH(HttpStatus.UNAUTHORIZED, "T0001", "유효하지 않은 토큰"),
+    INVALID_ACCESS_TOKEN(HttpStatus.UNAUTHORIZED, "T0002", "유효하지 않은 토큰"),
 
     // Common
     INVALID_INPUT_VALUE(HttpStatus.BAD_REQUEST, "C0001", "유효하지 않은 입력 값"),
