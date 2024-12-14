@@ -43,11 +43,14 @@ public class SecurityConfig {
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http.authorizeHttpRequests(authorizeRequests -> {
             // ALL
-            authorizeRequests.requestMatchers(HttpMethod.POST, "/auth/register/email/request", "/auth/register/email/verify", "/auth/register/status").permitAll();
+            authorizeRequests.requestMatchers(HttpMethod.POST, "/auth/register/email/request", "/auth/register/email/verify", "/auth/login", "/auth/refresh").permitAll();
+            authorizeRequests.requestMatchers(HttpMethod.GET, "/auth/register/status").permitAll();
 
             // GUEST
             authorizeRequests.requestMatchers(HttpMethod.POST, "/auth/register/password", "/auth/register/nickname").hasAuthority(AUTHORITY_GUEST);
-            authorizeRequests.anyRequest().authenticated();
+            authorizeRequests.anyRequest().permitAll();
+
+
         });
 
         http.exceptionHandling(exceptionHandling -> {

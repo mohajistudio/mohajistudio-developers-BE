@@ -73,7 +73,7 @@ public class RegisterController {
     }
 
     @GetMapping("/status")
-    public void getRegistrationStatus(@Valid @RequestParam EmailRequest emailRequest) {
-        registerService.checkUserRegistered(emailRequest.getEmail());
+    public void getRegistrationStatus(@Valid @RequestParam String email) {
+        registerService.checkUserRegistered(email);
     }
 }

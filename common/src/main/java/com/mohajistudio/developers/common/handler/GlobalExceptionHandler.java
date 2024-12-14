@@ -9,6 +9,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
+import org.springframework.web.bind.MissingServletRequestParameterException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 
@@ -30,10 +31,19 @@ public class GlobalExceptionHandler {
         return new ResponseEntity<>(errorResponse, errorCode.getStatus());
     }
 
+    /// Request Body의 유형이 잘못됐을 경우
     @ExceptionHandler(HttpMessageNotReadableException.class)
     protected ResponseEntity<ErrorResponse> handleHttpMessageNotReadableException(HttpMessageNotReadableException e, HttpServletRequest httpServletRequest) {
         ErrorCode errorCode = ErrorCode.HTTP_MESSAGE_NOT_READABLE;
         final ErrorResponse errorResponse = new ErrorResponse(errorCode);
         return new ResponseEntity<>(errorResponse, errorCode.getStatus());
+    }
+
+    /// 파라미터 값을 넘기지 않았을 경우
+    @ExceptionHandler(MissingServletRequestParameterException.class)
+    protected ResponseEntity<ErrorResponse> handleMissingServletRequestParameterException(MissingServletRequestParameterException e, HttpServletRequest httpServletRequest) {
+        ErrorCode errorCode = ErrorCode.MISSING_PARAMETER;
+        final ErrorResponse response = new ErrorResponse(errorCode);
+        return new ResponseEntity<>(response, errorCode.getStatus());
     }
 }

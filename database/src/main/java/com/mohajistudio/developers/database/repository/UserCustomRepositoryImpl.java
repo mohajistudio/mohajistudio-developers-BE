@@ -7,7 +7,6 @@ import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 
-import static com.mohajistudio.developers.database.entity.QEmailVerification.emailVerification;
 import static com.mohajistudio.developers.database.entity.QUser.user;
 
 @Repository
@@ -24,7 +23,7 @@ public class UserCustomRepositoryImpl implements UserCustomRepository {
 
     private BooleanExpression eqEmail(String email) {
         if (StringUtils.isNullOrEmpty(email)) return null;
-        return emailVerification.email.eq(email);
+        return user.email.eq(email);
     }
 
     private BooleanExpression eqPassword(String password) {

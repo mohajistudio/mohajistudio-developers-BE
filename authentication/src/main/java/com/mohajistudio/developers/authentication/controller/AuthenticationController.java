@@ -19,7 +19,7 @@ public class AuthenticationController {
     private final AuthenticationService authenticationService;
 
     @PostMapping("/login")
-    public GeneratedToken postEmailRequest(@Valid @RequestBody LoginRequest loginRequest) {
+    public GeneratedToken postLogin(@Valid @RequestBody LoginRequest loginRequest) {
         return authenticationService.login(loginRequest.getEmail(), loginRequest.getPassword());
     }
 

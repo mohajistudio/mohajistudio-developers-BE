@@ -8,6 +8,7 @@ import com.mohajistudio.developers.database.entity.User;
 import com.mohajistudio.developers.database.repository.UserRepository;
 import io.jsonwebtoken.Claims;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
@@ -16,13 +17,16 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class AuthenticationService {
     private final JwtUtil jwtUtil;
+    private final PasswordEncoder passwordEncoder;
     private final UserRepository userRepository;
     private final RegisterService registerService;
 
     public GeneratedToken login(String email, String password) {
         registerService.checkUserRegistered(email);
 
-        User user = userRepository.findByEmailAndPassword(email, password);
+        String encodedPassword = passwordEncoder.encode(password);
+
+        User user = userRepository.findByEmailAndPassword(email, encodedPassword);
 
         if (user == null) {
             throw new CustomException(ErrorCode.USER_NOT_FOUND);
