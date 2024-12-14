@@ -13,6 +13,8 @@ public enum ErrorCode {
     PASSWORD_ALREADY_SET(HttpStatus.BAD_REQUEST, "R0002", "이미 설정된 비밀번호"),
     NICKNAME_ALREADY_SET(HttpStatus.BAD_REQUEST, "R0003", "이미 설정된 닉네임"),
     INCOMPLETE_REGISTRATION(HttpStatus.BAD_REQUEST, "R0004", "회원가입이 완료되지 않은 유저"),
+    PASSWORD_NOT_SET(HttpStatus.BAD_REQUEST, "R0005", "설정되지 않은 비밀번호"),
+    NICKNAME_NOT_SET(HttpStatus.BAD_REQUEST, "R0006", "설정되지 않은 닉네임"),
 
     // Email Verification
     EMAIL_SEND_FAILURE(HttpStatus.INTERNAL_SERVER_ERROR, "EV0001", "이메일 전송 실패"),
@@ -26,6 +28,7 @@ public enum ErrorCode {
 
     // Common
     INVALID_INPUT_VALUE(HttpStatus.BAD_REQUEST, "C0001", "유효하지 않은 입력 값"),
+    HTTP_MESSAGE_NOT_READABLE(HttpStatus.BAD_REQUEST, "C0002", "잘못된 JSON 요청 형식입니다"),
     UNKNOWN_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "C9999", "알 수 없는 에러");
 
     private final String code;

@@ -36,6 +36,7 @@ public class RegisterService {
         }
 
         User user = User.builder().email(email).role(Role.ROLE_GUEST).build();
+        userRepository.save(user);
 
         GeneratedToken generatedToken = jwtUtil.generateToken(user.getId(), user.getRole(), user.getEmail());
         user.setRefreshToken(generatedToken.getRefreshToken());
@@ -44,7 +45,7 @@ public class RegisterService {
         return generatedToken;
     }
 
-    public boolean isUserRegistered(String email) {
+    public void checkUserRegistered(String email) {
         Optional<User> findUser = userRepository.findByEmail(email);
 
         if (findUser.isEmpty()) {
@@ -53,11 +54,10 @@ public class RegisterService {
 
         User user = findUser.get();
         if (StringUtil.isNullOrEmpty(user.getPassword())) {
-            return false;
+            throw new CustomException(ErrorCode.PASSWORD_NOT_SET);
         } else if (StringUtil.isNullOrEmpty(user.getNickname())) {
-            return false;
+            throw new CustomException(ErrorCode.NICKNAME_NOT_SET);
         }
-        return true;
     }
 
     public boolean isUserRegistrationComplete(String email) {
@@ -103,7 +103,7 @@ public class RegisterService {
         User user = findUser.get();
 
         if (user.getNickname() != null) {
-            throw new CustomException(ErrorCode.ALREADY_EXIST_USER);
+            throw new CustomException(ErrorCode.NICKNAME_ALREADY_SET);
         }
 
         user.setNickname(nickname);

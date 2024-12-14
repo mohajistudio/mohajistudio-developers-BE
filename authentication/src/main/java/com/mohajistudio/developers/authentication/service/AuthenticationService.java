@@ -20,11 +20,7 @@ public class AuthenticationService {
     private final RegisterService registerService;
 
     public GeneratedToken login(String email, String password) {
-        boolean isUserRegistered = registerService.isUserRegistered(email);
-
-        if(!isUserRegistered) {
-            throw new CustomException(ErrorCode.INCOMPLETE_REGISTRATION);
-        }
+        registerService.checkUserRegistered(email);
 
         User user = userRepository.findByEmailAndPassword(email, password);
 

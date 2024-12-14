@@ -81,7 +81,7 @@ public class EmailService {
             throw new CustomException(ErrorCode.INVALID_EMAIL);
         }
 
-        if (emailVerification.getAttempts() >= 4) {
+        if (emailVerification.getAttempts() >= 5) {
             throw new CustomException(ErrorCode.EXCEEDED_VERIFICATION_ATTEMPTS);
         }
 
