@@ -7,7 +7,7 @@ import com.mohajistudio.developers.common.enums.ErrorCode;
 import com.mohajistudio.developers.common.exception.CustomException;
 import com.mohajistudio.developers.database.entity.User;
 import com.mohajistudio.developers.database.enums.Role;
-import com.mohajistudio.developers.database.repository.UserRepository;
+import com.mohajistudio.developers.database.repository.user.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;

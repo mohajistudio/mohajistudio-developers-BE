@@ -18,7 +18,7 @@ public class EmailVerification extends BaseEntity {
     @Column(nullable = false)
     private String email;
 
-    @Column(nullable = false)
+    @Column(nullable = false, length = 6)
     private String code;
 
     @Column(nullable = false, columnDefinition = "SMALLINT DEFAULT 0")
@@ -27,6 +27,6 @@ public class EmailVerification extends BaseEntity {
     @Column
     private LocalDateTime verifiedAt;
 
-    @Column
+    @Column(nullable = false)
     private LocalDateTime expiredAt;
 }

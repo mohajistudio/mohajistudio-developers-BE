@@ -5,7 +5,7 @@ import com.mohajistudio.developers.authentication.util.JwtUtil;
 import com.mohajistudio.developers.common.enums.ErrorCode;
 import com.mohajistudio.developers.common.exception.CustomException;
 import com.mohajistudio.developers.database.entity.User;
-import com.mohajistudio.developers.database.repository.UserRepository;
+import com.mohajistudio.developers.database.repository.user.UserRepository;
 import io.jsonwebtoken.Claims;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;

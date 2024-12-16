@@ -1,15 +1,13 @@
-package com.mohajistudio.developers.database.repository;
+package com.mohajistudio.developers.database.repository.user;
 
 import com.mohajistudio.developers.database.entity.User;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.core.util.StringUtils;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Repository;
 
 import static com.mohajistudio.developers.database.entity.QUser.user;
 
-@Repository
 @RequiredArgsConstructor
 public class UserCustomRepositoryImpl implements UserCustomRepository {
     private final JPAQueryFactory jpaQueryFactory;

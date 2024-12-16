@@ -1,7 +1,7 @@
 package com.mohajistudio.developers.authentication.service;
 
 import com.mohajistudio.developers.database.entity.User;
-import com.mohajistudio.developers.database.repository.UserRepository;
+import com.mohajistudio.developers.database.repository.user.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;

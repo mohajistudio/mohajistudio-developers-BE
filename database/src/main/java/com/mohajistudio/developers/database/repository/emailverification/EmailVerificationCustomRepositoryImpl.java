@@ -1,18 +1,16 @@
-package com.mohajistudio.developers.database.repository;
+package com.mohajistudio.developers.database.repository.emailverification;
 
 import com.mohajistudio.developers.database.entity.EmailVerification;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.core.util.StringUtils;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Repository;
 
 import java.time.LocalDateTime;
 import java.util.List;
 
 import static com.mohajistudio.developers.database.entity.QEmailVerification.emailVerification;
 
-@Repository
 @RequiredArgsConstructor
 public class EmailVerificationCustomRepositoryImpl implements EmailVerificationCustomRepository {
     private final JPAQueryFactory jpaQueryFactory;
@@ -21,12 +19,19 @@ public class EmailVerificationCustomRepositoryImpl implements EmailVerificationC
     public List<EmailVerification> findAllRequestedTodayByEmail(String email) {
         LocalDateTime now = LocalDateTime.now();
 
-        return jpaQueryFactory.selectFrom(emailVerification).where(emailVerification.email.eq(email),
-                emailVerification.createdAt.between(now.minusHours(24), now)).fetch();
+        return jpaQueryFactory
+                .selectFrom(emailVerification)
+                .where(eqEmail(email),
+                        emailVerification.createdAt.between(now.minusHours(24), now))
+                .fetch();
     }
 
     public EmailVerification findByEmail(String email) {
-        return jpaQueryFactory.selectFrom(emailVerification).where(eqEmail(email), emailVerification.expiredAt.after(LocalDateTime.now())).fetchOne();
+        return jpaQueryFactory
+                .selectFrom(emailVerification)
+                .where(eqEmail(email),
+                        emailVerification.expiredAt.after(LocalDateTime.now()))
+                .fetchOne();
     }
 
     private BooleanExpression eqEmail(String email) {

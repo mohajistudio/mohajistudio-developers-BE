@@ -3,7 +3,7 @@ package com.mohajistudio.developers.authentication.service;
 import com.mohajistudio.developers.common.enums.ErrorCode;
 import com.mohajistudio.developers.common.exception.CustomException;
 import com.mohajistudio.developers.database.entity.EmailVerification;
-import com.mohajistudio.developers.database.repository.EmailVerificationRepository;
+import com.mohajistudio.developers.database.repository.emailverification.EmailVerificationRepository;
 import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;
 import jakarta.transaction.Transactional;
@@ -28,7 +28,7 @@ public class EmailService {
     private final EmailVerificationRepository emailVerificationRepository;
 
     @Transactional
-    public void sendVerificationEmail(String email) {
+    public void requestEmailVerification(String email) {
         List<EmailVerification> requestedTodayByEmail = emailVerificationRepository.findAllRequestedTodayByEmail(email);
 
         // 이미 24시간 동안 3번의 이메일 인증 요청을 보냈을 경우

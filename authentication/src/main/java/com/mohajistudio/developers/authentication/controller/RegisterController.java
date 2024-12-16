@@ -23,18 +23,18 @@ public class RegisterController {
     private final EmailService emailService;
 
     @PostMapping("/email/request")
-    public void postEmailRequest(@Valid @RequestBody EmailRequest emailRequest) {
+    public void requestEmailVerification(@Valid @RequestBody EmailRequest emailRequest) {
         boolean isUserRegistrationComplete = registerService.isUserRegistrationComplete(emailRequest.getEmail());
 
         if(isUserRegistrationComplete) {
             throw new CustomException(ErrorCode.ALREADY_EXIST_USER);
         }
 
-        emailService.sendVerificationEmail(emailRequest.getEmail());
+        emailService.requestEmailVerification(emailRequest.getEmail());
     }
 
     @PostMapping("/email/verify")
-    public GeneratedToken postEmailVerify(@Valid @RequestBody EmailVerifyRequest emailVerifyRequest) {
+    public GeneratedToken verifyEmailCode(@Valid @RequestBody EmailVerifyRequest emailVerifyRequest) {
         boolean isUserRegistrationComplete = registerService.isUserRegistrationComplete(emailVerifyRequest.getEmail());
 
         if(isUserRegistrationComplete) {
@@ -47,7 +47,7 @@ public class RegisterController {
     }
 
     @PostMapping("/password")
-    public void postPassword(@AuthenticationPrincipal UserDetails userDetails, @Valid @RequestBody SetPasswordRequest setPasswordRequest) {
+    public void setPassword(@AuthenticationPrincipal UserDetails userDetails, @Valid @RequestBody SetPasswordRequest setPasswordRequest) {
         String email = userDetails.getUsername();
 
         boolean isUserRegistrationComplete = registerService.isUserRegistrationComplete(email);
@@ -60,7 +60,7 @@ public class RegisterController {
     }
 
     @PostMapping("/nickname")
-    public void postNickname(@AuthenticationPrincipal UserDetails userDetails, @Valid @RequestBody SetNicknameRequest setNicknameRequest) {
+    public void setNickname(@AuthenticationPrincipal UserDetails userDetails, @Valid @RequestBody SetNicknameRequest setNicknameRequest) {
         String email = userDetails.getUsername();
 
         boolean isUserRegistrationComplete = registerService.isUserRegistrationComplete(email);
@@ -73,7 +73,7 @@ public class RegisterController {
     }
 
     @GetMapping("/status")
-    public void getRegistrationStatus(@Valid @RequestParam String email) {
+    public void checkRegistrationStatus(@Valid @RequestParam String email) {
         registerService.checkUserRegistered(email);
     }
 }
