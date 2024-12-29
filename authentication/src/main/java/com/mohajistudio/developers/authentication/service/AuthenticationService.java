@@ -64,6 +64,16 @@ public class AuthenticationService {
     }
 
     public void deleteAccount(String email) {
+        Optional<User> findUser = userRepository.findByEmail(email);
+
+        if(findUser.isEmpty()) {
+            throw new CustomException(ErrorCode.USER_NOT_FOUND);
+        }
+
+        User user = findUser.get();
+
+        userRepository.delete(user);
+
         //TODO Kafka를 통해 HostedService로 이벤트를 발생시켜 처리 후 탈퇴 메일 전송
     }
 }

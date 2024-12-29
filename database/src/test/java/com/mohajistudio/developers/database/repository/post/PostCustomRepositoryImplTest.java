@@ -78,14 +78,14 @@ public class PostCustomRepositoryImplTest {
         entityManager.flush();
         entityManager.clear();
 
-        PostTag postTag1 = PostTag.builder().tagId(tag1.getId()).postId(post.getId()).build();
-        PostTag postTag2 = PostTag.builder().tagId(tag2.getId()).postId(post.getId()).build();
-
-        entityManager.persist(postTag1);
-        entityManager.persist(postTag2);
-
-        entityManager.flush();
-        entityManager.clear();
+//        PostTag postTag1 = PostTag.builder().tagId(tag1.getId()).postId(post.getId()).build();
+//        PostTag postTag2 = PostTag.builder().tagId(tag2.getId()).postId(post.getId()).build();
+//
+//        entityManager.persist(postTag1);
+//        entityManager.persist(postTag2);
+//
+//        entityManager.flush();
+//        entityManager.clear();
     }
 
     @Test

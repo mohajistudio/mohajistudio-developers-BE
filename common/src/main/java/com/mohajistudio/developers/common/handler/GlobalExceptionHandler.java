@@ -12,6 +12,7 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.MissingServletRequestParameterException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.multipart.MaxUploadSizeExceededException;
 
 @Slf4j
 @ControllerAdvice
@@ -45,5 +46,13 @@ public class GlobalExceptionHandler {
         ErrorCode errorCode = ErrorCode.MISSING_PARAMETER;
         final ErrorResponse response = new ErrorResponse(errorCode);
         return new ResponseEntity<>(response, errorCode.getStatus());
+    }
+
+    /// 파일이 최대 크기를 초과했을 경우
+    @ExceptionHandler(MaxUploadSizeExceededException.class)
+    protected ResponseEntity<ErrorResponse> handleMaxUploadSizeExceededException(MaxUploadSizeExceededException e) {
+        ErrorCode errorCode = ErrorCode.MAX_UPLOAD_SIZE_EXCEEDED;
+        final ErrorResponse errorResponse = new ErrorResponse(errorCode);
+        return new ResponseEntity<>(errorResponse, errorCode.getStatus());
     }
 }

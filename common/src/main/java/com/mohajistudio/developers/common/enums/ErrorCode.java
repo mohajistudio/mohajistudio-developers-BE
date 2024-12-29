@@ -27,6 +27,12 @@ public enum ErrorCode {
     REFRESH_TOKEN_MISMATCH(HttpStatus.UNAUTHORIZED, "T0001", "유효하지 않은 토큰"),
     INVALID_ACCESS_TOKEN(HttpStatus.UNAUTHORIZED, "T0002", "유효하지 않은 토큰"),
 
+    // Infra
+    MULTIPART_FILE_EXCEPTION(HttpStatus.BAD_REQUEST, "MF0001", "파일을 찾을 수 없음"),
+    STORAGE_UPLOAD_FAILURE(HttpStatus.BAD_REQUEST, "MF0002", "스토리지 업로드 실패"),
+    MAX_UPLOAD_SIZE_EXCEEDED(HttpStatus.BAD_REQUEST, "MF0003", "파일 최대 크기 초과"),
+    INVALID_MEDIA_TYPE(HttpStatus.BAD_REQUEST, "MF0004", "잘못된 파일 형식"),
+
     // Common
     INVALID_INPUT_VALUE(HttpStatus.BAD_REQUEST, "C0001", "유효하지 않은 입력 값"),
     HTTP_MESSAGE_NOT_READABLE(HttpStatus.BAD_REQUEST, "C0002", "잘못된 JSON 요청 형식"),

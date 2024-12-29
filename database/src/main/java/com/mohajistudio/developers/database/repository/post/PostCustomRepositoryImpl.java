@@ -62,8 +62,7 @@ public class PostCustomRepositoryImpl implements PostCustomRepository {
         JPAQuery<Long> totalCount = queryFactory
                 .select(post.count())
                 .from(post)
-                .where(eqStatus(PostStatus.PUBLISHED))
-                ;
+                .where(eqStatus(PostStatus.PUBLISHED));
 
         return PageableExecutionUtils.getPage(posts, pageable, () -> totalCount.fetch().size());
     }
