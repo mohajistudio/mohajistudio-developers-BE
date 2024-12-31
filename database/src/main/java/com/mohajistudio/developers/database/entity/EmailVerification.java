@@ -1,8 +1,7 @@
 package com.mohajistudio.developers.database.entity;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Table;
+import com.mohajistudio.developers.database.enums.VerificationType;
+import jakarta.persistence.*;
 import lombok.*;
 
 import java.time.LocalDateTime;
@@ -23,6 +22,10 @@ public class EmailVerification extends BaseEntity {
 
     @Column(nullable = false, columnDefinition = "SMALLINT DEFAULT 0")
     private int attempts;
+
+    @Column(nullable = false, length = 20)
+    @Enumerated(EnumType.STRING)
+    private VerificationType verificationType;
 
     @Column
     private LocalDateTime verifiedAt;

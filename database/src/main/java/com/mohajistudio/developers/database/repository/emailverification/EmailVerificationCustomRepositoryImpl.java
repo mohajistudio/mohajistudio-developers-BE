@@ -1,6 +1,7 @@
 package com.mohajistudio.developers.database.repository.emailverification;
 
 import com.mohajistudio.developers.database.entity.EmailVerification;
+import com.mohajistudio.developers.database.enums.VerificationType;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.core.util.StringUtils;
 import com.querydsl.jpa.impl.JPAQueryFactory;
@@ -16,20 +17,23 @@ public class EmailVerificationCustomRepositoryImpl implements EmailVerificationC
     private final JPAQueryFactory jpaQueryFactory;
 
     @Override
-    public List<EmailVerification> findAllRequestedTodayByEmail(String email) {
+    public List<EmailVerification> findAllRequestedToday(String email, VerificationType verificationType) {
         LocalDateTime now = LocalDateTime.now();
 
         return jpaQueryFactory
                 .selectFrom(emailVerification)
                 .where(eqEmail(email),
-                        emailVerification.createdAt.between(now.minusHours(24), now))
+                        eqVerificationType(verificationType),
+                        emailVerification.createdAt.between(now.minusHours(24), now)
+                )
                 .fetch();
     }
 
-    public EmailVerification findByEmail(String email) {
+    public EmailVerification findByEmail(String email, VerificationType verificationType) {
         return jpaQueryFactory
                 .selectFrom(emailVerification)
                 .where(eqEmail(email),
+                        eqVerificationType(verificationType),
                         emailVerification.expiredAt.after(LocalDateTime.now()))
                 .fetchOne();
     }
@@ -37,5 +41,10 @@ public class EmailVerificationCustomRepositoryImpl implements EmailVerificationC
     private BooleanExpression eqEmail(String email) {
         if (StringUtils.isNullOrEmpty(email)) return null;
         return emailVerification.email.eq(email);
+    }
+
+    private BooleanExpression eqVerificationType(VerificationType verificationType) {
+        if (verificationType == null) return null;
+        return emailVerification.verificationType.eq(verificationType);
     }
 }

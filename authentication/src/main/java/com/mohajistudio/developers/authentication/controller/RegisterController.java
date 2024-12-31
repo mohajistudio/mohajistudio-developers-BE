@@ -9,6 +9,7 @@ import com.mohajistudio.developers.authentication.service.EmailService;
 import com.mohajistudio.developers.authentication.service.RegisterService;
 import com.mohajistudio.developers.common.enums.ErrorCode;
 import com.mohajistudio.developers.common.exception.CustomException;
+import com.mohajistudio.developers.database.enums.VerificationType;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -30,7 +31,7 @@ public class RegisterController {
             throw new CustomException(ErrorCode.ALREADY_EXIST_USER);
         }
 
-        emailService.requestEmailVerification(emailRequest.getEmail());
+        emailService.requestEmailVerification(emailRequest.getEmail(), VerificationType.SIGNUP);
     }
 
     @PostMapping("/email/verify")
@@ -41,7 +42,7 @@ public class RegisterController {
             throw new CustomException(ErrorCode.ALREADY_EXIST_USER);
         }
 
-        emailService.verifyEmailCode(emailVerifyRequest.getEmail(), emailVerifyRequest.getCode());
+        emailService.verifyEmailCode(emailVerifyRequest.getEmail(), emailVerifyRequest.getCode(), VerificationType.SIGNUP);
 
         return registerService.registerAndGenerateToken(emailVerifyRequest.getEmail());
     }

@@ -1,11 +1,15 @@
 package com.mohajistudio.developers.authentication.controller;
 
 import com.mohajistudio.developers.authentication.dto.GeneratedToken;
+import com.mohajistudio.developers.authentication.dto.request.ForgotPasswordRequest;
+import com.mohajistudio.developers.authentication.dto.request.ForgotPasswordVerifyRequest;
 import com.mohajistudio.developers.authentication.dto.request.LoginRequest;
 import com.mohajistudio.developers.authentication.dto.request.RefreshRequest;
 import com.mohajistudio.developers.authentication.service.AuthenticationService;
+import com.mohajistudio.developers.authentication.service.EmailService;
 import com.mohajistudio.developers.common.enums.ErrorCode;
 import com.mohajistudio.developers.common.exception.CustomException;
+import com.mohajistudio.developers.database.enums.VerificationType;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -17,6 +21,7 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/auth")
 public class AuthenticationController {
     private final AuthenticationService authenticationService;
+    private final EmailService emailService;
 
     @PostMapping("/login")
     public GeneratedToken postLogin(@Valid @RequestBody LoginRequest loginRequest) {
@@ -26,6 +31,16 @@ public class AuthenticationController {
     @PostMapping("/refresh")
     public GeneratedToken postRefreshToken(@Valid @RequestBody RefreshRequest refreshRequest) {
         return authenticationService.refreshToken(refreshRequest.getRefreshToken());
+    }
+
+    @PostMapping("/forgot-password/request")
+    public void postForgotPasswordRequest(@Valid @RequestBody ForgotPasswordRequest forgotPasswordRequest) {
+        emailService.requestEmailVerification(forgotPasswordRequest.getEmail(), VerificationType.PASSWORD_RESET);
+    }
+
+    @PostMapping("/forgot-password/verify")
+    public void postForgotPasswordVerify(@Valid @RequestBody ForgotPasswordVerifyRequest forgotPasswordVerifyRequest) {
+        emailService.verifyEmailCode(forgotPasswordVerifyRequest.getEmail(), forgotPasswordVerifyRequest.getCode(), VerificationType.PASSWORD_RESET);
     }
 
     @DeleteMapping("/{email}")
