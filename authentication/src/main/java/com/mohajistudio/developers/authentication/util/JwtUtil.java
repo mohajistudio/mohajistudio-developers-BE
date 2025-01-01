@@ -1,7 +1,7 @@
 package com.mohajistudio.developers.authentication.util;
 
 import com.mohajistudio.developers.authentication.config.JwtProperties;
-import com.mohajistudio.developers.authentication.dto.GeneratedToken;
+import com.mohajistudio.developers.common.dto.GeneratedToken;
 import com.mohajistudio.developers.database.enums.Role;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.security.Keys;
@@ -12,6 +12,8 @@ import org.springframework.stereotype.Component;
 
 import javax.crypto.SecretKey;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.UUID;
 
 @Slf4j
@@ -49,13 +51,20 @@ public class JwtUtil {
                 .compact();
     }
 
-    public Claims extractPayload(String token) {
+    public Map<String, Object> extractPayload(String token) {
         try {
-            return Jwts.parser()
+            Claims payload = Jwts.parser()
                     .verifyWith(secretKey)
                     .build()
                     .parseSignedClaims(token)
                     .getPayload();
+
+            Map<String, Object> extractedMap = new HashMap<>();
+            for (String key : payload.keySet()) {
+                extractedMap.put(key, payload.get(key));
+            }
+
+            return extractedMap;
         } catch (io.jsonwebtoken.security.SecurityException | MalformedJwtException e) {
             throw new JwtException("잘못된 JWT 서명", e);
         } catch (ExpiredJwtException e) {

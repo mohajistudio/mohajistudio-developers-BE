@@ -5,5 +5,5 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
 public interface PostCustomRepository {
-    Page<PostDto> findAllPost(Pageable pageable);
+    Page<PostDto> customFindAll(Pageable pageable);
 }

@@ -19,6 +19,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
+import java.util.Map;
 
 @RequiredArgsConstructor
 public class JwtAuthFilter extends OncePerRequestFilter {
@@ -33,9 +34,9 @@ public class JwtAuthFilter extends OncePerRequestFilter {
             if (authorizationHeader != null && authorizationHeader.startsWith("Bearer ")) {
                 String token = authorizationHeader.substring(7);
 
-                Claims claims = jwtUtil.extractPayload(token);
+                Map<String, Object> claims = jwtUtil.extractPayload(token);
                 if (claims != null) {
-                    String email = claims.get("email", String.class);
+                    String email = (String) claims.get("email");
 
                     UserDetails userDetails = customUserDetailsService.loadUserByUsername(email);
 

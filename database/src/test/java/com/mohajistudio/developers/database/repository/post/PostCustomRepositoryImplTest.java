@@ -5,7 +5,6 @@ import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.mohajistudio.developers.database.TestConfiguration;
 import com.mohajistudio.developers.database.dto.PostDto;
 import com.mohajistudio.developers.database.entity.Post;
-import com.mohajistudio.developers.database.entity.PostTag;
 import com.mohajistudio.developers.database.entity.Tag;
 import com.mohajistudio.developers.database.enums.PostStatus;
 import com.querydsl.jpa.JPQLTemplates;
@@ -95,7 +94,7 @@ public class PostCustomRepositoryImplTest {
         Pageable pageable = PageRequest.of(0, 10); // 첫 번째 페이지, 10개씩 조회
 
         // When
-        Page<PostDto> result = postRepository.findAllPost(pageable);
+        Page<PostDto> result = postRepository.customFindAll(pageable);
 
         // Then
         for (PostDto post : result.getContent()) {

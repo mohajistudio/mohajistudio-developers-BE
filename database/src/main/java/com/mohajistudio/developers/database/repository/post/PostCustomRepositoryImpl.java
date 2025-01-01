@@ -22,7 +22,7 @@ import static com.querydsl.core.group.GroupBy.*;
 
 @RequiredArgsConstructor
 public class PostCustomRepositoryImpl implements PostCustomRepository {
-    private final JPAQueryFactory queryFactory;
+    private final JPAQueryFactory jpaQueryFactory;
 
     /**
      * PageableExecutionUtils.getPage() 을 사용하여 페이징 결과를 반환합니다.
@@ -33,8 +33,8 @@ public class PostCustomRepositoryImpl implements PostCustomRepository {
      * 해당 클래스는 쿼리 조각을 미리 조립하고 totalCount.fetch().size() 함수가 호출될 때 실제 쿼리가 수행됩니다.
      */
     @Override
-    public Page<PostDto> findAllPost(Pageable pageable) {
-        List<PostDto> posts = queryFactory.select(post, tag)
+    public Page<PostDto> customFindAll(Pageable pageable) {
+        List<PostDto> posts = jpaQueryFactory.select(post, tag)
                 .from(post)
                 .leftJoin(postTag).on(post.id.eq(postTag.postId))
                 .leftJoin(tag).on(postTag.tagId.eq(tag.id))
@@ -59,7 +59,7 @@ public class PostCustomRepositoryImpl implements PostCustomRepository {
                                                 ).skipNulls())
                                         )));
 
-        JPAQuery<Long> totalCount = queryFactory
+        JPAQuery<Long> totalCount = jpaQueryFactory
                 .select(post.count())
                 .from(post)
                 .where(eqStatus(PostStatus.PUBLISHED));
