@@ -23,7 +23,7 @@ jobs:
 
       # Build api
     - name: Build API
-      run: ./gradlew :api:clean :api:build
+      run: ./gradlew :api:clean :api:build -x test
 
       # Build Docker image
     - name: Build Docker image
@@ -53,5 +53,6 @@ jobs:
             docker rm api || true
             docker run --restart always -d \
             --name api \
+              -v /share/SSDContainer/mohajistudio-developers-BE:/config \
               -p 8082:8082 \
               ${{ secrets.DOCKERHUB_USERNAME }}/api:${{ github.ref_name }}
