@@ -12,7 +12,7 @@
 <th:block layout:fragment="content">
 
     <div class="container mt-5">
-        <h1 class="text-center mb-4">Edit User</h1>
+        <h1 class="mb-4">Edit User</h1>
         <div class="card shadow">
             <div class="card-body">
                 <form th:action="@{'/users/' + ${user.id} + '/edit'}" th:object="${user}" method="post">

@@ -44,13 +44,13 @@
                         <tr>
                             <!-- 정렬 가능한 헤더 -->
                             <th:block
-                                    th:replace="~{/fragments/table/table_header_title :: tableHeaderTitleFragment('Id', 'id', ${sort[0]}, ${users.getSize()})}"></th:block>
+                                    th:replace="~{fragments/table/table_header_title :: tableHeaderTitleFragment('Id', 'id', ${sort[0]}, ${users.getSize()})}"></th:block>
                             <th:block
-                                    th:replace="~{/fragments/table/table_header_title :: tableHeaderTitleFragment('Nickname', 'nickname', ${sort[0]}, ${users.getSize()})}"></th:block>
+                                    th:replace="~{fragments/table/table_header_title :: tableHeaderTitleFragment('Nickname', 'nickname', ${sort[0]}, ${users.getSize()})}"></th:block>
                             <th:block
-                                    th:replace="~{/fragments/table/table_header_title :: tableHeaderTitleFragment('Email', 'email', ${sort[0]}, ${users.getSize()})}"></th:block>
+                                    th:replace="~{fragments/table/table_header_title :: tableHeaderTitleFragment('Email', 'email', ${sort[0]}, ${users.getSize()})}"></th:block>
                             <th:block
-                                    th:replace="~{/fragments/table/table_header_title :: tableHeaderTitleFragment('Role', 'role', ${sort[0]}, ${users.getSize()})}"></th:block>
+                                    th:replace="~{fragments/table/table_header_title :: tableHeaderTitleFragment('Role', 'role', ${sort[0]}, ${users.getSize()})}"></th:block>
                             <th>Actions</th>
                         </tr>
                         </thead>
@@ -120,7 +120,7 @@
 </th:block>
 
 <th:block layout:fragment="modal">
-    <th:block th:replace="~{/fragments/modal/delete-modal :: deleteModal}"></th:block>
+    <th:block th:replace="~{fragments/modal/delete-modal :: deleteModal}"></th:block>
 </th:block>
 
 <th:block layout:fragment="script">
