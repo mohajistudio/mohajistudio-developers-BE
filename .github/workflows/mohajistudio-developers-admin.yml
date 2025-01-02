@@ -54,5 +54,5 @@ jobs:
             /share/CACHEDEV2_DATA/.qpkg/container-station/bin/docker run --restart always -d \
             --name admin \
               -v /share/SSDContainer/mohajistudio-developers-BE:/config \
-              -p 8082:8082 \
+              -p 8083:8083 \
               ${{ secrets.DOCKERHUB_USERNAME }}/admin:${{ github.ref_name }}
