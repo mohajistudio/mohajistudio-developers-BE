@@ -37,5 +37,8 @@ out/
 .vscode/
 
 ### Configuration ###
-**/application*.yml
-**/application-*.yml
+**/application.yml
+**/application-api.yml
+**/application-database.yml
+**/application-admin.yml
+
