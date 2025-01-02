@@ -24,11 +24,17 @@ public class AuthenticationService {
     public GeneratedToken login(String email, String password) {
         registerService.checkUserRegistered(email);
 
-        String encodedPassword = passwordEncoder.encode(password);
+        Optional<User> findUser = userRepository.findByEmail(email);
 
-        User user = userRepository.findByEmailAndPassword(email, encodedPassword);
+        if(findUser.isEmpty()) {
+            throw new CustomException(ErrorCode.USER_NOT_FOUND);
+        }
 
-        if (user == null) {
+        User user = findUser.get();
+
+        boolean isMatches = passwordEncoder.matches(password, user.getPassword());
+
+        if(!isMatches) {
             throw new CustomException(ErrorCode.USER_NOT_FOUND);
         }
 
