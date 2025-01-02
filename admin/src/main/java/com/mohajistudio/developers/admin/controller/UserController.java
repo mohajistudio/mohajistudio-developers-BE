@@ -50,7 +50,7 @@ public class UserController {
         model.addAttribute("users", users);
         model.addAttribute("sort", sort);
 
-        return "/pages/users";
+        return "pages/users";
     }
 
     @GetMapping("/{userId}/edit")
@@ -78,7 +78,7 @@ public class UserController {
         model.addAttribute("nickname", user.getNickname());
         model.addAttribute("user", userDetail);
 
-        return "/pages/edit-user";
+        return "pages/edit-user";
     }
 
     @PostMapping("/{userId}/edit")
