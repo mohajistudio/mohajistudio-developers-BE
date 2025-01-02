@@ -42,7 +42,7 @@ jobs:
 
     # Deploy on Qnap NAS
     - name: Deploy on Qnap Nas
-      uses: appleboy/ssh-action@1.2.0
+      uses: appleboy/ssh-action@v1.2.0
       with:
         host: ${{ secrets.NAS_HOST }}
         username: ${{ secrets.NAS_USERNAME }}
@@ -53,5 +53,5 @@ jobs:
             docker rm api || true
             docker run --restart always -d \
             --name api \
-              -p ${{ secrets.PORT }}:${{ secrets.PORT }} \
+              -p 8082:8082 \
               ${{ secrets.DOCKERHUB_USERNAME }}/api:${{ github.ref_name }}
