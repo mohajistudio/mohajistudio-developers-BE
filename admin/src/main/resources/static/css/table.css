@@ -1,0 +1,21 @@
+.sort-active {
+    opacity: 1;
+}
+
+.sort-inactive {
+    opacity: 0.5;
+}
+
+.sort-indicator {
+    cursor: pointer;
+}
+
+.sort-indicators {
+    display: flex;
+}
+
+.sortable-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}

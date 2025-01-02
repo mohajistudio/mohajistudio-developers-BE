@@ -1,0 +1,19 @@
+dependencies {
+    implementation project(':common')
+    implementation project(':database')
+
+    implementation 'org.springframework.boot:spring-boot-starter'
+    implementation 'org.springframework.boot:spring-boot-starter-web'
+
+    // Database
+    implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+    implementation 'org.postgresql:postgresql:42.7.4'
+
+    // AWS S3
+    implementation 'org.springframework.cloud:spring-cloud-starter-aws:2.2.6.RELEASE'
+
+    // UUID v6
+    implementation 'com.github.f4b6a3:uuid-creator:6.0.0'
+}
+
+tasks.register("prepareKotlinBuildScriptModel"){}

@@ -1,0 +1,9 @@
+.login-container {
+    display: flex;
+    justify-content: center;
+}
+
+.login-form {
+    max-width: 500px;
+}
+

@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+
+<th:block th:fragment="tableHeaderTitleFragment(displayName, property, sort, size)">
+    <th class="sortable">
+        <a th:href="@{/users(
+                        size=${size},
+                        page=0,
+                        sort=${property} + ',' + (${#strings.equalsIgnoreCase(sort.getProperty(), property) && #strings.equalsIgnoreCase(sort.getDirection(), 'ASC') ? 'DESC' : 'ASC'}))}"
+           class="text-decoration-none text-dark sortable-header">
+            <span th:text="${displayName}"></span>
+            <span class="sort-indicators">
+                <!-- 오름차순 화살표 -->
+                <span class="sort-indicator"
+                      th:classappend="${#strings.equalsIgnoreCase(sort.getProperty(), property) && #strings.equalsIgnoreCase(sort.getDirection(), 'ASC')} ? 'sort-active' : 'sort-inactive'">
+                    ↑
+                </span>
+                <!-- 내림차순 화살표 -->
+                <span class="sort-indicator"
+                      th:classappend="${#strings.equalsIgnoreCase(sort.getProperty(), property) && #strings.equalsIgnoreCase(sort.getDirection(), 'DESC')} ? 'sort-active' : 'sort-inactive'">
+                    ↓
+                </span>
+            </span>
+        </a>
+    </th>
+</th:block>

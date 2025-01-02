@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="ko"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorate="~{/layout/layout}">
+
+<th:block layout:fragment="head">
+    <link th:href="@{/bootstrap/vendor/datatables/dataTables.bootstrap4.min.css}" rel="stylesheet"/>
+    <link th:href="@{/css/table.css}" rel="stylesheet"/>
+</th:block>
+
+<!-- Main Content -->
+<th:block layout:fragment="content">
+
+    <div class="container mt-5">
+        <h1 class="text-center mb-4">Edit User</h1>
+        <div class="card shadow">
+            <div class="card-body">
+                <form th:action="@{'/users/' + ${user.id} + '/edit'}" th:object="${user}" method="post">
+                    <!-- Nickname -->
+                    <div class="mb-3">
+                        <label for="nickname" class="form-label">Nickname</label>
+                        <input type="text" class="form-control" id="nickname" name="nickname" th:value="*{nickname}" placeholder="Enter nickname" required>
+                    </div>
+
+                    <!-- Email -->
+                    <div class="mb-3">
+                        <label for="email" class="form-label">Email</label>
+                        <input type="email" class="form-control" id="email" name="email" th:value="*{email}" placeholder="Enter email" required>
+                    </div>
+
+                    <!-- Password (ReadOnly) -->
+                    <div class="mb-3">
+                        <label for="password" class="form-label">Password</label>
+                        <input type="password" class="form-control" id="password" name="password" th:value="*{password}" readonly>
+                    </div>
+
+                    <!-- Role -->
+                    <div class="mb-3">
+                        <label for="role" class="form-label">Role</label>
+                        <br />
+                        <select class="form-select" id="role" name="role" th:value="*{role}">
+                            <option th:each="role : ${T(com.mohajistudio.developers.database.enums.Role).values()}"
+                                    th:value="${role}" th:text="${role}"></option>
+                        </select>
+                    </div>
+
+                    <!-- RefreshToken (ReadOnly) -->
+                    <div class="mb-3">
+                        <label for="refreshToken" class="form-label">Refresh Token</label>
+                        <textarea class="form-control" id="refreshToken" name="refreshToken" rows="3" th:text="*{refreshToken}" readonly></textarea>
+                    </div>
+
+                    <!-- Buttons -->
+                    <div class="d-flex justify-content-between">
+                        <a th:href="@{/users}" class="btn btn-secondary">Back to Users List</a>
+                        <button type="submit" class="btn btn-primary">Save Changes</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</th:block>
+</html>
