@@ -48,10 +48,10 @@ jobs:
         username: ${{ secrets.NAS_USERNAME }}
         password: ${{ secrets.NAS_PASSWORD }}
         script: |
-            docker pull ${{ secrets.DOCKERHUB_USERNAME }}/api:${{ github.ref_name }}
-            docker stop api || true
-            docker rm api || true
-            docker run --restart always -d \
+            /share/CACHEDEV2_DATA/.qpkg/container-station/bin/docker pull ${{ secrets.DOCKERHUB_USERNAME }}/api:${{ github.ref_name }}
+            /share/CACHEDEV2_DATA/.qpkg/container-station/bin/docker stop api || true
+            /share/CACHEDEV2_DATA/.qpkg/container-station/bin/docker rm api || true
+            /share/CACHEDEV2_DATA/.qpkg/container-station/bin/docker run --restart always -d \
             --name api \
               -v /share/SSDContainer/mohajistudio-developers-BE:/config \
               -p 8082:8082 \
