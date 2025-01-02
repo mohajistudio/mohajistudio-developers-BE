@@ -30,7 +30,7 @@ public class AuthenticationController {
 
         model.addAttribute("nickname", user.getNickname());
 
-        return "/pages/index";
+        return "pages/index";
     }
 
     @GetMapping("/login")
@@ -39,6 +39,6 @@ public class AuthenticationController {
             return "redirect:/";
         }
 
-        return "/pages/login";
+        return "pages/login";
     }
 }
