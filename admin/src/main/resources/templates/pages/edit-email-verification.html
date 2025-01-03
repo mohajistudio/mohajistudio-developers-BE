@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="ko"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorate="~{layout/layout}">
+
+<th:block layout:fragment="head">
+    <link th:href="@{/bootstrap/vendor/datatables/dataTables.bootstrap4.min.css}" rel="stylesheet"/>
+    <link th:href="@{/css/table.css}" rel="stylesheet"/>
+</th:block>
+
+<!-- Main Content -->
+<th:block layout:fragment="content">
+
+    <div class="container mt-5">
+        <h1 class="mb-4">Edit Email Verification</h1>
+        <div class="card shadow">
+            <div class="card-body">
+                <form th:action="@{'/email-verifications/' + ${emailVerification.id} + '/edit'}" th:object="${emailVerification}" method="post">
+                    <!-- Email (ReadOnly) -->
+                    <div class="mb-3">
+                        <label for="email" class="form-label">Email</label>
+                        <input type="email" class="form-control" id="email" name="email" th:value="*{email}" readonly>
+                    </div>
+
+                    <!-- Code (ReadOnly) -->
+                    <div class="mb-3">
+                        <label for="code" class="form-label">Code</label>
+                        <input type="text" class="form-control" id="code" name="code" th:value="*{code}" readonly>
+                    </div>
+
+                    <!-- Attempts -->
+                    <div class="mb-3">
+                        <label for="attempts" class="form-label">Attempts</label>
+                        <input type="number" class="form-control" id="attempts" name="attempts" th:value="*{attempts}">
+                    </div>
+
+                    <!-- Verification Type -->
+                    <div class="mb-3">
+                        <label for="verificationType" class="form-label">Verification Type</label>
+                        <select class="form-select" id="verificationType" name="verificationType" th:value="*{verificationType}">
+                            <option th:each="type : ${T(com.mohajistudio.developers.database.enums.VerificationType).values()}"
+                                    th:value="${type}" th:text="${type}"></option>
+                        </select>
+                    </div>
+
+                    <!-- VerifiedAt (ReadOnly) -->
+                    <div class="mb-3">
+                        <label for="verifiedAt" class="form-label">VerifiedAt</label>
+                        <input type="text" class="form-control" id="verifiedAt" name="verifiedAt" th:value="*{verifiedAt}" readonly>
+                    </div>
+
+                    <!-- ExpiredAt -->
+                    <div class="mb-3">
+                        <label for="expiredAt" class="form-label" th:text="'ExpiredAt, ' + ${#temporals.format(emailVerification.expiredAt, 'yyyy년 MM월 dd일 HH시 mm분')}">ExpiredAt</label>
+                        <input type="datetime-local" class="form-control" id="expiredAt" name="expiredAt" th:value="*{expiredAt}">
+                    </div>
+
+                    <!-- CreatedAt (ReadOnly) -->
+                    <div class="mb-3">
+                        <label for="createdAt" class="form-label">CreatedAt</label>
+                        <input type="text" class="form-control" id="createdAt" name="createdAt" th:value="*{createdAt}" readonly>
+                    </div>
+
+                    <!-- UpdatedAt (ReadOnly) -->
+                    <div class="mb-3">
+                        <label for="updatedAt" class="form-label">UpdatedAt</label>
+                        <input type="text" class="form-control" id="updatedAt" name="updatedAt" th:value="*{updatedAt}" readonly>
+                    </div>
+
+                    <!-- Buttons -->
+                    <div class="d-flex justify-content-between">
+                        <a th:href="@{/email-verifications}" class="btn btn-secondary">Back to Email Verifications List</a>
+                        <button type="submit" class="btn btn-primary">Save Changes</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</th:block>
+</html>
