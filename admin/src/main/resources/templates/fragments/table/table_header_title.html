@@ -1,12 +1,10 @@
 <!DOCTYPE html>
 <html lang="ko" xmlns:th="http://www.thymeleaf.org">
 
-<th:block th:fragment="tableHeaderTitleFragment(displayName, property, sort, size)">
+<th:block th:fragment="tableHeaderTitleFragment(endPoint, displayName, property, sort, size)">
     <th class="sortable">
-        <a th:href="@{/users(
-                        size=${size},
-                        page=0,
-                        sort=${property} + ',' + (${#strings.equalsIgnoreCase(sort.getProperty(), property) && #strings.equalsIgnoreCase(sort.getDirection(), 'ASC') ? 'DESC' : 'ASC'}))}"
+
+        <a th:href="|${endPoint}?page=0&size=${size}&sort=${property},${#strings.equalsIgnoreCase(sort.getProperty(), property) && #strings.equalsIgnoreCase(sort.getDirection(), 'ASC') ? 'DESC' : 'ASC'}|"
            class="text-decoration-none text-dark sortable-header">
             <span th:text="${displayName}"></span>
             <span class="sort-indicators">

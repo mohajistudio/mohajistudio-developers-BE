@@ -46,8 +46,20 @@
 
                     <!-- RefreshToken (ReadOnly) -->
                     <div class="mb-3">
-                        <label for="refreshToken" class="form-label">Refresh Token</label>
+                        <label for="refreshToken" class="form-label">RefreshToken</label>
                         <textarea class="form-control" id="refreshToken" name="refreshToken" rows="3" th:text="*{refreshToken}" readonly></textarea>
+                    </div>
+
+                    <!-- CreatedAt (ReadOnly) -->
+                    <div class="mb-3">
+                        <label for="createdAt" class="form-label">CreatedAt</label>
+                        <input type="text" class="form-control" id="createdAt" name="createdAt" th:value="*{createdAt}" readonly>
+                    </div>
+
+                    <!-- UpdatedAt (ReadOnly) -->
+                    <div class="mb-3">
+                        <label for="updatedAt" class="form-label">UpdatedAt</label>
+                        <input type="text" class="form-control" id="updatedAt" name="updatedAt" th:value="*{updatedAt}" readonly>
                     </div>
 
                     <!-- Buttons -->

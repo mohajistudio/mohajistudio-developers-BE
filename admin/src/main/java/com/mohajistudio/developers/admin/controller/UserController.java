@@ -41,7 +41,7 @@ public class UserController {
 
         User user = findUser.get();
 
-        Page<UserDto> users = userRepository.customFindALl(pageable);
+        Page<UserDto> users = userRepository.customFindAll(pageable);
 
         List<Sort.Order> sort = new ArrayList<>();
         pageable.getSort().stream().forEach(sort::add);
@@ -54,7 +54,7 @@ public class UserController {
     }
 
     @GetMapping("/{userId}/edit")
-    public String getUserDetailsPage(
+    public String getEditUserPage(
             @AuthenticationPrincipal UserDetails userDetails,
             @PathVariable UUID userId,
             Model model
@@ -67,22 +67,22 @@ public class UserController {
 
         User user = findUser.get();
 
-        Optional<User> findUserDetails = userRepository.findById(userId);
+        Optional<User> findEditUser = userRepository.findById(userId);
 
-        if (findUserDetails.isEmpty()) {
+        if (findEditUser.isEmpty()) {
             throw new CustomException(ErrorCode.USER_NOT_FOUND);
         }
 
-        User userDetail = findUserDetails.get();
+        User editUser = findEditUser.get();
 
         model.addAttribute("nickname", user.getNickname());
-        model.addAttribute("user", userDetail);
+        model.addAttribute("user", editUser);
 
         return "pages/edit-user";
     }
 
     @PostMapping("/{userId}/edit")
-    public String postUserDetails(
+    public String postEditUser(
             @PathVariable UUID userId, @ModelAttribute User editUser
     ) {
         Optional<User> findUser = userRepository.findById(userId);

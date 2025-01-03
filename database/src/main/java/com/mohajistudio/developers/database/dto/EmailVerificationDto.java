@@ -1,6 +1,6 @@
 package com.mohajistudio.developers.database.dto;
 
-import com.mohajistudio.developers.database.enums.Role;
+import com.mohajistudio.developers.database.enums.VerificationType;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -13,13 +13,14 @@ import java.util.UUID;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class UserDto {
+public class EmailVerificationDto {
     private UUID id;
-    private String nickname;
     private String email;
-    private String password;
-    private Role role;
-    private String refreshToken;
+    private String code;
+    private int attempts;
+    private VerificationType verificationType;
+    private LocalDateTime verifiedAt;
+    private LocalDateTime expiredAt;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
 }

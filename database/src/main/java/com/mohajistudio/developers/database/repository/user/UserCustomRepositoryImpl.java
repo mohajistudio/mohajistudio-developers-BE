@@ -1,10 +1,7 @@
 package com.mohajistudio.developers.database.repository.user;
 
-import com.mohajistudio.developers.database.dto.PostDto;
-import com.mohajistudio.developers.database.dto.TagDto;
 import com.mohajistudio.developers.database.dto.UserDto;
 import com.mohajistudio.developers.database.entity.User;
-import com.mohajistudio.developers.database.enums.PostStatus;
 import com.querydsl.core.types.Order;
 import com.querydsl.core.types.OrderSpecifier;
 import com.querydsl.core.types.Projections;
@@ -22,32 +19,22 @@ import org.springframework.data.support.PageableExecutionUtils;
 import java.util.ArrayList;
 import java.util.List;
 
-import static com.mohajistudio.developers.database.entity.QPost.post;
-import static com.mohajistudio.developers.database.entity.QPostTag.postTag;
-import static com.mohajistudio.developers.database.entity.QTag.tag;
 import static com.mohajistudio.developers.database.entity.QUser.user;
-import static com.querydsl.core.group.GroupBy.groupBy;
-import static com.querydsl.core.group.GroupBy.set;
 
 @RequiredArgsConstructor
 public class UserCustomRepositoryImpl implements UserCustomRepository {
     private final JPAQueryFactory jpaQueryFactory;
 
-    @Override
-    public User findByEmailAndPassword(String email, String password) {
-        return jpaQueryFactory.selectFrom(user)
-                .where(eqEmail(email), eqPassword(password))
-                .fetchOne();
-    }
-
-    public Page<UserDto> customFindALl(Pageable pageable) {
+    public Page<UserDto> customFindAll(Pageable pageable) {
         List<UserDto> users = jpaQueryFactory.select(Projections.constructor(UserDto.class,
                         user.id,
                         user.nickname,
                         user.email,
                         user.password,
                         user.role,
-                        user.refreshToken
+                        user.refreshToken,
+                        user.createdAt,
+                        user.updatedAt
                 )).from(user)
                 .orderBy(getOrderSpecifiers(pageable.getSort()))
                 .offset(pageable.getOffset())

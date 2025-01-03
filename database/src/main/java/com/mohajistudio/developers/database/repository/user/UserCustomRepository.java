@@ -6,6 +6,5 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
 public interface UserCustomRepository {
-    Page<UserDto> customFindALl(Pageable pageable);
-    User findByEmailAndPassword(String email, String password);
+    Page<UserDto> customFindAll(Pageable pageable);
 }

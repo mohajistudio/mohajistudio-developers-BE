@@ -4,137 +4,150 @@
       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorate="~{layout/layout}">
 
 <th:block layout:fragment="head">
-  <link th:href="@{/bootstrap/vendor/datatables/dataTables.bootstrap4.min.css}" rel="stylesheet"/>
-  <link th:href="@{/css/table.css}" rel="stylesheet"/>
+    <link th:href="@{/bootstrap/vendor/datatables/dataTables.bootstrap4.min.css}" rel="stylesheet"/>
+    <link th:href="@{/css/table.css}" rel="stylesheet"/>
 </th:block>
 
 <!-- Main Content -->
 <th:block layout:fragment="content">
 
-  <!-- Begin Page Content -->
-  <div class="container-fluid">
+    <!-- Begin Page Content -->
+    <div class="container-fluid">
 
-    <!-- Page Heading -->
-    <h1 class="h3 mb-2 text-gray-800">EmailVerification Entity</h1>
-    <p class="mb-4">Manage your email verification with pagination, search, and sorting.</p>
+        <!-- Page Heading -->
+        <h1 class="h3 mb-2 text-gray-800">EmailVerification Entity</h1>
+        <p class="mb-4">Manage your email verifications with pagination, search, and sorting.</p>
 
-    <!-- DataTales Example -->
-    <div class="card shadow mb-4">
-      <div class="card-body">
-        <!-- Search Form -->
-        <form th:action="@{/emailVerifications}" method="get" class="form-inline mb-3 justify-content-end">
-          <div class="form-group mr-2">
-            <input type="text" name="search" class="form-control" placeholder="Search" th:value="${search}">
-          </div>
-          <div class="form-group mr-2">
-            <select name="size" class="form-control">
-              <option th:selected="${emailVerifications.size == 5}" value="5">5</option>
-              <option th:selected="${emailVerifications.size == 10}" value="10">10</option>
-              <option th:selected="${emailVerifications.size == 20}" value="20">20</option>
-              <option th:selected="${emailVerifications.size == 50}" value="50">50</option>
-            </select>
-          </div>
-          <button type="submit" class="btn btn-primary">Search</button>
-        </form>
+        <!-- DataTales Example -->
+        <div class="card shadow mb-4">
+            <div class="card-body">
+                <!-- Search Form -->
+                <form th:action="@{/email-verifications}" method="get" class="form-inline mb-3 justify-content-end">
+                    <div class="form-group mr-2">
+                        <input type="text" name="search" class="form-control" placeholder="Search" th:value="${search}">
+                    </div>
+                    <div class="form-group mr-2">
+                        <select name="size" class="form-control">
+                            <option th:selected="${emailVerifications.size == 5}" value="5">5</option>
+                            <option th:selected="${emailVerifications.size == 10}" value="10">10</option>
+                            <option th:selected="${emailVerifications.size == 20}" value="20">20</option>
+                            <option th:selected="${emailVerifications.size == 50}" value="50">50</option>
+                        </select>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Search</button>
+                </form>
 
-        <!-- Table -->
-        <div class="table-responsive">
-          <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
-            <thead>
-            <tr>
-              <!-- 정렬 가능한 헤더 -->
-              <th:block
-                      th:replace="~{fragments/table/table_header_title :: tableHeaderTitleFragment('Id', 'id', ${sort[0]}, ${users.getSize()})}"></th:block>
-              <th:block
-                      th:replace="~{fragments/table/table_header_title :: tableHeaderTitleFragment('Nickname', 'nickname', ${sort[0]}, ${users.getSize()})}"></th:block>
-              <th:block
-                      th:replace="~{fragments/table/table_header_title :: tableHeaderTitleFragment('Email', 'email', ${sort[0]}, ${users.getSize()})}"></th:block>
-              <th:block
-                      th:replace="~{fragments/table/table_header_title :: tableHeaderTitleFragment('Role', 'role', ${sort[0]}, ${users.getSize()})}"></th:block>
-              <th>Actions</th>
-            </tr>
-            </thead>
-            <tbody>
-            <tr th:each="emailVerifications : ${emailVerifications.content}">
-              <td th:text="${user.id}"></td>
-              <td th:text="${user.nickname}"></td>
-              <td th:text="${user.email}"></td>
-              <td th:text="${user.role}"></td>
-              <!--Actions-->
-              <td>
-                <!-- 수정 버튼 -->
-                <a th:href="@{'/users/' + ${user.id} + '/edit'}" class="btn btn-primary btn-sm">수정</a>
-                <!-- 삭제 버튼 -->
-                <button class="btn btn-danger btn-sm" th:attr="onclick=|showDeleteModal('${user.email}', '${user.id}')|">삭제
-                </button>
-              </td>
-            </tr>
-            </tbody>
-          </table>
-        </div>
-        <!-- Pagination and Info -->
-        <div class="row">
-          <!-- Showing Information -->
-          <div class="col-sm-12 col-md-5">
-            <div class="dataTables_info" id="dataTable_info" role="status" aria-live="polite"
-                 th:text="|Total ${users.getTotalElements()} entries|">
+                <!-- Table -->
+                <div class="table-responsive">
+                    <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+                        <thead>
+                        <tr>
+                            <!-- 정렬 가능한 헤더 -->
+                            <th:block
+                                    th:replace="~{fragments/table/table_header_title :: tableHeaderTitleFragment('/email-verifications','Id', 'id', ${sort[0]}, ${emailVerifications.getSize()})}"></th:block>
+                            <th:block
+                                    th:replace="~{fragments/table/table_header_title :: tableHeaderTitleFragment('/email-verifications','Email', 'email', ${sort[0]}, ${emailVerifications.getSize()})}"></th:block>
+                            <th:block
+                                    th:replace="~{fragments/table/table_header_title :: tableHeaderTitleFragment('/email-verifications','Attempts', 'attempts', ${sort[0]}, ${emailVerifications.getSize()})}"></th:block>
+                            <th:block
+                                    th:replace="~{fragments/table/table_header_title :: tableHeaderTitleFragment('/email-verifications','VerificationType', 'verificationType', ${sort[0]}, ${emailVerifications.getSize()})}"></th:block>
+                            <th:block
+                                    th:replace="~{fragments/table/table_header_title :: tableHeaderTitleFragment('/email-verifications','VerifiedAt', 'verifiedAt', ${sort[0]}, ${emailVerifications.getSize()})}"></th:block>
+                            <th:block
+                                    th:replace="~{fragments/table/table_header_title :: tableHeaderTitleFragment('/email-verifications','ExpiredAt', 'expiredAt', ${sort[0]}, ${emailVerifications.getSize()})}"></th:block>
+                            <th:block
+                                    th:replace="~{fragments/table/table_header_title :: tableHeaderTitleFragment('/email-verifications','CreatedAt', 'createdAt', ${sort[0]}, ${emailVerifications.getSize()})}"></th:block>
+                            <th:block
+                                    th:replace="~{fragments/table/table_header_title :: tableHeaderTitleFragment('/email-verifications','UpdatedAt', 'updatedAt', ${sort[0]}, ${emailVerifications.getSize()})}"></th:block>
+                            <th>Actions</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr th:each="emailVerification : ${emailVerifications.content}">
+                            <td th:text="${emailVerification.id}"></td>
+                            <td th:text="${emailVerification.email}"></td>
+                            <td th:text="${emailVerification.attempts}"></td>
+                            <td th:text="${emailVerification.verificationType}"></td>
+                            <td th:text="${#temporals.format(emailVerification.verifiedAt, 'yyyy년 MM월 dd일 HH시 mm분')}"></td>
+                            <td th:text="${#temporals.format(emailVerification.expiredAt, 'yyyy년 MM월 dd일 HH시 mm분')}"></td>
+                            <td th:text="${#temporals.format(emailVerification.createdAt, 'yyyy년 MM월 dd일 HH시 mm분')}"></td>
+                            <td th:text="${#temporals.format(emailVerification.updatedAt, 'yyyy년 MM월 dd일 HH시 mm분')}"></td>
+                            <!--Actions-->
+                            <td>
+                                <!-- 수정 버튼 -->
+                                <a th:href="@{'/email-verifications/' + ${emailVerification.id} + '/edit'}" class="btn btn-primary btn-sm">수정</a>
+                                <!-- 삭제 버튼 -->
+                                <button class="btn btn-danger btn-sm"
+                                        th:attr="onclick=|showDeleteModal('${emailVerification.email}', '${emailVerification.id}')|">삭제
+                                </button>
+                            </td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <!-- Pagination and Info -->
+                <div class="row">
+                    <!-- Showing Information -->
+                    <div class="col-sm-12 col-md-5">
+                        <div class="dataTables_info" id="dataTable_info" role="status" aria-live="polite"
+                             th:text="|Total ${emailVerifications.getTotalElements()} entries|">
+                        </div>
+                    </div>
+                    <!-- Pagination Controls -->
+                    <div class="col-sm-12 col-md-7">
+                        <nav th:if="${emailVerifications.totalPages > 1}">
+                            <ul class="pagination justify-content-end">
+                                <!-- Previous Page Link -->
+                                <li class="page-item" th:classappend="${emailVerifications.first} ? 'disabled'">
+                                    <a class="page-link"
+                                       th:href="@{/email-verifications(search=${search}, page=${emailVerifications.number - 1}, size=${emailVerifications.size})}"
+                                       aria-label="Previous">
+                                        <span aria-hidden="true">&laquo;</span>
+                                    </a>
+                                </li>
+
+                                <!-- Page Number Links -->
+                                <li class="page-item" th:each="i : ${#numbers.sequence(0, emailVerifications.totalPages -1)}"
+                                    th:classappend="${i == emailVerifications.number} ? 'active'">
+                                    <a class="page-link"
+                                       th:href="@{/email-verifications(search=${search}, page=${i}, size=${emailVerifications.size})}"
+                                       th:text="${i + 1}">1</a>
+                                </li>
+
+                                <!-- Next Page Link -->
+                                <li class="page-item" th:classappend="${emailVerifications.last} ? 'disabled'">
+                                    <a class="page-link"
+                                       th:href="@{/email-verifications(search=${search}, page=${emailVerifications.number + 1}, size=${emailVerifications.size})}"
+                                       aria-label="Next">
+                                        <span aria-hidden="true">&raquo;</span>
+                                    </a>
+                                </li>
+                            </ul>
+                        </nav>
+                    </div>
+                </div>
             </div>
-          </div>
-          <!-- Pagination Controls -->
-          <div class="col-sm-12 col-md-7">
-            <nav th:if="${users.totalPages > 1}">
-              <ul class="pagination justify-content-end">
-                <!-- Previous Page Link -->
-                <li class="page-item" th:classappend="${users.first} ? 'disabled'">
-                  <a class="page-link"
-                     th:href="@{/users(search=${search}, page=${users.number - 1}, size=${users.size})}"
-                     aria-label="Previous">
-                    <span aria-hidden="true">&laquo;</span>
-                  </a>
-                </li>
-
-                <!-- Page Number Links -->
-                <li class="page-item" th:each="i : ${#numbers.sequence(0, users.totalPages -1)}"
-                    th:classappend="${i == users.number} ? 'active'">
-                  <a class="page-link"
-                     th:href="@{/users(search=${search}, page=${i}, size=${users.size})}"
-                     th:text="${i + 1}">1</a>
-                </li>
-
-                <!-- Next Page Link -->
-                <li class="page-item" th:classappend="${users.last} ? 'disabled'">
-                  <a class="page-link"
-                     th:href="@{/users(search=${search}, page=${users.number + 1}, size=${users.size})}"
-                     aria-label="Next">
-                    <span aria-hidden="true">&raquo;</span>
-                  </a>
-                </li>
-              </ul>
-            </nav>
-          </div>
         </div>
-      </div>
-    </div>
 
-  </div>
+    </div>
 </th:block>
 
 <th:block layout:fragment="modal">
-  <th:block th:replace="~{fragments/modal/delete-modal :: deleteModal}"></th:block>
+    <th:block th:replace="~{fragments/modal/delete-modal :: deleteModal}"></th:block>
 </th:block>
 
 <th:block layout:fragment="script">
-  <script>
-    function showDeleteModal(email, userId) {
-      const modalBody = document.getElementById('modalBody');
-      modalBody.innerText = `${email}을 정말 삭제하시겠습니까?\n한 번 삭제된 데이터는 되돌릴 수 없습니다.`;
+    <script>
+        function showDeleteModal(email, emailVerificationId) {
+            const modalBody = document.getElementById('modalBody');
+            modalBody.innerText = `${email}을 정말 삭제하시겠습니까?\n한 번 삭제된 데이터는 되돌릴 수 없습니다.`;
 
-      const deleteForm = document.getElementById('deleteForm');
-      deleteForm.setAttribute('action', `/users/${userId}`);
+            const deleteForm = document.getElementById('deleteForm');
+            deleteForm.setAttribute('action', `/email-verifications/${emailVerificationId}`);
 
-      const deleteModal = new bootstrap.Modal(document.getElementById('deleteModal'));
-      deleteModal.show();
-    }
-  </script>
+            const deleteModal = new bootstrap.Modal(document.getElementById('deleteModal'));
+            deleteModal.show();
+        }
+    </script>
 </th:block>
 </html>
