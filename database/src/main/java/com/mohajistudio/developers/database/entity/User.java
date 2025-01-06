@@ -23,12 +23,15 @@ public class User extends BaseEntity {
     @Column
     private String password;
 
-    @Column(length = 30)
-    private String jobRole;
-
     /// MediaFile Id
     @Column
     private UUID profileImageId;
+
+    @Column
+    private String profileImageUrl;
+
+    @Column(length = 30)
+    private String jobRole;
 
     @Column(length = 100)
     private String bio;
