@@ -9,7 +9,6 @@ import com.mohajistudio.developers.database.enums.Role;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.core.annotation.Order;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
@@ -48,7 +47,7 @@ public class SecurityConfig {
             authorizeRequests.requestMatchers(HttpMethod.POST, "/auth/register/password", "/auth/register/nickname").hasAuthority(AUTHORITY_GUEST);
 
             // DEVELOPER
-            authorizeRequests.requestMatchers(HttpMethod.POST, "/posts/media").hasAuthority(AUTHORITY_GUEST);
+            authorizeRequests.requestMatchers(HttpMethod.POST, "/posts/media").hasAnyAuthority(AUTHORITY_ADMIN, AUTHORITY_DEVELOPER);
 
             authorizeRequests.anyRequest().permitAll();
         });
