@@ -55,4 +55,8 @@ public class MediaService {
 
         return mediaFileRepository.save(mediaFile);
     }
+
+    public MediaFile findByIdAndUserId(UUID mediaFileId, UUID memberId) {
+        return mediaFileRepository.findByIdAndUserId(mediaFileId, memberId);
+    }
 }

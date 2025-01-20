@@ -29,7 +29,7 @@ public enum ErrorCode {
 
     // Infra
     MULTIPART_FILE_EXCEPTION(HttpStatus.BAD_REQUEST, "MF0001", "파일을 찾을 수 없음"),
-    STORAGE_UPLOAD_FAILURE(HttpStatus.BAD_REQUEST, "MF0002", "스토리지 업로드 실패"),
+    STORAGE_UPLOAD_FAILURE(HttpStatus.INTERNAL_SERVER_ERROR, "MF0002", "스토리지 업로드 실패"),
     MAX_UPLOAD_SIZE_EXCEEDED(HttpStatus.BAD_REQUEST, "MF0003", "파일 최대 크기 초과"),
     INVALID_MEDIA_TYPE(HttpStatus.BAD_REQUEST, "MF0004", "잘못된 파일 형식"),
 
