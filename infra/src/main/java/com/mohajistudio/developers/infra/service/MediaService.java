@@ -51,7 +51,7 @@ public class MediaService {
             throw new CustomException(ErrorCode.STORAGE_UPLOAD_FAILURE);
         }
 
-        MediaFile mediaFile = MediaFile.builder().userId(memberId).fileName(fileName).originalFileName(file.getOriginalFilename()).contentType(ContentType.fromMimeType(contentType)).size(file.getSize()).build();
+        MediaFile mediaFile = MediaFile.builder().userId(memberId).fileName(fileName).contentType(ContentType.fromMimeType(contentType)).size(file.getSize()).build();
 
         return mediaFileRepository.save(mediaFile);
     }

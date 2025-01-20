@@ -30,7 +30,7 @@ public class PostService {
     private final MediaService mediaService;
 
     public Page<PostDto> findAllPost(Pageable pageable) {
-        return postRepository.customFindAll(pageable);
+        return postRepository.findAllPostDto(pageable, null);
     }
 
     public List<MediaFile> uploadImages(String email, List<MultipartFile> files) {

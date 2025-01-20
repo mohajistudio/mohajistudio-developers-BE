@@ -1,7 +1,9 @@
 package com.mohajistudio.developers.database.repository.post;
 
+import com.mohajistudio.developers.database.dto.PostDetailsDto;
 import com.mohajistudio.developers.database.dto.PostDto;
 import com.mohajistudio.developers.database.dto.TagDto;
+import com.mohajistudio.developers.database.dto.UserDto;
 import com.mohajistudio.developers.database.enums.PostStatus;
 import com.querydsl.core.types.Projections;
 import com.querydsl.core.types.dsl.BooleanExpression;
@@ -13,10 +15,12 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.support.PageableExecutionUtils;
 
 import java.util.List;
+import java.util.UUID;
 
 import static com.mohajistudio.developers.database.entity.QPost.post;
 import static com.mohajistudio.developers.database.entity.QPostTag.postTag;
 import static com.mohajistudio.developers.database.entity.QTag.tag;
+import static com.mohajistudio.developers.database.entity.QUser.user;
 import static com.querydsl.core.group.GroupBy.*;
 
 
@@ -33,12 +37,13 @@ public class PostCustomRepositoryImpl implements PostCustomRepository {
      * 해당 클래스는 쿼리 조각을 미리 조립하고 totalCount.fetch().size() 함수가 호출될 때 실제 쿼리가 수행됩니다.
      */
     @Override
-    public Page<PostDto> customFindAll(Pageable pageable) {
-        List<PostDto> posts = jpaQueryFactory.select(post, tag)
+    public Page<PostDto> findAllPostDto(Pageable pageable, PostStatus status) {
+        List<PostDto> posts = jpaQueryFactory.select(post, tag, user)
                 .from(post)
+                .join(user).on(post.userId.eq(user.id))
                 .leftJoin(postTag).on(post.id.eq(postTag.postId))
                 .leftJoin(tag).on(postTag.tagId.eq(tag.id))
-                .where(eqStatus(PostStatus.PUBLISHED))
+                .where(eqStatus(status))
                 .orderBy(post.id.desc())
                 .offset(pageable.getOffset())
                 .limit(pageable.getPageSize())
@@ -48,16 +53,28 @@ public class PostCustomRepositoryImpl implements PostCustomRepository {
                                         .constructor(
                                                 PostDto.class,
                                                 post.id,
+                                                Projections.constructor(UserDto.class,
+                                                        user.id,
+                                                        user.nickname,
+                                                        user.email,
+                                                        user.password,
+                                                        user.role
+                                                ),
                                                 post.title,
                                                 post.summary,
                                                 post.thumbnail,
+                                                post.status,
+                                                post.publishedAt,
                                                 set(Projections.constructor(TagDto.class,
-                                                        tag.id,
-                                                        tag.title,
-                                                        tag.slug,
-                                                        tag.description
-                                                ).skipNulls())
-                                        )));
+                                                                tag.id,
+                                                                tag.title,
+                                                                tag.slug,
+                                                                tag.description
+                                                        ).skipNulls()
+                                                )
+                                        )
+                                )
+                );
 
         JPAQuery<Long> totalCount = jpaQueryFactory
                 .select(post.count())
@@ -67,7 +84,55 @@ public class PostCustomRepositoryImpl implements PostCustomRepository {
         return PageableExecutionUtils.getPage(posts, pageable, () -> totalCount.fetch().size());
     }
 
+    @Override
+    public PostDetailsDto findByIdPostDetailsDto(UUID id) {
+        List<PostDetailsDto> posts = jpaQueryFactory.select(post, tag, user)
+                .from(post)
+                .join(user).on(post.userId.eq(user.id))
+                .leftJoin(postTag).on(post.id.eq(postTag.postId))
+                .leftJoin(tag).on(postTag.tagId.eq(tag.id))
+                .where(eqId(id))
+                .transform(
+                        groupBy(post.id)
+                                .list(Projections
+                                        .constructor(
+                                                PostDetailsDto.class,
+                                                post.id,
+                                                Projections.constructor(UserDto.class,
+                                                        user.id,
+                                                        user.nickname,
+                                                        user.email,
+                                                        user.password,
+                                                        user.role
+                                                ),
+                                                post.title,
+                                                post.content,
+                                                post.summary,
+                                                post.thumbnail,
+                                                post.status,
+                                                post.publishedAt,
+                                                set(Projections.constructor(TagDto.class,
+                                                        tag.id,
+                                                        tag.title,
+                                                        tag.slug,
+                                                        tag.description
+                                                ).skipNulls())
+                                        )
+                                )
+                );
+
+        if(posts.isEmpty()) return null;
+
+        return posts.get(0);
+    }
+
     private BooleanExpression eqStatus(PostStatus status) {
+        if (status == null) return null;
         return post.status.eq(status);
+    }
+
+    private BooleanExpression eqId(UUID id) {
+        if (id == null) return null;
+        return post.id.eq(id);
     }
 }

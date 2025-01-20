@@ -21,9 +21,6 @@ public class MediaFile extends BaseEntity {
     private String fileName;
 
     @Column(nullable = false)
-    private String originalFileName;
-
-    @Column(nullable = false)
     @Enumerated(EnumType.STRING)
     private ContentType contentType;
 

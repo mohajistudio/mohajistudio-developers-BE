@@ -1,5 +1,6 @@
 package com.mohajistudio.developers.api.domain.authentication.controller;
 
+import com.mohajistudio.developers.api.domain.authentication.dto.response.EmailVerifyResponse;
 import com.mohajistudio.developers.common.dto.GeneratedToken;
 import com.mohajistudio.developers.api.domain.authentication.dto.request.EmailRequest;
 import com.mohajistudio.developers.api.domain.authentication.dto.request.EmailVerifyRequest;
@@ -9,6 +10,7 @@ import com.mohajistudio.developers.api.domain.authentication.service.EmailServic
 import com.mohajistudio.developers.api.domain.authentication.service.RegisterService;
 import com.mohajistudio.developers.common.enums.ErrorCode;
 import com.mohajistudio.developers.common.exception.CustomException;
+import com.mohajistudio.developers.database.entity.EmailVerification;
 import com.mohajistudio.developers.database.enums.VerificationType;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -24,14 +26,16 @@ public class RegisterController {
     private final EmailService emailService;
 
     @PostMapping("/email/request")
-    public void requestEmailVerification(@Valid @RequestBody EmailRequest emailRequest) {
+    public EmailVerifyResponse requestEmailVerification(@Valid @RequestBody EmailRequest emailRequest) {
         boolean isUserRegistrationComplete = registerService.isUserRegistrationComplete(emailRequest.getEmail());
 
         if(isUserRegistrationComplete) {
             throw new CustomException(ErrorCode.ALREADY_EXIST_USER);
         }
 
-        emailService.requestEmailVerification(emailRequest.getEmail(), VerificationType.SIGNUP);
+        EmailVerification emailVerification = emailService.requestEmailVerification(emailRequest.getEmail(), VerificationType.SIGNUP);
+
+        return EmailVerifyResponse.builder().expiredAt(emailVerification.getExpiredAt()).build();
     }
 
     @PostMapping("/email/verify")

@@ -14,10 +14,11 @@ import java.util.UUID;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class PostDto {
+public class PostDetailsDto {
     private UUID id;
     private UserDto user;
     private String title;
+    private String content;
     private String summary;
     private String thumbnail;
     private PostStatus status;

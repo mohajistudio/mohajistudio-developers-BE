@@ -29,7 +29,7 @@ public class EmailService {
     private final EmailVerificationRepository emailVerificationRepository;
 
     @Transactional
-    public void requestEmailVerification(String email, VerificationType verificationType) {
+    public EmailVerification requestEmailVerification(String email, VerificationType verificationType) {
         List<EmailVerification> requestedTodayByEmail = emailVerificationRepository.findAllRequestedToday(email, verificationType);
 
         // 이미 24시간 동안 3번의 이메일 인증 요청을 보냈을 경우
@@ -72,6 +72,8 @@ public class EmailService {
         } catch (MessagingException e) {
             throw new CustomException(ErrorCode.EMAIL_SEND_FAILURE, e.getMessage());
         }
+
+        return newEmailVerification;
     }
 
     @Transactional
