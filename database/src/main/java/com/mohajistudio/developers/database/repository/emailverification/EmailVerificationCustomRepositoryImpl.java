@@ -27,6 +27,7 @@ import static com.mohajistudio.developers.database.entity.QEmailVerification.ema
 public class EmailVerificationCustomRepositoryImpl implements EmailVerificationCustomRepository {
     private final JPAQueryFactory jpaQueryFactory;
 
+    @Override
     public Page<EmailVerificationDto> customFindAll(Pageable pageable) {
         List<EmailVerificationDto> emailVerifications = jpaQueryFactory.select(Projections.constructor(EmailVerificationDto.class,
                 emailVerification.id,

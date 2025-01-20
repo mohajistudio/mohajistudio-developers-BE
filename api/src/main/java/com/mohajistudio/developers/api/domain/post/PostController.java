@@ -2,11 +2,14 @@ package com.mohajistudio.developers.api.domain.post;
 
 import com.mohajistudio.developers.api.domain.post.dto.request.CreatePostRequest;
 import com.mohajistudio.developers.api.domain.post.dto.request.UpdatePostRequest;
+import com.mohajistudio.developers.authentication.dto.CustomUserDetails;
 import com.mohajistudio.developers.common.enums.ErrorCode;
 import com.mohajistudio.developers.common.exception.CustomException;
 import com.mohajistudio.developers.database.dto.PostDto;
 import com.mohajistudio.developers.database.entity.MediaFile;
 import com.mohajistudio.developers.database.entity.Post;
+import com.mohajistudio.developers.database.repository.user.UserRepository;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -33,8 +36,8 @@ public class PostController {
     }
 
     @PostMapping
-    Post addPost(@AuthenticationPrincipal UserDetails userDetails, @RequestBody CreatePostRequest post) {
-        return null;
+    Post addPost(@AuthenticationPrincipal CustomUserDetails userDetails, @Valid @RequestBody CreatePostRequest createPostRequest) {
+        return postService.publishPost(userDetails.getUserId(), createPostRequest.getTitle(), createPostRequest.getSummary(), createPostRequest.getContent(), createPostRequest.getThumbnailId());
     }
 
     @PostMapping(value = "/media", consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})

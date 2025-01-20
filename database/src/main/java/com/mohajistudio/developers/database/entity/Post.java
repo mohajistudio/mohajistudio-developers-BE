@@ -2,6 +2,7 @@ package com.mohajistudio.developers.database.entity;
 
 import com.mohajistudio.developers.database.enums.PostStatus;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.Size;
 import lombok.*;
 
 import java.time.LocalDateTime;
@@ -19,20 +20,23 @@ public class Post extends BaseEntity {
     @Column(nullable = false)
     private UUID userId;
 
-    //TODO 글자수
     @Column(nullable = false)
+    @Size(min = 1, max = 100)
     private String title;
 
     //TODO 글자수
     @Column(nullable = false, columnDefinition = "TEXT")
     private String content;
 
-    //TODO 글자수
-    @Column(nullable = false)
+    @Column
+    @Size(max = 200)
     private String summary;
 
     @Column(columnDefinition = "TEXT")
     private String thumbnail;
+
+    @Column
+    private UUID thumbnailId;
 
     @Column(nullable = false, length = 20)
     @Enumerated(EnumType.STRING)

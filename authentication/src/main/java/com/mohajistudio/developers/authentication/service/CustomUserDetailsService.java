@@ -1,5 +1,6 @@
 package com.mohajistudio.developers.authentication.service;
 
+import com.mohajistudio.developers.authentication.dto.CustomUserDetails;
 import com.mohajistudio.developers.database.entity.User;
 import com.mohajistudio.developers.database.repository.user.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -28,8 +29,9 @@ public class CustomUserDetailsService implements UserDetailsService {
         User user = findUser.get();
 
         if(user.getPassword() != null) {
-            return new org.springframework.security.core.userdetails.User(user.getEmail(), user.getPassword(), Collections.singletonList(new SimpleGrantedAuthority(user.getRole().name())));
+            return new CustomUserDetails(user.getId(), user.getEmail(), user.getPassword(), Collections.singletonList(new SimpleGrantedAuthority(user.getRole().name())));
         }
-        return new org.springframework.security.core.userdetails.User(user.getEmail(), "unregistered", Collections.singletonList(new SimpleGrantedAuthority(user.getRole().name())));
+
+        return new CustomUserDetails(null, user.getEmail(), "unregistered", Collections.singletonList(new SimpleGrantedAuthority(user.getRole().name())));
     }
 }
