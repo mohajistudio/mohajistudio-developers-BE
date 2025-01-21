@@ -20,7 +20,7 @@ public class Tag extends BaseEntity {
     @Column(nullable = false, length = 50)
     private String title;
 
-    @Column(nullable = false, length = 50)
+    @Column(length = 50)
     private String slug;
 
     @Column(nullable = false, columnDefinition = "TEXT")

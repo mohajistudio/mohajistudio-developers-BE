@@ -1,6 +1,7 @@
 package com.mohajistudio.developers.infra.service;
 
 import com.amazonaws.services.s3.AmazonS3Client;
+import com.amazonaws.services.s3.model.CopyObjectRequest;
 import com.amazonaws.services.s3.model.ObjectMetadata;
 import com.amazonaws.services.s3.model.PutObjectRequest;
 import com.mohajistudio.developers.common.enums.ErrorCode;
@@ -8,7 +9,7 @@ import com.mohajistudio.developers.common.exception.CustomException;
 import com.mohajistudio.developers.database.entity.MediaFile;
 import com.mohajistudio.developers.database.enums.ContentType;
 import com.mohajistudio.developers.database.repository.mediafile.MediaFileRepository;
-import com.mohajistudio.developers.infra.util.UploadUtil;
+import com.mohajistudio.developers.infra.util.MediaUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -27,17 +28,18 @@ public class MediaService {
     @Value("${cloud.aws.s3.bucket}")
     private String bucket;
 
-    public MediaFile uploadImage(UUID memberId, MultipartFile file) {
+    public MediaFile uploadMediaFileToTempFolder(UUID memberId, MultipartFile file) {
         String contentType = file.getContentType();
 
-        String fileName;
-        if (contentType != null && contentType.startsWith("image/")) {
-            fileName = UploadUtil.createImagesFileName(file.getOriginalFilename(), memberId);
-        } else if (contentType != null && contentType.startsWith("video/")) {
-            fileName = UploadUtil.createVideosFileName(file.getOriginalFilename(), memberId);
-        } else {
+        if (contentType == null) {
             throw new CustomException(ErrorCode.INVALID_MEDIA_TYPE);
         }
+
+        if (!contentType.startsWith("image/") && !contentType.startsWith("video/")) {
+            throw new CustomException(ErrorCode.INVALID_MEDIA_TYPE);
+        }
+
+        String fileName = MediaUtil.createTempFileName(file.getOriginalFilename(), memberId);
 
         ObjectMetadata metadata = new ObjectMetadata();
         metadata.setContentType(file.getContentType());
@@ -53,6 +55,31 @@ public class MediaService {
 
         MediaFile mediaFile = MediaFile.builder().userId(memberId).fileName(fileName).contentType(ContentType.fromMimeType(contentType)).size(file.getSize()).build();
 
+        return mediaFileRepository.save(mediaFile);
+    }
+
+    public MediaFile moveToPermanentFolder(MediaFile mediaFile) {
+        String sourceKey = mediaFile.getFileName();
+        String mimeType = mediaFile.getContentType().getMimeType();
+        String destinationKey;
+
+        if (mimeType.startsWith("image/")) {
+            destinationKey = MediaUtil.changeTempToImages(sourceKey);
+        } else if (mimeType.startsWith("video/")) {
+            destinationKey = MediaUtil.changeTempToVideos(sourceKey);
+        } else {
+            throw new CustomException(ErrorCode.INVALID_MEDIA_TYPE);
+        }
+
+        try {
+            CopyObjectRequest copyObjectRequest = new CopyObjectRequest(bucket, sourceKey, bucket, destinationKey);
+            amazonS3Client.copyObject(copyObjectRequest);
+        } catch (Exception e) {
+            log.error(e.getMessage());
+            throw new CustomException(ErrorCode.STORAGE_UPLOAD_FAILURE);
+        }
+
+        mediaFile.setFileName(destinationKey);
         return mediaFileRepository.save(mediaFile);
     }
 
