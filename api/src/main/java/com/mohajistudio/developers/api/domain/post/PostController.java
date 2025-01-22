@@ -8,7 +8,6 @@ import com.mohajistudio.developers.common.exception.CustomException;
 import com.mohajistudio.developers.database.dto.PostDto;
 import com.mohajistudio.developers.database.entity.MediaFile;
 import com.mohajistudio.developers.database.entity.Post;
-import com.mohajistudio.developers.database.repository.user.UserRepository;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -37,7 +36,11 @@ public class PostController {
 
     @PostMapping
     Post addPost(@AuthenticationPrincipal CustomUserDetails userDetails, @Valid @RequestBody CreatePostRequest createPostRequest) {
-        return postService.publishPost(userDetails.getUserId(), createPostRequest.getTitle(), createPostRequest.getSummary(), createPostRequest.getContent(), createPostRequest.getThumbnailId());
+        String updatedHtmlContent = postService.processHtmlImagesForPermanentStorage(userDetails.getUserId(), createPostRequest.getContent());
+
+        createPostRequest.setContent(updatedHtmlContent);
+
+        return postService.publishPost(userDetails.getUserId(), createPostRequest.getTitle(), createPostRequest.getSummary(), createPostRequest.getContent(), createPostRequest.getThumbnailId(), createPostRequest.getTags());
     }
 
     @PostMapping(value = "/media", consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
@@ -51,7 +54,7 @@ public class PostController {
 
         String email = userDetails.getUsername();
 
-        return postService.uploadImages(email, files);
+        return postService.uploadMediaFiles(email, files);
     }
 
     @GetMapping("/{postId}")
