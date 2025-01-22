@@ -2,6 +2,7 @@ package com.mohajistudio.developers.api.domain.post;
 
 import com.mohajistudio.developers.common.enums.ErrorCode;
 import com.mohajistudio.developers.common.exception.CustomException;
+import com.mohajistudio.developers.database.dto.PostDetailsDto;
 import com.mohajistudio.developers.database.dto.PostDto;
 import com.mohajistudio.developers.database.entity.*;
 import com.mohajistudio.developers.database.enums.PostStatus;
@@ -125,5 +126,15 @@ public class PostService {
         }
 
         return document.html();
+    }
+
+    public PostDetailsDto findPost(UUID postId) {
+        PostDetailsDto findPostDetailsDto = postRepository.findByIdPostDetailsDto(postId);
+
+        if(findPostDetailsDto == null) {
+            throw new CustomException(ErrorCode.ENTITY_NOT_FOUND, "알 수 없는 게시글");
+        }
+
+        return findPostDetailsDto;
     }
 }

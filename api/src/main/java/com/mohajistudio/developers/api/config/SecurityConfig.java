@@ -39,15 +39,11 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http.authorizeHttpRequests(authorizeRequests -> {
-            // ALL
-            authorizeRequests.requestMatchers(HttpMethod.POST, "/auth/register/email/request", "/auth/register/email/verify", "/auth/login", "/auth/refresh").permitAll();
-            authorizeRequests.requestMatchers(HttpMethod.GET, "/auth/register/status").permitAll();
-
             // GUEST
             authorizeRequests.requestMatchers(HttpMethod.POST, "/auth/register/password", "/auth/register/nickname").hasAuthority(AUTHORITY_GUEST);
 
             // DEVELOPER
-            authorizeRequests.requestMatchers(HttpMethod.POST, "/posts/media").hasAnyAuthority(AUTHORITY_ADMIN, AUTHORITY_DEVELOPER);
+            authorizeRequests.requestMatchers(HttpMethod.POST, "/posts", "/posts/media").hasAnyAuthority(AUTHORITY_ADMIN, AUTHORITY_DEVELOPER);
 
             authorizeRequests.anyRequest().permitAll();
         });

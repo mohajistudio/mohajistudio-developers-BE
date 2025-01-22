@@ -5,6 +5,7 @@ import com.mohajistudio.developers.api.domain.post.dto.request.UpdatePostRequest
 import com.mohajistudio.developers.authentication.dto.CustomUserDetails;
 import com.mohajistudio.developers.common.enums.ErrorCode;
 import com.mohajistudio.developers.common.exception.CustomException;
+import com.mohajistudio.developers.database.dto.PostDetailsDto;
 import com.mohajistudio.developers.database.dto.PostDto;
 import com.mohajistudio.developers.database.entity.MediaFile;
 import com.mohajistudio.developers.database.entity.Post;
@@ -58,8 +59,8 @@ public class PostController {
     }
 
     @GetMapping("/{postId}")
-    Post getPost(@PathVariable UUID postId) {
-        return null;
+    PostDetailsDto getPost(@PathVariable UUID postId) {
+        return postService.findPost(postId);
     }
 
     @PatchMapping("/{postId}")

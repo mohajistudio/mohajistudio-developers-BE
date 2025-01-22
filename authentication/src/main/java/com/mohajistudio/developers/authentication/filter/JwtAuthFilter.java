@@ -3,7 +3,6 @@ package com.mohajistudio.developers.authentication.filter;
 import com.mohajistudio.developers.authentication.service.CustomUserDetailsService;
 import com.mohajistudio.developers.authentication.util.JwtUtil;
 import com.mohajistudio.developers.common.enums.ErrorCode;
-import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.JwtException;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -75,8 +74,8 @@ public class JwtAuthFilter extends OncePerRequestFilter {
         response.setContentType(MediaType.APPLICATION_JSON_VALUE);
         response.setCharacterEncoding("UTF-8");
 
-        String code = ErrorCode.INVALID_ACCESS_TOKEN.getCode();
-        String message = ErrorCode.INVALID_ACCESS_TOKEN.getMessage();
+        String code = ErrorCode.UNKNOWN_ERROR.getCode();
+        String message = e.getMessage();
 
         String jsonResponse = String.format("{\"code\": \"%s\", \"message\": \"%s\"}", code, message);
         response.getWriter().write(jsonResponse);
