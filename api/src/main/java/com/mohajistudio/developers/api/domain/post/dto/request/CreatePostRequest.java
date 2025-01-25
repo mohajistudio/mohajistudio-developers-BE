@@ -1,5 +1,6 @@
 package com.mohajistudio.developers.api.domain.post.dto.request;
 
+import com.mohajistudio.developers.database.enums.PostStatus;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
@@ -26,6 +27,9 @@ public class CreatePostRequest {
     private String summary;
 
     private UUID thumbnailId;
+
+    @NotNull
+    private PostStatus status;
 
     private List<String> tags;
 }
