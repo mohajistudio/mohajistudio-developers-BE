@@ -23,6 +23,6 @@ public class Tag extends BaseEntity {
     @Column(length = 50)
     private String slug;
 
-    @Column(nullable = false, columnDefinition = "TEXT")
+    @Column(columnDefinition = "TEXT")
     private String description;
 }

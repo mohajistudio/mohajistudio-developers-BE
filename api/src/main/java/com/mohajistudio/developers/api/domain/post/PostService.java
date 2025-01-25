@@ -66,11 +66,10 @@ public class PostService {
         return mediaFiles;
     }
 
-    public Post publishPost(UUID userId, String title, String summary, String content, UUID thumbnailId, List<String> tags) {
+    public Post publishPost(UUID userId, String title, String summary, String content, UUID thumbnailId, PostStatus status, List<String> tags) {
         LocalDateTime publishedAt = LocalDateTime.now();
-        PostStatus status = PostStatus.PUBLISHED;
 
-        Post post = Post.builder().title(title).summary(summary).content(content).publishedAt(publishedAt).status(status).build();
+        Post post = Post.builder().userId(userId).title(title).summary(summary).content(content).publishedAt(publishedAt).status(status).build();
 
         if (thumbnailId != null) {
             MediaFile findMediaFile = mediaService.findByIdAndUserId(thumbnailId, userId);
@@ -125,7 +124,7 @@ public class PostService {
             }
         }
 
-        return document.html();
+        return document.body().html();
     }
 
     public PostDetailsDto findPost(UUID postId) {

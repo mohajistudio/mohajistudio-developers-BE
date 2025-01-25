@@ -41,7 +41,7 @@ public class PostController {
 
         createPostRequest.setContent(updatedHtmlContent);
 
-        return postService.publishPost(userDetails.getUserId(), createPostRequest.getTitle(), createPostRequest.getSummary(), createPostRequest.getContent(), createPostRequest.getThumbnailId(), createPostRequest.getTags());
+        return postService.publishPost(userDetails.getUserId(), createPostRequest.getTitle(), createPostRequest.getSummary(), createPostRequest.getContent(), createPostRequest.getThumbnailId(), createPostRequest.getStatus(), createPostRequest.getTags());
     }
 
     @PostMapping(value = "/media", consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
