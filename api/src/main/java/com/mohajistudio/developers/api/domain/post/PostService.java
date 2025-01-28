@@ -110,8 +110,9 @@ public class PostService {
         for (Element img : imgTags) {
             String src = img.attr("src");
             if (src.startsWith(awsS3BaseUrl + "/media/temp")) {
-                String alt = img.attr("alt");
-                UUID mediaFileId = UUID.fromString(alt);
+                String extractedMediaFileId = MediaUtil.extractIdFromFileName(src);
+
+                UUID mediaFileId = UUID.fromString(extractedMediaFileId);
 
                 MediaFile findMediaFile = mediaFileRepository.findByIdAndUserId(mediaFileId, userId);
                 if (findMediaFile == null) {

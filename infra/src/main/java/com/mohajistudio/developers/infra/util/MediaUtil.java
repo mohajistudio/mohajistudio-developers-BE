@@ -29,6 +29,28 @@ public class MediaUtil {
         return TEMP_DIR + memberId + "/" + uuid + ext;
     }
 
+    public static String extractIdFromFileName(String fileName) {
+        if (fileName == null || fileName.isEmpty()) {
+            throw new IllegalArgumentException("S3 file path cannot be null or empty");
+        }
+
+        // 마지막 '/' 이후의 파일 이름 추출
+        int lastSlashIndex = fileName.lastIndexOf('/');
+        if (lastSlashIndex == -1 || lastSlashIndex == fileName.length() - 1) {
+            throw new IllegalArgumentException("Invalid S3 file path format");
+        }
+
+        String extractFileName = fileName.substring(lastSlashIndex + 1);
+
+        // 파일 이름에서 확장자를 제외한 부분 추출
+        int lastDotIndex = extractFileName.lastIndexOf('.');
+        if (lastDotIndex == -1) {
+            throw new IllegalArgumentException("File name does not contain an extension");
+        }
+
+        return extractFileName.substring(0, lastDotIndex);
+    }
+
     private static String getFileExtension(String originalFileName) {
         return originalFileName.substring(originalFileName.lastIndexOf(FILE_EXTENSION_SEPARATOR));
     }
