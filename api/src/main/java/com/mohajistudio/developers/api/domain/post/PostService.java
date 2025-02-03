@@ -11,6 +11,7 @@ import com.mohajistudio.developers.database.repository.post.PostRepository;
 import com.mohajistudio.developers.database.repository.posttag.PostTagRepository;
 import com.mohajistudio.developers.database.repository.tag.TagRepository;
 import com.mohajistudio.developers.database.repository.user.UserRepository;
+import com.mohajistudio.developers.database.utils.RedisUtil;
 import com.mohajistudio.developers.infra.service.MediaService;
 import com.mohajistudio.developers.infra.util.MediaUtil;
 import jakarta.transaction.Transactional;
@@ -30,12 +31,14 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
+import java.util.concurrent.TimeUnit;
 
 @Slf4j
 @Service
 @Transactional
 @RequiredArgsConstructor
 public class PostService {
+    private final RedisUtil redisUtil;
     private final PostRepository postRepository;
     private final UserRepository userRepository;
     private final MediaService mediaService;
@@ -84,7 +87,7 @@ public class PostService {
 
         Post savedPost = postRepository.save(post);
 
-        for(String tag : tags) {
+        for (String tag : tags) {
             Tag findTag = tagRepository.findByTitle(tag);
 
             if (findTag == null) {
@@ -131,10 +134,26 @@ public class PostService {
     public PostDetailsDto findPost(UUID postId) {
         PostDetailsDto findPostDetailsDto = postRepository.findByIdPostDetailsDto(postId);
 
-        if(findPostDetailsDto == null) {
+        if (findPostDetailsDto == null) {
             throw new CustomException(ErrorCode.ENTITY_NOT_FOUND, "알 수 없는 게시글");
         }
 
         return findPostDetailsDto;
+    }
+
+    public void increaseViewCount(UUID postId, UUID userId, String ipAddress) {
+        String redisKey;
+
+        if (userId != null) {
+            redisKey = "post:view:" + postId + ":user:" + userId;
+        } else {
+            redisKey = "post:view:" + postId + ":ip:" + ipAddress;
+        }
+
+        if (!redisUtil.hasKey(redisKey)) {
+            postRepository.incrementViewCount(postId);
+
+            redisUtil.setValue(redisKey, "1", 10, TimeUnit.MINUTES);
+        }
     }
 }

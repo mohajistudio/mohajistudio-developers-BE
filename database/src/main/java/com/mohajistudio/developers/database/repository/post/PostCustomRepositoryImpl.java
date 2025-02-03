@@ -124,6 +124,13 @@ public class PostCustomRepositoryImpl implements PostCustomRepository {
         return posts.get(0);
     }
 
+    @Override
+    public boolean incrementViewCount(UUID id) {
+        long count = jpaQueryFactory.update(post).set(post.viewCount, post.viewCount.add(1)).where(eqId(id)).execute();
+
+        return count > 0;
+    }
+
     private BooleanExpression eqStatus(PostStatus status) {
         if (status == null) return null;
         return post.status.eq(status);

@@ -9,6 +9,7 @@ import com.mohajistudio.developers.database.dto.PostDetailsDto;
 import com.mohajistudio.developers.database.dto.PostDto;
 import com.mohajistudio.developers.database.entity.MediaFile;
 import com.mohajistudio.developers.database.entity.Post;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -59,7 +60,12 @@ public class PostController {
     }
 
     @GetMapping("/{postId}")
-    PostDetailsDto getPost(@PathVariable UUID postId) {
+    PostDetailsDto getPost(@AuthenticationPrincipal CustomUserDetails userDetails, @PathVariable UUID postId, HttpServletRequest request) {
+        UUID userId = userDetails.getUserId();
+        String ipAddress = request.getRemoteAddr();
+
+        postService.increaseViewCount(postId, userId, ipAddress);
+
         return postService.findPost(postId);
     }
 
