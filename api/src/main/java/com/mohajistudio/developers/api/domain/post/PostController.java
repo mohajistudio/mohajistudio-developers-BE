@@ -3,12 +3,14 @@ package com.mohajistudio.developers.api.domain.post;
 import com.mohajistudio.developers.api.domain.post.dto.request.CreatePostRequest;
 import com.mohajistudio.developers.api.domain.post.dto.request.UpdatePostRequest;
 import com.mohajistudio.developers.authentication.dto.CustomUserDetails;
+import com.mohajistudio.developers.common.dto.response.CustomPageResponse;
 import com.mohajistudio.developers.common.enums.ErrorCode;
 import com.mohajistudio.developers.common.exception.CustomException;
 import com.mohajistudio.developers.database.dto.PostDetailsDto;
 import com.mohajistudio.developers.database.dto.PostDto;
 import com.mohajistudio.developers.database.entity.MediaFile;
 import com.mohajistudio.developers.database.entity.Post;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -31,8 +33,10 @@ public class PostController {
     private final PostService postService;
 
     @GetMapping
-    Page<PostDto> getPosts(Pageable pageable) {
-        return postService.findAllPost(pageable);
+    CustomPageResponse<PostDto> getPosts(Pageable pageable) {
+        Page<PostDto> posts = postService.findAllPost(pageable);
+
+        return new CustomPageResponse<>(posts);
     }
 
     @PostMapping
@@ -59,7 +63,12 @@ public class PostController {
     }
 
     @GetMapping("/{postId}")
-    PostDetailsDto getPost(@PathVariable UUID postId) {
+    PostDetailsDto getPost(@AuthenticationPrincipal CustomUserDetails userDetails, @PathVariable UUID postId, HttpServletRequest request) {
+        UUID userId = userDetails.getUserId();
+        String ipAddress = request.getRemoteAddr();
+
+        postService.increaseViewCount(postId, userId, ipAddress);
+
         return postService.findPost(postId);
     }
 

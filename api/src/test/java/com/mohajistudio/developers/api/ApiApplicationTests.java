@@ -5,10 +5,28 @@ import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 import org.junit.jupiter.api.Test;
+import org.springframework.ai.azure.openai.AzureOpenAiChatModel;
+import org.springframework.ai.chat.prompt.Prompt;
+import org.springframework.ai.chat.prompt.PromptTemplate;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
 @SpringBootTest
 class ApiApplicationTests {
+
+    @Autowired
+    AzureOpenAiChatModel azureOpenAiChatModel;
+
+    @Test
+    void contextLoads() {
+        PromptTemplate promptTemplate = new PromptTemplate("안녕, 넌 누구니?");
+
+        Prompt prompt = promptTemplate.create();
+
+        String content = azureOpenAiChatModel.call(prompt).getResult().getOutput().getContent();
+
+        System.out.println("content = " + content);
+    }
 
     String htmlContent = """
             <div>

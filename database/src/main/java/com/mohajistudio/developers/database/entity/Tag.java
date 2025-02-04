@@ -20,9 +20,6 @@ public class Tag extends BaseEntity {
     @Column(nullable = false, length = 50)
     private String title;
 
-    @Column(length = 50)
-    private String slug;
-
-    @Column(columnDefinition = "TEXT")
-    private String description;
+    @Column(nullable = false, columnDefinition = "DEFAULT 0")
+    private int tagCount;
 }

@@ -44,7 +44,7 @@ public class PostCustomRepositoryImpl implements PostCustomRepository {
                 .leftJoin(postTag).on(post.id.eq(postTag.postId))
                 .leftJoin(tag).on(postTag.tagId.eq(tag.id))
                 .where(eqStatus(status))
-                .orderBy(post.id.desc())
+                .orderBy(post.id.asc())
                 .offset(pageable.getOffset())
                 .limit(pageable.getPageSize())
                 .transform(
@@ -57,6 +57,7 @@ public class PostCustomRepositoryImpl implements PostCustomRepository {
                                                         user.id,
                                                         user.nickname,
                                                         user.email,
+                                                        user.profileImageUrl,
                                                         user.role
                                                 ),
                                                 post.title,
@@ -101,6 +102,7 @@ public class PostCustomRepositoryImpl implements PostCustomRepository {
                                                         user.id,
                                                         user.nickname,
                                                         user.email,
+                                                        user.profileImageUrl,
                                                         user.role
                                                 ),
                                                 post.title,
@@ -122,6 +124,13 @@ public class PostCustomRepositoryImpl implements PostCustomRepository {
         if(posts.isEmpty()) return null;
 
         return posts.get(0);
+    }
+
+    @Override
+    public boolean incrementViewCount(UUID id) {
+        long count = jpaQueryFactory.update(post).set(post.viewCount, post.viewCount.add(1)).where(eqId(id)).execute();
+
+        return count > 0;
     }
 
     private BooleanExpression eqStatus(PostStatus status) {

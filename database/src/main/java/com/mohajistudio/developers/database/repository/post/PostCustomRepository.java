@@ -12,4 +12,6 @@ public interface PostCustomRepository {
     Page<PostDto> findAllPostDto(Pageable pageable, PostStatus status);
 
     PostDetailsDto findByIdPostDetailsDto(UUID id);
+
+    boolean incrementViewCount(UUID id);
 }

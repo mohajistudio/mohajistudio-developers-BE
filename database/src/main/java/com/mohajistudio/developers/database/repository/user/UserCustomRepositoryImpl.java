@@ -2,6 +2,7 @@ package com.mohajistudio.developers.database.repository.user;
 
 import com.mohajistudio.developers.database.dto.UserDto;
 import com.mohajistudio.developers.database.entity.User;
+import com.mohajistudio.developers.database.enums.Role;
 import com.querydsl.core.types.Order;
 import com.querydsl.core.types.OrderSpecifier;
 import com.querydsl.core.types.Projections;
@@ -25,17 +26,15 @@ import static com.mohajistudio.developers.database.entity.QUser.user;
 public class UserCustomRepositoryImpl implements UserCustomRepository {
     private final JPAQueryFactory jpaQueryFactory;
 
-    public Page<UserDto> customFindAll(Pageable pageable) {
+    public Page<UserDto> findAllUserDto(Pageable pageable, Role role) {
         List<UserDto> users = jpaQueryFactory.select(Projections.constructor(UserDto.class,
                         user.id,
                         user.nickname,
                         user.email,
-                        user.password,
-                        user.role,
-                        user.refreshToken,
-                        user.createdAt,
-                        user.updatedAt
+                        user.profileImageUrl,
+                        user.role
                 )).from(user)
+                .where(eqRole(role))
                 .orderBy(getOrderSpecifiers(pageable.getSort()))
                 .offset(pageable.getOffset())
                 .limit(pageable.getPageSize()).fetch();
@@ -55,6 +54,11 @@ public class UserCustomRepositoryImpl implements UserCustomRepository {
     private BooleanExpression eqPassword(String password) {
         if (StringUtils.isNullOrEmpty(password)) return null;
         return user.password.eq(password);
+    }
+
+    private BooleanExpression eqRole(Role role) {
+        if (role == null) return null;
+        return user.role.eq(role);
     }
 
     private OrderSpecifier<?>[] getOrderSpecifiers(Sort sort) {
