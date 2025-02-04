@@ -1,5 +1,6 @@
 package com.mohajistudio.developers.api.domain.post;
 
+import com.mohajistudio.developers.api.domain.tag.TagService;
 import com.mohajistudio.developers.common.enums.ErrorCode;
 import com.mohajistudio.developers.common.exception.CustomException;
 import com.mohajistudio.developers.database.dto.PostDetailsDto;
@@ -8,8 +9,6 @@ import com.mohajistudio.developers.database.entity.*;
 import com.mohajistudio.developers.database.enums.PostStatus;
 import com.mohajistudio.developers.database.repository.mediafile.MediaFileRepository;
 import com.mohajistudio.developers.database.repository.post.PostRepository;
-import com.mohajistudio.developers.database.repository.posttag.PostTagRepository;
-import com.mohajistudio.developers.database.repository.tag.TagRepository;
 import com.mohajistudio.developers.database.repository.user.UserRepository;
 import com.mohajistudio.developers.database.utils.RedisUtil;
 import com.mohajistudio.developers.infra.service.MediaService;
@@ -42,9 +41,8 @@ public class PostService {
     private final PostRepository postRepository;
     private final UserRepository userRepository;
     private final MediaService mediaService;
-    private final TagRepository tagRepository;
+    private final TagService tagService;
     private final MediaFileRepository mediaFileRepository;
-    private final PostTagRepository postTagRepository;
 
     public Page<PostDto> findAllPost(Pageable pageable) {
         return postRepository.findAllPostDto(pageable, null);
@@ -91,18 +89,7 @@ public class PostService {
         Post savedPost = postRepository.save(post);
 
         for (String tag : tags) {
-            Tag findTag = tagRepository.findByTitle(tag);
-
-            if (findTag == null) {
-                Tag newTag = Tag.builder().title(tag).userId(userId).build();
-                Tag savedTag = tagRepository.save(newTag);
-
-                PostTag postTag = PostTag.builder().postId(savedPost.getId()).tagId(savedTag.getId()).build();
-                postTagRepository.save(postTag);
-            } else {
-                PostTag postTag = PostTag.builder().postId(savedPost.getId()).tagId(findTag.getId()).build();
-                postTagRepository.save(postTag);
-            }
+            tagService.addTag(tag, userId, post.getId());
         }
 
         return savedPost;

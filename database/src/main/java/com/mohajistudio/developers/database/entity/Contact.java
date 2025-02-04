@@ -1,6 +1,5 @@
 package com.mohajistudio.developers.database.entity;
 
-import com.mohajistudio.developers.database.enums.ContactType;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -17,10 +16,12 @@ public class Contact extends BaseEntity {
     @Column
     private UUID userId;
 
-    @Column(length = 20)
-    @Enumerated(EnumType.STRING)
-    private ContactType contactType;
+    @Column
+    private UUID contactTypeId;
 
-    @Column(length = 20)
-    private String contactValue;
+    @Column
+    private String displayName;
+
+    @Column
+    private String url;
 }

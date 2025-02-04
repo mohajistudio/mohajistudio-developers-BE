@@ -14,6 +14,4 @@ import java.util.UUID;
 public class TagDto {
     private UUID id;
     private String title;
-    private String slug;
-    private String description;
 }
