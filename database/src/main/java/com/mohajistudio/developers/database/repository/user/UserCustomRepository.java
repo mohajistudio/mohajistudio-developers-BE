@@ -1,10 +1,10 @@
 package com.mohajistudio.developers.database.repository.user;
 
 import com.mohajistudio.developers.database.dto.UserDto;
-import com.mohajistudio.developers.database.entity.User;
+import com.mohajistudio.developers.database.enums.Role;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
 public interface UserCustomRepository {
-    Page<UserDto> customFindAll(Pageable pageable);
+    Page<UserDto> findAllUserDto(Pageable pageable, Role role);
 }

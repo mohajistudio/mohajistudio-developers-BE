@@ -41,7 +41,7 @@ public class UserController {
 
         User user = findUser.get();
 
-        Page<UserDto> users = userRepository.customFindAll(pageable);
+        Page<UserDto> users = userRepository.findAllUserDto(pageable, null);
 
         List<Sort.Order> sort = new ArrayList<>();
         pageable.getSort().stream().forEach(sort::add);
