@@ -44,7 +44,7 @@ public class PostCustomRepositoryImpl implements PostCustomRepository {
                 .leftJoin(postTag).on(post.id.eq(postTag.postId))
                 .leftJoin(tag).on(postTag.tagId.eq(tag.id))
                 .where(eqStatus(status))
-                .orderBy(post.id.desc())
+                .orderBy(post.id.asc())
                 .offset(pageable.getOffset())
                 .limit(pageable.getPageSize())
                 .transform(

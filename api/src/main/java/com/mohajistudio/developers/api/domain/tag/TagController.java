@@ -1,5 +1,6 @@
 package com.mohajistudio.developers.api.domain.tag;
 
+import com.mohajistudio.developers.common.dto.response.CustomPageResponse;
 import com.mohajistudio.developers.database.dto.TagDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -15,7 +16,9 @@ public class TagController {
     private final TagService tagService;
 
     @GetMapping
-    Page<TagDto> getTags(Pageable pageable) {
-        return tagService.findAllTags(pageable);
+    CustomPageResponse<TagDto> getTags(Pageable pageable) {
+        Page<TagDto> tags = tagService.findAllTags(pageable);
+
+        return new CustomPageResponse<>(tags);
     }
 }
