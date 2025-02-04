@@ -8,7 +8,6 @@ import com.mohajistudio.developers.common.enums.ErrorCode;
 import com.mohajistudio.developers.common.exception.CustomException;
 import com.mohajistudio.developers.database.entity.MediaFile;
 import com.mohajistudio.developers.database.enums.ContentType;
-import com.mohajistudio.developers.database.repository.mediafile.MediaFileRepository;
 import com.mohajistudio.developers.infra.util.MediaUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -23,7 +22,6 @@ import java.util.UUID;
 @RequiredArgsConstructor
 public class MediaService {
     private final AmazonS3Client amazonS3Client;
-    private final MediaFileRepository mediaFileRepository;
 
     @Value("${cloud.aws.s3.bucket}")
     private String bucket;
@@ -53,9 +51,7 @@ public class MediaService {
             throw new CustomException(ErrorCode.STORAGE_UPLOAD_FAILURE);
         }
 
-        MediaFile mediaFile = MediaFile.builder().userId(memberId).fileName(fileName).contentType(ContentType.fromMimeType(contentType)).size(file.getSize()).build();
-
-        return mediaFileRepository.save(mediaFile);
+        return MediaFile.builder().userId(memberId).fileName(fileName).contentType(ContentType.fromMimeType(contentType)).size(file.getSize()).build();
     }
 
     public MediaFile moveToPermanentFolder(MediaFile mediaFile) {
@@ -80,10 +76,6 @@ public class MediaService {
         }
 
         mediaFile.setFileName(destinationKey);
-        return mediaFileRepository.save(mediaFile);
-    }
-
-    public MediaFile findByIdAndUserId(UUID mediaFileId, UUID memberId) {
-        return mediaFileRepository.findByIdAndUserId(mediaFileId, memberId);
+        return mediaFile;
     }
 }

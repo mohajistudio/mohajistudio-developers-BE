@@ -63,7 +63,10 @@ public class PostService {
 
         for (MultipartFile file : files) {
             MediaFile mediaFile = mediaService.uploadMediaFileToTempFolder(user.getId(), file);
-            mediaFiles.add(mediaFile);
+
+            MediaFile savedMediaFile = mediaFileRepository.save(mediaFile);
+
+            mediaFiles.add(savedMediaFile);
         }
 
         return mediaFiles;
@@ -75,7 +78,7 @@ public class PostService {
         Post post = Post.builder().userId(userId).title(title).summary(summary).content(content).publishedAt(publishedAt).status(status).build();
 
         if (thumbnailId != null) {
-            MediaFile findMediaFile = mediaService.findByIdAndUserId(thumbnailId, userId);
+            MediaFile findMediaFile = mediaFileRepository.findByIdAndUserId(thumbnailId, userId);
 
             if (findMediaFile == null) {
                 throw new CustomException(ErrorCode.ENTITY_NOT_FOUND, "유효하지 않은 썸네일");
@@ -122,7 +125,9 @@ public class PostService {
                     throw new CustomException(ErrorCode.ENTITY_NOT_FOUND, "알 수 없는 미디어 파일");
                 }
 
-                MediaFile savedMediaFile = mediaService.moveToPermanentFolder(findMediaFile);
+                MediaFile mediaFile = mediaService.moveToPermanentFolder(findMediaFile);
+
+                MediaFile savedMediaFile = mediaFileRepository.save(mediaFile);
 
                 img.attr("src", awsS3BaseUrl + savedMediaFile.getFileName());
             }

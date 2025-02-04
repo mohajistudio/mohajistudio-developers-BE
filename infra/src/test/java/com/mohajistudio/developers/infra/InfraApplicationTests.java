@@ -1,13 +1,7 @@
 package com.mohajistudio.developers.infra;
 
-import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 
-@SpringBootTest
+@SpringBootTest(classes = InfraApplication.class)
 class InfraApplicationTests {
-
-    @Test
-    void contextLoads() {
-    }
-
 }
