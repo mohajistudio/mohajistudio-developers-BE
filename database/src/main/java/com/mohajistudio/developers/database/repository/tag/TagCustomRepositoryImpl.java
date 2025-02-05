@@ -38,7 +38,7 @@ public class TagCustomRepositoryImpl implements TagCustomRepository {
                         tag.title
                 ))
                 .from(tag)
-                .orderBy(tag.count().desc())
+                .orderBy(tag.tagCount.desc())
                 .offset(pageable.getOffset())
                 .limit(pageable.getPageSize())
                 .fetch();
