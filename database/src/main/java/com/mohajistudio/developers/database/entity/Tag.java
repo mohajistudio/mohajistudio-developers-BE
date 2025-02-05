@@ -20,6 +20,6 @@ public class Tag extends BaseEntity {
     @Column(nullable = false, length = 50)
     private String title;
 
-    @Column(nullable = false, columnDefinition = "DEFAULT 0")
+    @Column(columnDefinition = "INTEGER DEFAULT 0 NOT NULL")
     private int tagCount;
 }

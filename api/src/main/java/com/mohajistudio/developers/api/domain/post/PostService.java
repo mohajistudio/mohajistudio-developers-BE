@@ -45,7 +45,7 @@ public class PostService {
     private final MediaFileRepository mediaFileRepository;
 
     public Page<PostDto> findAllPost(Pageable pageable) {
-        return postRepository.findAllPostDto(pageable, null);
+        return postRepository.findAllPostDto(pageable, PostStatus.PUBLISHED);
     }
 
     public List<MediaFile> uploadMediaFiles(String email, List<MultipartFile> files) {

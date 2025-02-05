@@ -5,6 +5,7 @@ import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.mohajistudio.developers.database.TestConfiguration;
 import com.mohajistudio.developers.database.dto.PostDto;
 import com.mohajistudio.developers.database.entity.Post;
+import com.mohajistudio.developers.database.entity.PostTag;
 import com.mohajistudio.developers.database.entity.Tag;
 import com.mohajistudio.developers.database.enums.PostStatus;
 import com.querydsl.jpa.JPQLTemplates;
@@ -60,15 +61,11 @@ public class PostCustomRepositoryImplTest {
         Tag tag1 = Tag.builder()
                 .userId(UUID.randomUUID())
                 .title("Title")
-                .slug("Slug")
-                .description("Description")
                 .build();
 
         Tag tag2 = Tag.builder()
                 .userId(UUID.randomUUID())
                 .title("Title")
-                .slug("Slug")
-                .description("Description")
                 .build();
 
         entityManager.persist(tag1);
@@ -77,14 +74,14 @@ public class PostCustomRepositoryImplTest {
         entityManager.flush();
         entityManager.clear();
 
-//        PostTag postTag1 = PostTag.builder().tagId(tag1.getId()).postId(post.getId()).build();
-//        PostTag postTag2 = PostTag.builder().tagId(tag2.getId()).postId(post.getId()).build();
-//
-//        entityManager.persist(postTag1);
-//        entityManager.persist(postTag2);
-//
-//        entityManager.flush();
-//        entityManager.clear();
+        PostTag postTag1 = PostTag.builder().tagId(tag1.getId()).postId(post.getId()).build();
+        PostTag postTag2 = PostTag.builder().tagId(tag2.getId()).postId(post.getId()).build();
+
+        entityManager.persist(postTag1);
+        entityManager.persist(postTag2);
+
+        entityManager.flush();
+        entityManager.clear();
     }
 
     @Test

@@ -67,9 +67,7 @@ public class PostCustomRepositoryImpl implements PostCustomRepository {
                                                 post.publishedAt,
                                                 set(Projections.constructor(TagDto.class,
                                                                 tag.id,
-                                                                tag.title,
-                                                                tag.slug,
-                                                                tag.description
+                                                                tag.title
                                                         ).skipNulls()
                                                 )
                                         )
@@ -79,7 +77,7 @@ public class PostCustomRepositoryImpl implements PostCustomRepository {
         JPAQuery<Long> totalCount = jpaQueryFactory
                 .select(post.count())
                 .from(post)
-                .where(eqStatus(PostStatus.PUBLISHED));
+                .where(eqStatus(status));
 
         return PageableExecutionUtils.getPage(posts, pageable, () -> totalCount.fetch().size());
     }
@@ -113,9 +111,7 @@ public class PostCustomRepositoryImpl implements PostCustomRepository {
                                                 post.publishedAt,
                                                 set(Projections.constructor(TagDto.class,
                                                         tag.id,
-                                                        tag.title,
-                                                        tag.slug,
-                                                        tag.description
+                                                        tag.title
                                                 ).skipNulls())
                                         )
                                 )
