@@ -28,7 +28,7 @@ public class EmailVerificationCustomRepositoryImpl implements EmailVerificationC
     private final JPAQueryFactory jpaQueryFactory;
 
     @Override
-    public Page<EmailVerificationDto> customFindAll(Pageable pageable) {
+    public Page<EmailVerificationDto> findAllEmailVerificationDto(Pageable pageable) {
         List<EmailVerificationDto> emailVerifications = jpaQueryFactory.select(Projections.constructor(EmailVerificationDto.class,
                 emailVerification.id,
                 emailVerification.email,

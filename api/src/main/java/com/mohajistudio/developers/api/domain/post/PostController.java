@@ -40,7 +40,7 @@ public class PostController {
     }
 
     @PostMapping
-    Post addPost(@AuthenticationPrincipal CustomUserDetails userDetails, @Valid @RequestBody CreatePostRequest createPostRequest) {
+    UUID addPost(@AuthenticationPrincipal CustomUserDetails userDetails, @Valid @RequestBody CreatePostRequest createPostRequest) {
         String updatedHtmlContent = postService.processHtmlImagesForPermanentStorage(userDetails.getUserId(), createPostRequest.getContent());
 
         createPostRequest.setContent(updatedHtmlContent);

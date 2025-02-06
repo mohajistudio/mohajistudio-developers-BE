@@ -1,16 +1,21 @@
 package com.mohajistudio.developers.api.domain.user;
 
+import com.mohajistudio.developers.api.domain.user.dto.request.UpdateUserRequest;
 import com.mohajistudio.developers.api.domain.user.service.UserService;
+import com.mohajistudio.developers.authentication.dto.CustomUserDetails;
 import com.mohajistudio.developers.common.dto.response.CustomPageResponse;
+import com.mohajistudio.developers.common.enums.ErrorCode;
+import com.mohajistudio.developers.common.exception.CustomException;
+import com.mohajistudio.developers.database.dto.UserDetailsDto;
 import com.mohajistudio.developers.database.dto.UserDto;
 import com.mohajistudio.developers.database.enums.Role;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.UUID;
 
 @RestController
 @RequestMapping("/users")
@@ -23,5 +28,19 @@ public class UserController {
         Page<UserDto> users = userService.findAllUser(pageable, role);
 
         return new CustomPageResponse<>(users);
+    }
+
+    @GetMapping("/{nickname}")
+    UserDetailsDto getUserDetails(@PathVariable String nickname) {
+        return userService.findUserDetails(nickname);
+    }
+
+    @PatchMapping("/{userId}")
+    void patchUser(@AuthenticationPrincipal CustomUserDetails userDetails, @PathVariable UUID userId, @RequestBody UpdateUserRequest updateUserRequest) {
+        if(!userDetails.getUserId().equals(userId)) {
+            throw new CustomException(ErrorCode.UNAUTHORIZED);
+        }
+
+        userService.updateUser(userId, updateUserRequest);
     }
 }

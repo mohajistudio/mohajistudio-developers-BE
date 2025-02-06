@@ -1,5 +1,9 @@
 package com.mohajistudio.developers.database.repository.user;
 
+import com.mohajistudio.developers.common.enums.ErrorCode;
+import com.mohajistudio.developers.common.exception.CustomException;
+import com.mohajistudio.developers.database.dto.ContactDto;
+import com.mohajistudio.developers.database.dto.UserDetailsDto;
 import com.mohajistudio.developers.database.dto.UserDto;
 import com.mohajistudio.developers.database.entity.User;
 import com.mohajistudio.developers.database.enums.Role;
@@ -19,7 +23,10 @@ import org.springframework.data.support.PageableExecutionUtils;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
+import static com.mohajistudio.developers.database.entity.QContact.contact;
+import static com.mohajistudio.developers.database.entity.QContactType.contactType;
 import static com.mohajistudio.developers.database.entity.QUser.user;
 
 @RequiredArgsConstructor
@@ -44,6 +51,43 @@ public class UserCustomRepositoryImpl implements UserCustomRepository {
                 .from(user);
 
         return PageableExecutionUtils.getPage(users, pageable, totalCount::fetchOne);
+    }
+
+    @Override
+    public UserDetailsDto findUserDetailsDto(String nickname) {
+        UserDetailsDto userDetailsDto = jpaQueryFactory
+                .select(Projections.constructor(
+                        UserDetailsDto.class,
+                        user.id,
+                        user.nickname,
+                        user.email,
+                        user.profileImageUrl,
+                        user.bio,
+                        user.role
+                ))
+                .from(user)
+                .where(user.nickname.eq(nickname))
+                .fetchOne();
+
+        if(userDetailsDto == null) {
+            throw new CustomException(ErrorCode.USER_NOT_FOUND);
+        }
+
+        List<ContactDto> contacts = jpaQueryFactory
+                .select(Projections.constructor(ContactDto.class,
+                        contact.id,
+                        contact.displayName,
+                        contact.url,
+                        contactType.name,
+                        contactType.imageUrl
+                ))
+                .from(contact)
+                .leftJoin(contactType).on(contact.contactTypeId.eq(contactType.id))
+                .where(contact.userId.eq(Objects.requireNonNull(userDetailsDto).getId())).fetch();
+
+        userDetailsDto.setContacts(contacts);
+
+        return userDetailsDto;
     }
 
     private BooleanExpression eqEmail(String email) {

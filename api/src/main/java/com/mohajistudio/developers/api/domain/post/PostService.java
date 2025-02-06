@@ -70,7 +70,7 @@ public class PostService {
         return mediaFiles;
     }
 
-    public Post publishPost(UUID userId, String title, String summary, String content, UUID thumbnailId, PostStatus status, List<String> tags) {
+    public UUID publishPost(UUID userId, String title, String summary, String content, UUID thumbnailId, PostStatus status, List<String> tags) {
         LocalDateTime publishedAt = LocalDateTime.now();
 
         Post post = Post.builder().userId(userId).title(title).summary(summary).content(content).publishedAt(publishedAt).status(status).build();
@@ -92,7 +92,7 @@ public class PostService {
             tagService.addTag(tag, userId, post.getId());
         }
 
-        return savedPost;
+        return savedPost.getId();
     }
 
     public String processHtmlImagesForPermanentStorage(UUID userId, String htmlContent) {

@@ -44,7 +44,7 @@ public class EmailVerificationController {
 
         User user = findUser.get();
 
-        Page<EmailVerificationDto> emailVerifications = emailVerificationRepository.customFindAll(pageable);
+        Page<EmailVerificationDto> emailVerifications = emailVerificationRepository.findAllEmailVerificationDto(pageable);
 
         List<Sort.Order> sort = new ArrayList<>();
         pageable.getSort().stream().forEach(sort::add);
