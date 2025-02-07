@@ -34,7 +34,7 @@ public class JwtAuthenticationEntryPoint implements AuthenticationEntryPoint {
             exception.put("message", request.getAttribute("exception").toString());
             objectMapper.writeValue(response.getWriter(), exception);
         } else {
-            exception.put("message", "인가되지 않은 유저");
+            exception.put("message", "인가되지 않은 사용자");
             objectMapper.writeValue(response.getWriter(), exception);
         }
     }

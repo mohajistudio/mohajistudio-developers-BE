@@ -1,30 +1,35 @@
-package com.mohajistudio.developers.api.domain.authentication.service;
+package com.mohajistudio.developers.authentication.service;
 
+import com.mohajistudio.developers.authentication.config.JwtProperties;
 import com.mohajistudio.developers.common.dto.GeneratedToken;
 import com.mohajistudio.developers.authentication.util.JwtUtil;
 import com.mohajistudio.developers.common.enums.ErrorCode;
 import com.mohajistudio.developers.common.exception.CustomException;
 import com.mohajistudio.developers.database.entity.User;
 import com.mohajistudio.developers.database.repository.user.UserRepository;
+import com.mohajistudio.developers.database.utils.RedisUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.time.Instant;
 import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
+import java.util.concurrent.TimeUnit;
 
 @Service
 @RequiredArgsConstructor
 public class AuthenticationService {
     private final JwtUtil jwtUtil;
+    private final RedisUtil redisUtil;
+    private final JwtProperties jwtProperties;
     private final PasswordEncoder passwordEncoder;
     private final UserRepository userRepository;
-    private final RegisterService registerService;
+
+    private static final String LOGOUT_PREFIX = "logout:";
 
     public GeneratedToken login(String email, String password) {
-        registerService.checkUserRegistered(email);
-
         Optional<User> findUser = userRepository.findByEmail(email);
 
         if(findUser.isEmpty()) {
@@ -59,6 +64,20 @@ public class AuthenticationService {
         user.setRefreshToken(null);
 
         userRepository.save(user);
+    }
+
+    public void saveLogoutTime(UUID userId) {
+        long expireSeconds = jwtProperties.getAccessTokenPeriod();
+        long logoutTime = Instant.now().getEpochSecond(); // 현재 UNIX 타임스탬프
+
+        String key = LOGOUT_PREFIX + userId;
+        redisUtil.setValue(key, String.valueOf(logoutTime), expireSeconds, TimeUnit.SECONDS);
+    }
+
+    public Long getLogoutTime(UUID userId) {
+        String key = LOGOUT_PREFIX + userId;
+        String logoutTime = redisUtil.getValue(key);
+        return (logoutTime != null) ? Long.parseLong(logoutTime) : null;
     }
 
     public GeneratedToken refreshToken(String refreshToken) {

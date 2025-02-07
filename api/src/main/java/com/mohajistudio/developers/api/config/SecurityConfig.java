@@ -3,6 +3,7 @@ package com.mohajistudio.developers.api.config;
 import com.mohajistudio.developers.authentication.filter.JwtAuthFilter;
 import com.mohajistudio.developers.authentication.handler.JwtAccessDeniedHandler;
 import com.mohajistudio.developers.authentication.handler.JwtAuthenticationEntryPoint;
+import com.mohajistudio.developers.authentication.service.AuthenticationService;
 import com.mohajistudio.developers.authentication.service.CustomUserDetailsService;
 import com.mohajistudio.developers.authentication.util.JwtUtil;
 import com.mohajistudio.developers.database.enums.Role;
@@ -31,6 +32,7 @@ public class SecurityConfig {
     private final CustomUserDetailsService customUserDetailsService;
     private final JwtAuthenticationEntryPoint jwtAuthenticationEntryPoint;
     private final JwtAccessDeniedHandler jwtAccessDeniedHandler;
+    private final AuthenticationService authenticationService;
 
     private static final String AUTHORITY_ADMIN = Role.ROLE_ADMIN.name();
     private static final String AUTHORITY_DEVELOPER = Role.ROLE_DEVELOPER.name();
@@ -39,6 +41,9 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http.authorizeHttpRequests(authorizeRequests -> {
+            // Any
+            authorizeRequests.requestMatchers(HttpMethod.POST, "/auth/logout").hasAnyAuthority(AUTHORITY_ADMIN, AUTHORITY_DEVELOPER, AUTHORITY_GUEST);
+
             // GUEST
             authorizeRequests.requestMatchers(HttpMethod.POST, "/auth/register/password", "/auth/register/nickname").hasAuthority(AUTHORITY_GUEST);
 
@@ -53,7 +58,7 @@ public class SecurityConfig {
             exceptionHandling.accessDeniedHandler(jwtAccessDeniedHandler);
         });
 
-        http.addFilterBefore(new JwtAuthFilter(customUserDetailsService, jwtUtil), UsernamePasswordAuthenticationFilter.class);
+        http.addFilterBefore(new JwtAuthFilter(authenticationService, customUserDetailsService, jwtUtil), UsernamePasswordAuthenticationFilter.class);
         http.sessionManagement(sessionManagement -> sessionManagement.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
         http.cors(cors -> cors.configurationSource(corsConfigurationSource()));
         http.csrf(AbstractHttpConfigurer::disable);

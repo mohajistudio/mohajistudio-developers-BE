@@ -1,12 +1,13 @@
 package com.mohajistudio.developers.api.domain.authentication.controller;
 
+import com.mohajistudio.developers.api.domain.authentication.service.RegisterService;
 import com.mohajistudio.developers.authentication.dto.CustomUserDetails;
 import com.mohajistudio.developers.common.dto.GeneratedToken;
 import com.mohajistudio.developers.api.domain.authentication.dto.request.ForgotPasswordRequest;
 import com.mohajistudio.developers.api.domain.authentication.dto.request.ForgotPasswordVerifyRequest;
 import com.mohajistudio.developers.api.domain.authentication.dto.request.LoginRequest;
 import com.mohajistudio.developers.api.domain.authentication.dto.request.RefreshRequest;
-import com.mohajistudio.developers.api.domain.authentication.service.AuthenticationService;
+import com.mohajistudio.developers.authentication.service.AuthenticationService;
 import com.mohajistudio.developers.api.domain.authentication.service.EmailService;
 import com.mohajistudio.developers.common.enums.ErrorCode;
 import com.mohajistudio.developers.common.exception.CustomException;
@@ -21,17 +22,21 @@ import org.springframework.web.bind.annotation.*;
 @RequiredArgsConstructor
 @RequestMapping("/auth")
 public class AuthenticationController {
+    private final RegisterService registerService;
     private final AuthenticationService authenticationService;
     private final EmailService emailService;
 
     @PostMapping("/login")
     public GeneratedToken postLogin(@Valid @RequestBody LoginRequest loginRequest) {
+        registerService.checkUserRegistered(loginRequest.getEmail());
+
         return authenticationService.login(loginRequest.getEmail(), loginRequest.getPassword());
     }
 
     @PostMapping("/logout")
     public void logout(@AuthenticationPrincipal CustomUserDetails userDetails) {
         authenticationService.logout(userDetails.getUserId());
+        authenticationService.saveLogoutTime(userDetails.getUserId());
     }
 
     @PostMapping("/refresh")

@@ -44,6 +44,8 @@ public class PostService {
     private final TagService tagService;
     private final MediaFileRepository mediaFileRepository;
 
+    private static final String POST_VIEW_PREFIX = "post:view:";
+
     public Page<PostDto> findAllPost(Pageable pageable) {
         return postRepository.findAllPostDto(pageable, PostStatus.PUBLISHED);
     }
@@ -137,9 +139,9 @@ public class PostService {
         String redisKey;
 
         if (userId != null) {
-            redisKey = "post:view:" + postId + ":user:" + userId;
+            redisKey = POST_VIEW_PREFIX + postId + ":user:" + userId;
         } else {
-            redisKey = "post:view:" + postId + ":ip:" + ipAddress;
+            redisKey = POST_VIEW_PREFIX + postId + ":ip:" + ipAddress;
         }
 
         if (!redisUtil.hasKey(redisKey)) {
