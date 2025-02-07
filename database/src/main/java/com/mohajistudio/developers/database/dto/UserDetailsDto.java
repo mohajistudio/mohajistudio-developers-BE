@@ -1,6 +1,7 @@
 package com.mohajistudio.developers.database.dto;
 
 import com.mohajistudio.developers.database.enums.Role;
+import com.querydsl.core.annotations.QueryProjection;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -22,7 +23,7 @@ public class UserDetailsDto {
     private Role role;
     private List<ContactDto> contacts;
 
-    // QueryDSL Projections에서 사용
+    @QueryProjection
     public UserDetailsDto(UUID id, String nickname, String email, String profileImageUrl, String bio, Role role) {
         this.id = id;
         this.nickname = nickname;

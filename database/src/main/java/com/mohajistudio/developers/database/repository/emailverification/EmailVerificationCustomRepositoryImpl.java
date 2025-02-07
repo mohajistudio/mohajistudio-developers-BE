@@ -1,11 +1,11 @@
 package com.mohajistudio.developers.database.repository.emailverification;
 
 import com.mohajistudio.developers.database.dto.EmailVerificationDto;
+import com.mohajistudio.developers.database.dto.QEmailVerificationDto;
 import com.mohajistudio.developers.database.entity.EmailVerification;
 import com.mohajistudio.developers.database.enums.VerificationType;
 import com.querydsl.core.types.Order;
 import com.querydsl.core.types.OrderSpecifier;
-import com.querydsl.core.types.Projections;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.core.types.dsl.PathBuilder;
 import com.querydsl.core.util.StringUtils;
@@ -29,16 +29,16 @@ public class EmailVerificationCustomRepositoryImpl implements EmailVerificationC
 
     @Override
     public Page<EmailVerificationDto> findAllEmailVerificationDto(Pageable pageable) {
-        List<EmailVerificationDto> emailVerifications = jpaQueryFactory.select(Projections.constructor(EmailVerificationDto.class,
-                emailVerification.id,
-                emailVerification.email,
-                emailVerification.code,
-                emailVerification.attempts,
-                emailVerification.verificationType,
-                emailVerification.verifiedAt,
-                emailVerification.expiredAt,
-                emailVerification.createdAt,
-                emailVerification.updatedAt
+        List<EmailVerificationDto> emailVerifications = jpaQueryFactory.select(new QEmailVerificationDto(
+                        emailVerification.id,
+                        emailVerification.email,
+                        emailVerification.code,
+                        emailVerification.attempts,
+                        emailVerification.verificationType,
+                        emailVerification.verifiedAt,
+                        emailVerification.expiredAt,
+                        emailVerification.createdAt,
+                        emailVerification.updatedAt
                 )).from(emailVerification)
                 .orderBy(getOrderSpecifiers(pageable.getSort()))
                 .offset(pageable.getOffset())

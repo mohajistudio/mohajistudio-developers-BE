@@ -1,11 +1,7 @@
 package com.mohajistudio.developers.database.repository.post;
 
-import com.mohajistudio.developers.database.dto.PostDetailsDto;
-import com.mohajistudio.developers.database.dto.PostDto;
-import com.mohajistudio.developers.database.dto.TagDto;
-import com.mohajistudio.developers.database.dto.UserDto;
+import com.mohajistudio.developers.database.dto.*;
 import com.mohajistudio.developers.database.enums.PostStatus;
-import com.querydsl.core.types.Projections;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.impl.JPAQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
@@ -49,11 +45,9 @@ public class PostCustomRepositoryImpl implements PostCustomRepository {
                 .limit(pageable.getPageSize())
                 .transform(
                         groupBy(post.id)
-                                .list(Projections
-                                        .constructor(
-                                                PostDto.class,
+                                .list(new QPostDto(
                                                 post.id,
-                                                Projections.constructor(UserDto.class,
+                                                new QUserDto(
                                                         user.id,
                                                         user.nickname,
                                                         user.email,
@@ -65,7 +59,7 @@ public class PostCustomRepositoryImpl implements PostCustomRepository {
                                                 post.thumbnail,
                                                 post.status,
                                                 post.publishedAt,
-                                                set(Projections.constructor(TagDto.class,
+                                                set(new QTagDto(
                                                                 tag.id,
                                                                 tag.title
                                                         ).skipNulls()
@@ -92,11 +86,9 @@ public class PostCustomRepositoryImpl implements PostCustomRepository {
                 .where(eqId(id))
                 .transform(
                         groupBy(post.id)
-                                .list(Projections
-                                        .constructor(
-                                                PostDetailsDto.class,
+                                .list(new QPostDetailsDto(
                                                 post.id,
-                                                Projections.constructor(UserDto.class,
+                                                new QUserDto(
                                                         user.id,
                                                         user.nickname,
                                                         user.email,
@@ -109,7 +101,7 @@ public class PostCustomRepositoryImpl implements PostCustomRepository {
                                                 post.thumbnail,
                                                 post.status,
                                                 post.publishedAt,
-                                                set(Projections.constructor(TagDto.class,
+                                                set(new QTagDto(
                                                         tag.id,
                                                         tag.title
                                                 ).skipNulls())
@@ -117,7 +109,7 @@ public class PostCustomRepositoryImpl implements PostCustomRepository {
                                 )
                 );
 
-        if(posts.isEmpty()) return null;
+        if (posts.isEmpty()) return null;
 
         return posts.get(0);
     }

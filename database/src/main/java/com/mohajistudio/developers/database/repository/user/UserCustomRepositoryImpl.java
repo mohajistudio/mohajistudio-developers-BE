@@ -2,14 +2,11 @@ package com.mohajistudio.developers.database.repository.user;
 
 import com.mohajistudio.developers.common.enums.ErrorCode;
 import com.mohajistudio.developers.common.exception.CustomException;
-import com.mohajistudio.developers.database.dto.ContactDto;
-import com.mohajistudio.developers.database.dto.UserDetailsDto;
-import com.mohajistudio.developers.database.dto.UserDto;
+import com.mohajistudio.developers.database.dto.*;
 import com.mohajistudio.developers.database.entity.User;
 import com.mohajistudio.developers.database.enums.Role;
 import com.querydsl.core.types.Order;
 import com.querydsl.core.types.OrderSpecifier;
-import com.querydsl.core.types.Projections;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.core.types.dsl.PathBuilder;
 import com.querydsl.core.util.StringUtils;
@@ -34,7 +31,7 @@ public class UserCustomRepositoryImpl implements UserCustomRepository {
     private final JPAQueryFactory jpaQueryFactory;
 
     public Page<UserDto> findAllUserDto(Pageable pageable, Role role) {
-        List<UserDto> users = jpaQueryFactory.select(Projections.constructor(UserDto.class,
+        List<UserDto> users = jpaQueryFactory.select(new QUserDto(
                         user.id,
                         user.nickname,
                         user.email,
@@ -56,8 +53,7 @@ public class UserCustomRepositoryImpl implements UserCustomRepository {
     @Override
     public UserDetailsDto findUserDetailsDto(String nickname) {
         UserDetailsDto userDetailsDto = jpaQueryFactory
-                .select(Projections.constructor(
-                        UserDetailsDto.class,
+                .select(new QUserDetailsDto(
                         user.id,
                         user.nickname,
                         user.email,
@@ -74,7 +70,7 @@ public class UserCustomRepositoryImpl implements UserCustomRepository {
         }
 
         List<ContactDto> contacts = jpaQueryFactory
-                .select(Projections.constructor(ContactDto.class,
+                .select(new QContactDto(
                         contact.id,
                         contact.displayName,
                         contact.url,
