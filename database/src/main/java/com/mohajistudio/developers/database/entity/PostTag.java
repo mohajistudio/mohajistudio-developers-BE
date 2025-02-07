@@ -25,6 +25,9 @@ public class PostTag {
     @Column(nullable = false)
     private UUID tagId;
 
+    @Column(nullable = false)
+    private UUID userId;
+
     @CreatedDate
     private LocalDateTime createdAt;
 

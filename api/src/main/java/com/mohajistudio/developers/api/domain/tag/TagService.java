@@ -18,8 +18,11 @@ public class TagService {
     private final TagRepository tagRepository;
     private final PostTagRepository postTagRepository;
 
-    public Page<TagDto> findAllTags(Pageable pageable) {
-        return tagRepository.findAllTagDto(pageable);
+    public Page<TagDto> findAllTags(Pageable pageable, UUID userId) {
+        if(userId == null) {
+            return tagRepository.findAllTagDto(pageable);
+        }
+        return tagRepository.findAllTagDtoByUserId(pageable, userId);
     }
 
     public void addTag(String tag, UUID userId, UUID postId) {
@@ -29,13 +32,13 @@ public class TagService {
             Tag newTag = Tag.builder().title(tag).userId(userId).tagCount(1).build();
             Tag savedTag = tagRepository.save(newTag);
 
-            PostTag postTag = PostTag.builder().postId(postId).tagId(savedTag.getId()).build();
+            PostTag postTag = PostTag.builder().postId(postId).tagId(savedTag.getId()).userId(userId).build();
             postTagRepository.save(postTag);
         } else {
             findTag.setTagCount(findTag.getTagCount() + 1);
             Tag savedTag = tagRepository.save(findTag);
 
-            PostTag postTag = PostTag.builder().postId(postId).tagId(savedTag.getId()).build();
+            PostTag postTag = PostTag.builder().postId(postId).tagId(savedTag.getId()).userId(userId).build();
             postTagRepository.save(postTag);
         }
     }

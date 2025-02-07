@@ -143,7 +143,7 @@ public class PostCustomRepositoryImpl implements PostCustomRepository {
     }
 
     private BooleanExpression eqUserId(UUID userId) {
-        if(userId == null) return null;
+        if (userId == null) return null;
         return post.userId.eq(userId);
     }
 
