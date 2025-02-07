@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.Map;
 import java.util.Optional;
+import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
@@ -44,6 +45,20 @@ public class AuthenticationService {
         userRepository.save(user);
 
         return generatedToken;
+    }
+
+    public void logout(UUID userId) {
+        Optional<User> findUser = userRepository.findById(userId);
+
+        if(findUser.isEmpty()) {
+            throw new CustomException(ErrorCode.USER_NOT_FOUND);
+        }
+
+        User user = findUser.get();
+
+        user.setRefreshToken(null);
+
+        userRepository.save(user);
     }
 
     public GeneratedToken refreshToken(String refreshToken) {

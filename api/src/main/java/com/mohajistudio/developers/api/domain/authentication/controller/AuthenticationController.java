@@ -1,5 +1,6 @@
 package com.mohajistudio.developers.api.domain.authentication.controller;
 
+import com.mohajistudio.developers.authentication.dto.CustomUserDetails;
 import com.mohajistudio.developers.common.dto.GeneratedToken;
 import com.mohajistudio.developers.api.domain.authentication.dto.request.ForgotPasswordRequest;
 import com.mohajistudio.developers.api.domain.authentication.dto.request.ForgotPasswordVerifyRequest;
@@ -26,6 +27,11 @@ public class AuthenticationController {
     @PostMapping("/login")
     public GeneratedToken postLogin(@Valid @RequestBody LoginRequest loginRequest) {
         return authenticationService.login(loginRequest.getEmail(), loginRequest.getPassword());
+    }
+
+    @PostMapping("/logout")
+    public void logout(@AuthenticationPrincipal CustomUserDetails userDetails) {
+        authenticationService.logout(userDetails.getUserId());
     }
 
     @PostMapping("/refresh")
