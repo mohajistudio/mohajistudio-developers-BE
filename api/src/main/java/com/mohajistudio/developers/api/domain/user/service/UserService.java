@@ -47,7 +47,7 @@ public class UserService {
         user.setBio(updateUserRequest.getBio());
         userRepository.save(user);
 
-        updateUserRequest.getContact().forEach(contact -> {
+        updateUserRequest.getContacts().forEach(contact -> {
             Optional<ContactType> findContactType = contactTypeRepository.findById(contact.getContactTypeId());
 
             if (findContactType.isEmpty()) {

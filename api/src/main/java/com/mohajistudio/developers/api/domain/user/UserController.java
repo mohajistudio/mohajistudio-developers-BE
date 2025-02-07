@@ -9,6 +9,7 @@ import com.mohajistudio.developers.common.exception.CustomException;
 import com.mohajistudio.developers.database.dto.UserDetailsDto;
 import com.mohajistudio.developers.database.dto.UserDto;
 import com.mohajistudio.developers.database.enums.Role;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -36,7 +37,7 @@ public class UserController {
     }
 
     @PatchMapping("/{userId}")
-    void patchUser(@AuthenticationPrincipal CustomUserDetails userDetails, @PathVariable UUID userId, @RequestBody UpdateUserRequest updateUserRequest) {
+    void patchUser(@AuthenticationPrincipal CustomUserDetails userDetails, @PathVariable UUID userId, @Valid @RequestBody UpdateUserRequest updateUserRequest) {
         if(!userDetails.getUserId().equals(userId)) {
             throw new CustomException(ErrorCode.UNAUTHORIZED);
         }
