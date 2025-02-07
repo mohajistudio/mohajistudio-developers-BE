@@ -12,7 +12,9 @@ import java.util.UUID;
 @AllArgsConstructor
 @Builder
 @Entity
-@Table(name = "users")
+@Table(name = "users", indexes = {
+        @Index(name = "idx_user_nickname", columnList = "nickname", unique = true),
+})
 public class User extends BaseEntity {
     @Column(unique = true, length = 20)
     private String nickname;

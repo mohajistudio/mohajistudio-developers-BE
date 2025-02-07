@@ -1,8 +1,8 @@
 package com.mohajistudio.developers.database.repository.tag;
 
+import com.mohajistudio.developers.database.dto.QTagDto;
 import com.mohajistudio.developers.database.dto.TagDto;
 import com.mohajistudio.developers.database.entity.Tag;
-import com.querydsl.core.types.Projections;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.core.util.StringUtils;
 import com.querydsl.jpa.impl.JPAQuery;
@@ -32,8 +32,7 @@ public class TagCustomRepositoryImpl implements TagCustomRepository {
     @Override
     public Page<TagDto> findAllTagDto(Pageable pageable) {
         List<TagDto> tags = jpaQueryFactory
-                .select(Projections.constructor(
-                        TagDto.class,
+                .select(new QTagDto(
                         tag.id,
                         tag.title
                 ))

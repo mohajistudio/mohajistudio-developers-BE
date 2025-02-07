@@ -6,6 +6,7 @@ import com.mohajistudio.developers.authentication.dto.CustomUserDetails;
 import com.mohajistudio.developers.common.dto.response.CustomPageResponse;
 import com.mohajistudio.developers.common.enums.ErrorCode;
 import com.mohajistudio.developers.common.exception.CustomException;
+import com.mohajistudio.developers.common.utils.HttpUtil;
 import com.mohajistudio.developers.database.dto.PostDetailsDto;
 import com.mohajistudio.developers.database.dto.PostDto;
 import com.mohajistudio.developers.database.entity.MediaFile;
@@ -23,6 +24,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.net.UnknownHostException;
 import java.util.List;
 import java.util.UUID;
 
@@ -40,7 +42,7 @@ public class PostController {
     }
 
     @PostMapping
-    Post addPost(@AuthenticationPrincipal CustomUserDetails userDetails, @Valid @RequestBody CreatePostRequest createPostRequest) {
+    UUID addPost(@AuthenticationPrincipal CustomUserDetails userDetails, @Valid @RequestBody CreatePostRequest createPostRequest) {
         String updatedHtmlContent = postService.processHtmlImagesForPermanentStorage(userDetails.getUserId(), createPostRequest.getContent());
 
         createPostRequest.setContent(updatedHtmlContent);
@@ -63,9 +65,14 @@ public class PostController {
     }
 
     @GetMapping("/{postId}")
-    PostDetailsDto getPost(@AuthenticationPrincipal CustomUserDetails userDetails, @PathVariable UUID postId, HttpServletRequest request) {
-        UUID userId = userDetails.getUserId();
-        String ipAddress = request.getRemoteAddr();
+    PostDetailsDto getPost(@AuthenticationPrincipal CustomUserDetails userDetails, @PathVariable UUID postId, HttpServletRequest request) throws UnknownHostException {
+
+        UUID userId = null;
+        if(userDetails != null) {
+            userId = userDetails.getUserId();
+        }
+
+        String ipAddress = HttpUtil.getClientIp(request);
 
         postService.increaseViewCount(postId, userId, ipAddress);
 

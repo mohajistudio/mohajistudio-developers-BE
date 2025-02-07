@@ -1,7 +1,7 @@
 package com.mohajistudio.developers.database.dto;
 
 import com.mohajistudio.developers.database.enums.Role;
-import lombok.AllArgsConstructor;
+import com.querydsl.core.annotations.QueryProjection;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -11,11 +11,19 @@ import java.util.UUID;
 @Getter
 @Setter
 @NoArgsConstructor
-@AllArgsConstructor
 public class UserDto {
     private UUID id;
     private String nickname;
     private String email;
     private String profileImageUrl;
     private Role role;
+
+    @QueryProjection
+    public UserDto(UUID id, String nickname, String email, String profileImageUrl, Role role) {
+        this.id = id;
+        this.nickname = nickname;
+        this.email = email;
+        this.profileImageUrl = profileImageUrl;
+        this.role = role;
+    }
 }
