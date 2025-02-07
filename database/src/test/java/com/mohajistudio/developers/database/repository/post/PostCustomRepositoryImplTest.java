@@ -91,7 +91,7 @@ public class PostCustomRepositoryImplTest {
         Pageable pageable = PageRequest.of(0, 10); // 첫 번째 페이지, 10개씩 조회
 
         // When
-        Page<PostDto> result = postRepository.findAllPostDto(pageable, null);
+        Page<PostDto> result = postRepository.findAllPostDto(pageable, null, null, null, null);
 
         // Then
         for (PostDto post : result.getContent()) {

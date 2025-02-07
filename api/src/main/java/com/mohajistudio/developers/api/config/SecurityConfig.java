@@ -41,7 +41,7 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http.authorizeHttpRequests(authorizeRequests -> {
-            // Any
+            // ANY
             authorizeRequests.requestMatchers(HttpMethod.POST, "/auth/logout").hasAnyAuthority(AUTHORITY_ADMIN, AUTHORITY_DEVELOPER, AUTHORITY_GUEST);
 
             // GUEST
@@ -84,4 +84,3 @@ public class SecurityConfig {
         return authenticationConfiguration.getAuthenticationManager();
     }
 }
-
