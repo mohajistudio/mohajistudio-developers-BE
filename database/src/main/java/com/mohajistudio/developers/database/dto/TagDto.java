@@ -13,10 +13,26 @@ import java.util.UUID;
 public class TagDto {
     private UUID id;
     private String title;
+    private Long tagCount;
+
+    @QueryProjection
+    public TagDto(UUID id, String title, long tagCount) {
+        this.id = id;
+        this.title = title;
+        this.tagCount = tagCount;
+    }
+
+    @QueryProjection
+    public TagDto(UUID id, String title, int tagCount) {
+        this.id = id;
+        this.title = title;
+        this.tagCount = (long) tagCount;
+    }
 
     @QueryProjection
     public TagDto(UUID id, String title) {
         this.id = id;
         this.title = title;
+        this.tagCount = null;
     }
 }

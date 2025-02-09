@@ -1,6 +1,7 @@
 package com.mohajistudio.developers.api.domain.post;
 
 import com.mohajistudio.developers.api.domain.post.dto.request.CreatePostRequest;
+import com.mohajistudio.developers.api.domain.post.dto.request.GetPostRequest;
 import com.mohajistudio.developers.api.domain.post.dto.request.UpdatePostRequest;
 import com.mohajistudio.developers.authentication.dto.CustomUserDetails;
 import com.mohajistudio.developers.common.dto.response.CustomPageResponse;
@@ -11,6 +12,7 @@ import com.mohajistudio.developers.database.dto.PostDetailsDto;
 import com.mohajistudio.developers.database.dto.PostDto;
 import com.mohajistudio.developers.database.entity.MediaFile;
 import com.mohajistudio.developers.database.entity.Post;
+import com.mohajistudio.developers.database.enums.PostStatus;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -35,8 +37,8 @@ public class PostController {
     private final PostService postService;
 
     @GetMapping
-    CustomPageResponse<PostDto> getPosts(Pageable pageable) {
-        Page<PostDto> posts = postService.findAllPost(pageable);
+    CustomPageResponse<PostDto> getPosts(Pageable pageable, GetPostRequest getPostRequest) {
+        Page<PostDto> posts = postService.findAllPost(pageable, getPostRequest.getUserId(), getPostRequest.getSearch(), getPostRequest.getTags(), PostStatus.PUBLISHED);
 
         return new CustomPageResponse<>(posts);
     }

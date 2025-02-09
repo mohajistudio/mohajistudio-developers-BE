@@ -46,8 +46,8 @@ public class PostService {
 
     private static final String POST_VIEW_PREFIX = "post:view:";
 
-    public Page<PostDto> findAllPost(Pageable pageable) {
-        return postRepository.findAllPostDto(pageable, PostStatus.PUBLISHED);
+    public Page<PostDto> findAllPost(Pageable pageable, UUID userId, String search, List<String> tags, PostStatus status) {
+        return postRepository.findAllPostDto(pageable, userId, search, tags, status);
     }
 
     public List<MediaFile> uploadMediaFiles(String email, List<MultipartFile> files) {

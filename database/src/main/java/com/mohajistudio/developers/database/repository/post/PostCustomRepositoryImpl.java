@@ -3,6 +3,7 @@ package com.mohajistudio.developers.database.repository.post;
 import com.mohajistudio.developers.database.dto.*;
 import com.mohajistudio.developers.database.enums.PostStatus;
 import com.querydsl.core.types.dsl.BooleanExpression;
+import com.querydsl.core.util.StringUtils;
 import com.querydsl.jpa.impl.JPAQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
@@ -33,13 +34,18 @@ public class PostCustomRepositoryImpl implements PostCustomRepository {
      * 해당 클래스는 쿼리 조각을 미리 조립하고 totalCount.fetch().size() 함수가 호출될 때 실제 쿼리가 수행됩니다.
      */
     @Override
-    public Page<PostDto> findAllPostDto(Pageable pageable, PostStatus status) {
+    public Page<PostDto> findAllPostDto(Pageable pageable, UUID userId, String search, List<String> tags, PostStatus status) {
         List<PostDto> posts = jpaQueryFactory.select(post, tag, user)
                 .from(post)
                 .join(user).on(post.userId.eq(user.id))
                 .leftJoin(postTag).on(post.id.eq(postTag.postId))
                 .leftJoin(tag).on(postTag.tagId.eq(tag.id))
-                .where(eqStatus(status))
+                .where(
+                        eqStatus(status),
+                        containsSearch(search),
+                        containsTags(tags),
+                        eqUserId(userId)
+                )
                 .orderBy(post.id.asc())
                 .offset(pageable.getOffset())
                 .limit(pageable.getPageSize())
@@ -71,7 +77,12 @@ public class PostCustomRepositoryImpl implements PostCustomRepository {
         JPAQuery<Long> totalCount = jpaQueryFactory
                 .select(post.count())
                 .from(post)
-                .where(eqStatus(status));
+                .where(
+                        eqStatus(status),
+                        containsSearch(search),
+                        containsTags(tags),
+                        eqUserId(userId)
+                );
 
         return PageableExecutionUtils.getPage(posts, pageable, () -> totalCount.fetch().size());
     }
@@ -129,5 +140,23 @@ public class PostCustomRepositoryImpl implements PostCustomRepository {
     private BooleanExpression eqId(UUID id) {
         if (id == null) return null;
         return post.id.eq(id);
+    }
+
+    private BooleanExpression eqUserId(UUID userId) {
+        if (userId == null) return null;
+        return post.userId.eq(userId);
+    }
+
+    private BooleanExpression containsSearch(String search) {
+        if (StringUtils.isNullOrEmpty(search)) return null;
+        return post.title.containsIgnoreCase(search);
+    }
+
+    private BooleanExpression containsTags(List<String> tags) {
+        if (tags == null || tags.isEmpty()) {
+            return null;
+        }
+
+        return tag.title.in(tags);
     }
 }

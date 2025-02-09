@@ -13,7 +13,9 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.support.PageableExecutionUtils;
 
 import java.util.List;
+import java.util.UUID;
 
+import static com.mohajistudio.developers.database.entity.QPostTag.postTag;
 import static com.mohajistudio.developers.database.entity.QTag.tag;
 
 
@@ -34,7 +36,8 @@ public class TagCustomRepositoryImpl implements TagCustomRepository {
         List<TagDto> tags = jpaQueryFactory
                 .select(new QTagDto(
                         tag.id,
-                        tag.title
+                        tag.title,
+                        tag.tagCount
                 ))
                 .from(tag)
                 .orderBy(tag.tagCount.desc())
@@ -49,8 +52,39 @@ public class TagCustomRepositoryImpl implements TagCustomRepository {
         return PageableExecutionUtils.getPage(tags, pageable, () -> totalCount.fetch().size());
     }
 
+    @Override
+    public Page<TagDto> findAllTagDtoByUserId(Pageable pageable, UUID userId) {
+        List<TagDto> tags = jpaQueryFactory
+                .select(new QTagDto(
+                        tag.id,
+                        tag.title,
+                        postTag.tagId.count()
+                ))
+                .from(postTag)
+                .join(tag).on(postTag.tagId.eq(tag.id))
+                .where(eqUserId(userId))
+                .groupBy(tag.id, tag.title)
+                .orderBy(postTag.tagId.count().desc())
+                .offset(pageable.getOffset())
+                .limit(pageable.getPageSize())
+                .fetch();
+
+        JPAQuery<Long> totalCount = jpaQueryFactory
+                .select(tag.countDistinct())
+                .from(postTag)
+                .join(tag).on(postTag.tagId.eq(tag.id))
+                .where(eqUserId(userId));
+
+
+        return PageableExecutionUtils.getPage(tags, pageable, () -> totalCount.fetch().size());
+    }
+
     private BooleanExpression eqTitle(String title) {
         if (StringUtils.isNullOrEmpty(title)) return null;
         return tag.title.eq(title);
+    }
+
+    private BooleanExpression eqUserId(UUID userId) {
+        return postTag.userId.eq(userId);
     }
 }
