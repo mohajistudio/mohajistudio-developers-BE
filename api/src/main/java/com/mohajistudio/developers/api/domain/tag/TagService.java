@@ -42,5 +42,4 @@ public class TagService {
             postTagRepository.save(postTag);
         }
     }
-
 }

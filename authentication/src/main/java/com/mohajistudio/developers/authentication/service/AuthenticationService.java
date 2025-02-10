@@ -92,7 +92,7 @@ public class AuthenticationService {
 
         User user = findUser.get();
 
-        if(user.getRefreshToken().equals(refreshToken)) {
+        if(!user.getRefreshToken().equals(refreshToken)) {
             throw new CustomException(ErrorCode.REFRESH_TOKEN_MISMATCH);
         }
 
