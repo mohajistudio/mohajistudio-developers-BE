@@ -34,7 +34,7 @@ public class AuthenticationController {
     }
 
     @PostMapping("/logout")
-    public void logout(@AuthenticationPrincipal CustomUserDetails userDetails) {
+    public void postLogout(@AuthenticationPrincipal CustomUserDetails userDetails) {
         authenticationService.logout(userDetails.getUserId());
         authenticationService.saveLogoutTime(userDetails.getUserId());
     }

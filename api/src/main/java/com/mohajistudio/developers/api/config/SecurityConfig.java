@@ -49,7 +49,7 @@ public class SecurityConfig {
             authorizeRequests.requestMatchers(HttpMethod.POST, "/auth/register/password", "/auth/register/nickname").hasAuthority(AUTHORITY_GUEST);
 
             // DEVELOPER
-            authorizeRequests.requestMatchers(HttpMethod.POST, "/posts").hasAnyAuthority(AUTHORITY_ADMIN, AUTHORITY_DEVELOPER);
+            authorizeRequests.requestMatchers(HttpMethod.POST, "/posts", "/posts/summary").hasAnyAuthority(AUTHORITY_ADMIN, AUTHORITY_DEVELOPER);
 
             authorizeRequests.anyRequest().permitAll();
         });

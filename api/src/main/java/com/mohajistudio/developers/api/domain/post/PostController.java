@@ -1,6 +1,7 @@
 package com.mohajistudio.developers.api.domain.post;
 
 import com.mohajistudio.developers.api.domain.post.dto.request.CreatePostRequest;
+import com.mohajistudio.developers.api.domain.post.dto.request.GenerateSummaryRequest;
 import com.mohajistudio.developers.api.domain.post.dto.request.GetPostRequest;
 import com.mohajistudio.developers.api.domain.post.dto.request.UpdatePostRequest;
 import com.mohajistudio.developers.authentication.dto.CustomUserDetails;
@@ -10,6 +11,7 @@ import com.mohajistudio.developers.database.dto.PostDetailsDto;
 import com.mohajistudio.developers.database.dto.PostDto;
 import com.mohajistudio.developers.database.entity.Post;
 import com.mohajistudio.developers.database.enums.PostStatus;
+import com.mohajistudio.developers.infra.service.AzureOpenAiService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -27,6 +29,7 @@ import java.util.UUID;
 @RequiredArgsConstructor
 public class PostController {
     private final PostService postService;
+    private final AzureOpenAiService azureOpenAiService;
 
     @GetMapping
     CustomPageResponse<PostDto> getPosts(Pageable pageable, GetPostRequest getPostRequest) {
@@ -46,7 +49,6 @@ public class PostController {
 
     @GetMapping("/{postId}")
     PostDetailsDto getPost(@AuthenticationPrincipal CustomUserDetails userDetails, @PathVariable UUID postId, HttpServletRequest request) throws UnknownHostException {
-
         UUID userId = null;
         if(userDetails != null) {
             userId = userDetails.getUserId();
@@ -57,6 +59,11 @@ public class PostController {
         postService.increaseViewCount(postId, userId, ipAddress);
 
         return postService.findPost(postId);
+    }
+
+    @PostMapping(value = "/generate-summary")
+    String postGenerateSummary(@RequestBody GenerateSummaryRequest generateSummaryRequest) {
+        return azureOpenAiService.generateSummary(generateSummaryRequest.getContent());
     }
 
     @PatchMapping("/{postId}")
