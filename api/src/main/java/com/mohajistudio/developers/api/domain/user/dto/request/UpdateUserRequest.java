@@ -6,10 +6,13 @@ import lombok.Getter;
 import lombok.Setter;
 
 import java.util.List;
+import java.util.UUID;
 
 @Getter
 @Setter
 public class UpdateUserRequest {
+    private UUID profileImageId;
+
     @NotNull
     @Pattern(regexp = "^[a-z0-9_.](?:[a-z0-9]*[_.]?){1,19}$")
     private String nickname;

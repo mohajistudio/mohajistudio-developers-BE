@@ -9,7 +9,6 @@ import com.mohajistudio.developers.database.entity.*;
 import com.mohajistudio.developers.database.enums.PostStatus;
 import com.mohajistudio.developers.database.repository.mediafile.MediaFileRepository;
 import com.mohajistudio.developers.database.repository.post.PostRepository;
-import com.mohajistudio.developers.database.repository.user.UserRepository;
 import com.mohajistudio.developers.database.utils.RedisUtil;
 import com.mohajistudio.developers.infra.service.MediaService;
 import com.mohajistudio.developers.infra.util.MediaUtil;
@@ -23,12 +22,9 @@ import org.jsoup.select.Elements;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
-import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 
@@ -39,7 +35,6 @@ import java.util.concurrent.TimeUnit;
 public class PostService {
     private final RedisUtil redisUtil;
     private final PostRepository postRepository;
-    private final UserRepository userRepository;
     private final MediaService mediaService;
     private final TagService tagService;
     private final MediaFileRepository mediaFileRepository;
@@ -48,28 +43,6 @@ public class PostService {
 
     public Page<PostDto> findAllPost(Pageable pageable, UUID userId, String search, List<String> tags, PostStatus status) {
         return postRepository.findAllPostDto(pageable, userId, search, tags, status);
-    }
-
-    public List<MediaFile> uploadMediaFiles(String email, List<MultipartFile> files) {
-        Optional<User> findUser = userRepository.findByEmail(email);
-
-        if (findUser.isEmpty()) {
-            throw new CustomException(ErrorCode.USER_NOT_FOUND);
-        }
-
-        User user = findUser.get();
-
-        List<MediaFile> mediaFiles = new ArrayList<>();
-
-        for (MultipartFile file : files) {
-            MediaFile mediaFile = mediaService.uploadMediaFileToTempFolder(user.getId(), file);
-
-            MediaFile savedMediaFile = mediaFileRepository.save(mediaFile);
-
-            mediaFiles.add(savedMediaFile);
-        }
-
-        return mediaFiles;
     }
 
     public UUID publishPost(UUID userId, String title, String summary, String content, UUID thumbnailId, PostStatus status, List<String> tags) {
