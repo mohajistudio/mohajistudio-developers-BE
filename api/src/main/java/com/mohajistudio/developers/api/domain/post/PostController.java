@@ -1,6 +1,7 @@
 package com.mohajistudio.developers.api.domain.post;
 
 import com.mohajistudio.developers.api.domain.post.dto.request.CreatePostRequest;
+import com.mohajistudio.developers.api.domain.post.dto.request.GenerateSummaryRequest;
 import com.mohajistudio.developers.api.domain.post.dto.request.GetPostRequest;
 import com.mohajistudio.developers.api.domain.post.dto.request.UpdatePostRequest;
 import com.mohajistudio.developers.authentication.dto.CustomUserDetails;
@@ -60,9 +61,9 @@ public class PostController {
         return postService.findPost(postId);
     }
 
-    @PostMapping(value = "/summary")
-    String getSummary(@RequestBody String content) {
-        return azureOpenAiService.generateSummary(content);
+    @PostMapping(value = "/generate-summary")
+    String postGenerateSummary(@RequestBody GenerateSummaryRequest generateSummaryRequest) {
+        return azureOpenAiService.generateSummary(generateSummaryRequest.getContent());
     }
 
     @PatchMapping("/{postId}")
