@@ -7,11 +7,14 @@ import com.mohajistudio.developers.database.dto.UserDetailsDto;
 import com.mohajistudio.developers.database.dto.UserDto;
 import com.mohajistudio.developers.database.entity.Contact;
 import com.mohajistudio.developers.database.entity.ContactType;
+import com.mohajistudio.developers.database.entity.MediaFile;
 import com.mohajistudio.developers.database.entity.User;
 import com.mohajistudio.developers.database.enums.Role;
 import com.mohajistudio.developers.database.repository.contact.ContactRepository;
 import com.mohajistudio.developers.database.repository.contacttype.ContactTypeRepository;
+import com.mohajistudio.developers.database.repository.mediafile.MediaFileRepository;
 import com.mohajistudio.developers.database.repository.user.UserRepository;
+import com.mohajistudio.developers.infra.service.MediaService;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -24,9 +27,11 @@ import java.util.UUID;
 @Service
 @RequiredArgsConstructor
 public class UserService {
+    private final MediaService mediaService;
     private final UserRepository userRepository;
     private final ContactRepository contactRepository;
     private final ContactTypeRepository contactTypeRepository;
+    private final MediaFileRepository mediaFileRepository;
 
     public Page<UserDto> findAllUser(Pageable pageable, Role role) {
         return userRepository.findAllUserDto(pageable, role);
@@ -41,6 +46,20 @@ public class UserService {
         }
 
         User user = findUser.get();
+
+        if(updateUserRequest.getProfileImageId() != null) {
+            MediaFile findMediaFile = mediaFileRepository.findByIdAndUserId(updateUserRequest.getProfileImageId(), userId);
+
+            if(findMediaFile == null) {
+                throw new CustomException(ErrorCode.ENTITY_NOT_FOUND, "알 수 없는 MediaFile");
+            }
+
+            MediaFile mediaFile = mediaService.moveToPermanentFolder(findMediaFile);
+            mediaFileRepository.save(mediaFile);
+
+            user.setProfileImageId(mediaFile.getId());
+            user.setProfileImageUrl(mediaFile.getFileName());
+        }
 
         user.setNickname(updateUserRequest.getNickname());
         user.setJobRole(updateUserRequest.getJobRole());

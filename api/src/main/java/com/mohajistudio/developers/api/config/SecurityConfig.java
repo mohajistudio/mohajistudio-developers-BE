@@ -42,13 +42,14 @@ public class SecurityConfig {
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http.authorizeHttpRequests(authorizeRequests -> {
             // ANY
-            authorizeRequests.requestMatchers(HttpMethod.POST, "/auth/logout").hasAnyAuthority(AUTHORITY_ADMIN, AUTHORITY_DEVELOPER, AUTHORITY_GUEST);
+            authorizeRequests.requestMatchers(HttpMethod.POST, "/auth/logout", "/media-files").hasAnyAuthority(AUTHORITY_ADMIN, AUTHORITY_DEVELOPER, AUTHORITY_GUEST);
+            authorizeRequests.requestMatchers(HttpMethod.PATCH, "/users/*").hasAnyAuthority(AUTHORITY_ADMIN, AUTHORITY_DEVELOPER, AUTHORITY_GUEST);
 
             // GUEST
             authorizeRequests.requestMatchers(HttpMethod.POST, "/auth/register/password", "/auth/register/nickname").hasAuthority(AUTHORITY_GUEST);
 
             // DEVELOPER
-            authorizeRequests.requestMatchers(HttpMethod.POST, "/posts", "/posts/media").hasAnyAuthority(AUTHORITY_ADMIN, AUTHORITY_DEVELOPER);
+            authorizeRequests.requestMatchers(HttpMethod.POST, "/posts").hasAnyAuthority(AUTHORITY_ADMIN, AUTHORITY_DEVELOPER);
 
             authorizeRequests.anyRequest().permitAll();
         });

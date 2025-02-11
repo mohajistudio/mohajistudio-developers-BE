@@ -5,12 +5,9 @@ import com.mohajistudio.developers.api.domain.post.dto.request.GetPostRequest;
 import com.mohajistudio.developers.api.domain.post.dto.request.UpdatePostRequest;
 import com.mohajistudio.developers.authentication.dto.CustomUserDetails;
 import com.mohajistudio.developers.common.dto.response.CustomPageResponse;
-import com.mohajistudio.developers.common.enums.ErrorCode;
-import com.mohajistudio.developers.common.exception.CustomException;
 import com.mohajistudio.developers.common.utils.HttpUtil;
 import com.mohajistudio.developers.database.dto.PostDetailsDto;
 import com.mohajistudio.developers.database.dto.PostDto;
-import com.mohajistudio.developers.database.entity.MediaFile;
 import com.mohajistudio.developers.database.entity.Post;
 import com.mohajistudio.developers.database.enums.PostStatus;
 import jakarta.servlet.http.HttpServletRequest;
@@ -18,16 +15,11 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.http.MediaType;
-import org.springframework.security.core.Authentication;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
 
 import java.net.UnknownHostException;
-import java.util.List;
 import java.util.UUID;
 
 @RestController
@@ -50,20 +42,6 @@ public class PostController {
         createPostRequest.setContent(updatedHtmlContent);
 
         return postService.publishPost(userDetails.getUserId(), createPostRequest.getTitle(), createPostRequest.getSummary(), createPostRequest.getContent(), createPostRequest.getThumbnailId(), createPostRequest.getStatus(), createPostRequest.getTags());
-    }
-
-    @PostMapping(value = "/media", consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
-    List<MediaFile> addMedia(@RequestPart(value = "files", required = false) List<MultipartFile> files) {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        UserDetails userDetails = (UserDetails) authentication.getPrincipal();
-
-        if (files == null || files.isEmpty()) {
-            throw new CustomException(ErrorCode.MULTIPART_FILE_EXCEPTION);
-        }
-
-        String email = userDetails.getUsername();
-
-        return postService.uploadMediaFiles(email, files);
     }
 
     @GetMapping("/{postId}")
