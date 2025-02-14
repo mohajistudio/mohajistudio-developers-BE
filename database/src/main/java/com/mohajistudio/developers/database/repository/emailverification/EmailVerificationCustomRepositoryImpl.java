@@ -67,6 +67,7 @@ public class EmailVerificationCustomRepositoryImpl implements EmailVerificationC
         return jpaQueryFactory
                 .selectFrom(emailVerification)
                 .where(eqEmail(email),
+                        emailVerification.verifiedAt.isNull(),
                         eqVerificationType(verificationType),
                         emailVerification.expiredAt.after(LocalDateTime.now()))
                 .fetchOne();
