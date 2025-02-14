@@ -2,7 +2,7 @@ package com.mohajistudio.developers.authentication.util;
 
 import com.mohajistudio.developers.authentication.config.JwtProperties;
 import com.mohajistudio.developers.common.dto.GeneratedToken;
-import com.mohajistudio.developers.database.enums.Role;
+import com.mohajistudio.developers.database.dto.UserDto;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.security.Keys;
 import jakarta.annotation.PostConstruct;
@@ -14,7 +14,6 @@ import javax.crypto.SecretKey;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.UUID;
 
 @Slf4j
 @Component
@@ -28,21 +27,20 @@ public class JwtUtil {
         this.secretKey = Keys.hmacShaKeyFor(jwtProperties.getSecretKey().getBytes());
     }
 
-    public GeneratedToken generateToken(UUID userId, Role role, String email) {
-        String accessToken = generateToken(userId, jwtProperties.getAccessTokenPeriod(), role, email);
-        String refreshToken = generateToken(userId, jwtProperties.getRefreshTokenPeriod(), role, email);
+    public GeneratedToken generateToken(UserDto user) {
+        String accessToken = generateToken(user, jwtProperties.getAccessTokenPeriod());
+        String refreshToken = generateToken(user, jwtProperties.getRefreshTokenPeriod());
 
         return new GeneratedToken(accessToken, refreshToken);
     }
 
-    private String generateToken(UUID userId, long expirationPeriod, Role role, String email) {
+    private String generateToken(UserDto user, long expirationPeriod) {
         ClaimsBuilder claimsBuilder = Jwts.claims();
-        claimsBuilder.add("role", role);
-        claimsBuilder.add("email", email);
+
+        claimsBuilder.add("user", user);
         Claims claims = claimsBuilder.build();
 
         return Jwts.builder()
-                .subject(userId.toString())
                 .issuedAt(new Date())
                 .issuer(jwtProperties.getIssuer())
                 .expiration(new Date(System.currentTimeMillis() + expirationPeriod))

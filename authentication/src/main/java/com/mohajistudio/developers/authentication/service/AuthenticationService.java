@@ -1,10 +1,12 @@
 package com.mohajistudio.developers.authentication.service;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.mohajistudio.developers.authentication.config.JwtProperties;
 import com.mohajistudio.developers.common.dto.GeneratedToken;
 import com.mohajistudio.developers.authentication.util.JwtUtil;
 import com.mohajistudio.developers.common.enums.ErrorCode;
 import com.mohajistudio.developers.common.exception.CustomException;
+import com.mohajistudio.developers.database.dto.UserDto;
 import com.mohajistudio.developers.database.entity.User;
 import com.mohajistudio.developers.database.repository.user.UserRepository;
 import com.mohajistudio.developers.database.utils.RedisUtil;
@@ -44,12 +46,7 @@ public class AuthenticationService {
             throw new CustomException(ErrorCode.USER_NOT_FOUND);
         }
 
-        GeneratedToken generatedToken = jwtUtil.generateToken(user.getId(), user.getRole(), user.getEmail());
-
-        user.setRefreshToken(generatedToken.getRefreshToken());
-        userRepository.save(user);
-
-        return generatedToken;
+        return generateToken(user);
     }
 
     public void logout(UUID userId) {
@@ -82,9 +79,11 @@ public class AuthenticationService {
 
     public GeneratedToken refreshToken(String refreshToken) {
         Map<String, Object> claims = jwtUtil.extractPayload(refreshToken);
-        String email = (String) claims.get("email");
 
-        Optional<User> findUser = userRepository.findByEmail(email);
+        ObjectMapper objectMapper = new ObjectMapper();
+        UserDto userDto = objectMapper.convertValue(claims.get("user"), UserDto.class);
+
+        Optional<User> findUser = userRepository.findById(userDto.getId());
 
         if(findUser.isEmpty()) {
             throw new CustomException(ErrorCode.USER_NOT_FOUND);
@@ -96,11 +95,7 @@ public class AuthenticationService {
             throw new CustomException(ErrorCode.REFRESH_TOKEN_MISMATCH);
         }
 
-        GeneratedToken generatedToken = jwtUtil.generateToken(user.getId(), user.getRole(), user.getEmail());
-        user.setRefreshToken(generatedToken.getRefreshToken());
-        userRepository.save(user);
-
-        return generatedToken;
+        return generateToken(user);
     }
 
     public void deleteAccount(String email) {
@@ -115,5 +110,16 @@ public class AuthenticationService {
         userRepository.delete(user);
 
         //TODO Kafka를 통해 HostedService로 이벤트를 발생시켜 처리 후 탈퇴 메일 전송
+    }
+
+    public GeneratedToken generateToken(User user) {
+        UserDto userDto = UserDto.builder().id(user.getId()).nickname(user.getNickname()).email(user.getEmail()).profileImageUrl(user.getProfileImageUrl()).role(user.getRole()).build();
+
+        GeneratedToken generatedToken = jwtUtil.generateToken(userDto);
+
+        user.setRefreshToken(generatedToken.getRefreshToken());
+        userRepository.save(user);
+
+        return generatedToken;
     }
 }

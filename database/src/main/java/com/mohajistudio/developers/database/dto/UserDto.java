@@ -2,6 +2,7 @@ package com.mohajistudio.developers.database.dto;
 
 import com.mohajistudio.developers.database.enums.Role;
 import com.querydsl.core.annotations.QueryProjection;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -10,6 +11,7 @@ import java.util.UUID;
 
 @Getter
 @Setter
+@Builder
 @NoArgsConstructor
 public class UserDto {
     private UUID id;

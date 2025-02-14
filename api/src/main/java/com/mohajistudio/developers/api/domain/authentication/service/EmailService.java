@@ -28,6 +28,8 @@ public class EmailService {
     private final SpringTemplateEngine templateEngine;
     private final EmailVerificationRepository emailVerificationRepository;
 
+    private static final int EXPIRATION_TIME = 5;
+
     @Transactional
     public EmailVerification requestEmailVerification(String email, VerificationType verificationType) {
         List<EmailVerification> requestedTodayByEmail = emailVerificationRepository.findAllRequestedToday(email, verificationType);
@@ -46,15 +48,16 @@ public class EmailService {
             emailVerificationRepository.save(emailVerification);
         }
 
+        LocalDateTime expiredAt = LocalDateTime.now();
+        expiredAt = expiredAt.plusMinutes(EXPIRATION_TIME);
+
         String verificationCode = String.format("%06d", new Random().nextInt(999999));
 
         Context context = new Context();
         context.setVariable("code", verificationCode);
+        context.setVariable("expirationTime", EXPIRATION_TIME + "분");
 
         String htmlContent = templateEngine.process("verification-email-template", context);
-
-        LocalDateTime expiredAt = LocalDateTime.now();
-        expiredAt = expiredAt.plusMinutes(5);
 
         EmailVerification newEmailVerification = EmailVerification.builder().code(verificationCode).email(email).expiredAt(expiredAt).verificationType(verificationType).build();
 
@@ -64,7 +67,7 @@ public class EmailService {
             MimeMessage mimeMessage = javaMailSender.createMimeMessage();
             MimeMessageHelper helper = new MimeMessageHelper(mimeMessage, "UTF-8");
             helper.setTo(email);
-            helper.setSubject("Your Verification Code");
+            helper.setSubject("MohajiStudio Developers 이메일 인증");
             helper.setText(htmlContent, true);
             helper.setFrom("mohajistudio@gmail.com");
 

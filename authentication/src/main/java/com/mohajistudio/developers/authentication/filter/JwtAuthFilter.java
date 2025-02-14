@@ -1,10 +1,12 @@
 package com.mohajistudio.developers.authentication.filter;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.mohajistudio.developers.authentication.service.AuthenticationService;
 import com.mohajistudio.developers.authentication.service.CustomUserDetailsService;
 import com.mohajistudio.developers.authentication.util.JwtUtil;
 import com.mohajistudio.developers.common.enums.ErrorCode;
 import com.mohajistudio.developers.common.exception.CustomException;
+import com.mohajistudio.developers.database.dto.UserDto;
 import io.jsonwebtoken.JwtException;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -22,7 +24,6 @@ import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
 import java.util.Map;
-import java.util.UUID;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -42,17 +43,17 @@ public class JwtAuthFilter extends OncePerRequestFilter {
                 Map<String, Object> claims = jwtUtil.extractPayload(token);
                 if (claims != null) {
                     /// 로그아웃된 사용자 체크
-                    UUID userId = UUID.fromString((String) claims.get("sub"));
                     long issuedAt = (Long) claims.get("iat");
 
-                    Long logoutTime = authenticationService.getLogoutTime(userId);
+                    ObjectMapper mapper = new ObjectMapper();
+                    UserDto user = mapper.convertValue(claims.get("user"), UserDto.class);
+
+                    Long logoutTime = authenticationService.getLogoutTime(user.getId());
                     if (logoutTime != null && issuedAt < logoutTime) {
                         throw new CustomException(ErrorCode.INVALID_ACCESS_TOKEN);
                     }
 
-                    String email = (String) claims.get("email");
-
-                    UserDetails userDetails = customUserDetailsService.loadUserByUsername(email);
+                    UserDetails userDetails = customUserDetailsService.loadUserByUsername(user.getEmail());
 
                     if (userDetails != null) {
                         UsernamePasswordAuthenticationToken usernamePasswordAuthenticationToken =
