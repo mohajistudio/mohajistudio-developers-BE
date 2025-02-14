@@ -49,21 +49,21 @@ public class PostController {
 
     @GetMapping("/{postId}")
     PostDetailsDto getPost(@AuthenticationPrincipal CustomUserDetails userDetails, @PathVariable UUID postId, HttpServletRequest request) throws UnknownHostException {
-        UUID userId = null;
-        if(userDetails != null) {
-            userId = userDetails.getUserId();
-        }
+            UUID userId = null;
+            if(userDetails != null) {
+                userId = userDetails.getUserId();
+            }
 
-        String ipAddress = HttpUtil.getClientIp(request);
+            String ipAddress = HttpUtil.getClientIp(request);
 
-        postService.increaseViewCount(postId, userId, ipAddress);
+            postService.increaseViewCount(postId, userId, ipAddress);
 
-        return postService.findPost(postId);
+            return postService.findPost(postId);
     }
 
-    @PostMapping(value = "/generate-summary")
-    String postGenerateSummary(@RequestBody GenerateSummaryRequest generateSummaryRequest) {
-        return azureOpenAiService.generateSummary(generateSummaryRequest.getContent());
+    @PostMapping(value = "/generate-metadata")
+    String postGenerateMetadata(@RequestBody GenerateSummaryRequest generateSummaryRequest) {
+        return azureOpenAiService.generatePostMetadata(generateSummaryRequest.getContent());
     }
 
     @PatchMapping("/{postId}")

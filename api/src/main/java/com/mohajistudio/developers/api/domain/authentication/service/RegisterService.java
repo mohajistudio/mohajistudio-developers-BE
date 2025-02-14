@@ -1,8 +1,8 @@
 package com.mohajistudio.developers.api.domain.authentication.service;
 
 import ch.qos.logback.core.util.StringUtil;
+import com.mohajistudio.developers.authentication.service.AuthenticationService;
 import com.mohajistudio.developers.common.dto.GeneratedToken;
-import com.mohajistudio.developers.authentication.util.JwtUtil;
 import com.mohajistudio.developers.common.enums.ErrorCode;
 import com.mohajistudio.developers.common.exception.CustomException;
 import com.mohajistudio.developers.database.entity.User;
@@ -18,31 +18,23 @@ import java.util.Optional;
 @Service
 @RequiredArgsConstructor
 public class RegisterService {
-    private final JwtUtil jwtUtil;
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
+    private final AuthenticationService authenticationService;
 
     public GeneratedToken registerAndGenerateToken(String email) {
         Optional<User> findUser = userRepository.findByEmail(email);
 
+        User user;
+
         if (findUser.isPresent()) {
-            User user = findUser.get();
-
-            GeneratedToken generatedToken = jwtUtil.generateToken(user.getId(), user.getRole(), user.getEmail());
-            user.setRefreshToken(generatedToken.getRefreshToken());
+            user = findUser.get();
+        } else {
+            user = User.builder().email(email).role(Role.ROLE_GUEST).build();
             userRepository.save(user);
-
-            return generatedToken;
         }
 
-        User user = User.builder().email(email).role(Role.ROLE_GUEST).build();
-        userRepository.save(user);
-
-        GeneratedToken generatedToken = jwtUtil.generateToken(user.getId(), user.getRole(), user.getEmail());
-        user.setRefreshToken(generatedToken.getRefreshToken());
-        userRepository.save(user);
-
-        return generatedToken;
+        return authenticationService.generateToken(user);
     }
 
     public void checkUserRegistered(String email) {
