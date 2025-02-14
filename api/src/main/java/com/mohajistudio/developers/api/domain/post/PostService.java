@@ -74,6 +74,7 @@ public class PostService {
         Document document = Jsoup.parse(htmlContent);
         Elements imgTags = document.select("img[src]");
         String awsS3BaseUrl = MediaUtil.getAwsS3BaseUrl();
+        document.outputSettings().prettyPrint(false);
 
         for (Element img : imgTags) {
             String src = img.attr("src");
