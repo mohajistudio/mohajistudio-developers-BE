@@ -35,6 +35,12 @@ public class TagService {
             PostTag postTag = PostTag.builder().postId(postId).tagId(savedTag.getId()).userId(userId).build();
             postTagRepository.save(postTag);
         } else {
+            PostTag findPostTag = postTagRepository.findByTagIdAndUserIdAndPostId(findTag.getId(), userId, postId);
+
+            if(findPostTag != null) {
+                return;
+            }
+
             findTag.setTagCount(findTag.getTagCount() + 1);
             Tag savedTag = tagRepository.save(findTag);
 

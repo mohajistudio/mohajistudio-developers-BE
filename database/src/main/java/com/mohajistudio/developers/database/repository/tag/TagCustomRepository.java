@@ -13,4 +13,6 @@ public interface TagCustomRepository {
     Page<TagDto> findAllTagDto(Pageable pageable);
 
     Page<TagDto> findAllTagDtoByUserId(Pageable pageable, UUID userId);
+
+    void decrementTagCount(UUID tagId);
 }

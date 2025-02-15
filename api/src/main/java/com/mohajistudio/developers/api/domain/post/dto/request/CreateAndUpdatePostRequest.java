@@ -12,7 +12,7 @@ import java.util.UUID;
 
 @Getter
 @Setter
-public class CreatePostRequest {
+public class CreateAndUpdatePostRequest {
 
     @NotNull
     @NotBlank

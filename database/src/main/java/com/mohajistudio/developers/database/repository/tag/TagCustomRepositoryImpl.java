@@ -79,6 +79,15 @@ public class TagCustomRepositoryImpl implements TagCustomRepository {
         return PageableExecutionUtils.getPage(tags, pageable, () -> totalCount.fetch().size());
     }
 
+    @Override
+    public void decrementTagCount(UUID tagId) {
+        jpaQueryFactory
+                .update(tag)
+                .set(tag.tagCount, tag.tagCount.subtract(1))
+                .where(tag.id.eq(tagId))
+                .execute();
+    }
+
     private BooleanExpression eqTitle(String title) {
         if (StringUtils.isNullOrEmpty(title)) return null;
         return tag.title.eq(title);

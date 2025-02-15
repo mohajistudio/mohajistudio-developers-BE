@@ -47,7 +47,8 @@ public class SecurityConfig {
             authorizeRequests.requestMatchers(HttpMethod.PATCH, "/users/*").hasAnyAuthority(AUTHORITY_ADMIN, AUTHORITY_DEVELOPER, AUTHORITY_GUEST);
 
             // DEVELOPER
-            authorizeRequests.requestMatchers(HttpMethod.POST, "/posts", "/posts/summary").hasAnyAuthority(AUTHORITY_ADMIN, AUTHORITY_DEVELOPER);
+            authorizeRequests.requestMatchers(HttpMethod.POST, "/posts", "/posts/generate-metadata").hasAnyAuthority(AUTHORITY_ADMIN, AUTHORITY_DEVELOPER);
+            authorizeRequests.requestMatchers(HttpMethod.PATCH, "/posts/*").hasAnyAuthority(AUTHORITY_ADMIN, AUTHORITY_DEVELOPER);
 
             // UNREGISTERED
             authorizeRequests.requestMatchers(HttpMethod.POST, "/auth/register/password", "/auth/register/nickname").hasAuthority(AUTHORITY_UNREGISTERED);
