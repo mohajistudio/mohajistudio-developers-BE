@@ -2,6 +2,7 @@ package com.mohajistudio.developers.infra.service;
 
 import com.amazonaws.services.s3.AmazonS3Client;
 import com.amazonaws.services.s3.model.CopyObjectRequest;
+import com.amazonaws.services.s3.model.DeleteObjectRequest;
 import com.amazonaws.services.s3.model.ObjectMetadata;
 import com.amazonaws.services.s3.model.PutObjectRequest;
 import com.mohajistudio.developers.common.enums.ErrorCode;
@@ -77,5 +78,15 @@ public class MediaService {
 
         mediaFile.setFileName(destinationKey);
         return mediaFile;
+    }
+
+    public void delete(MediaFile mediaFile) {
+        try {
+            DeleteObjectRequest deleteObjectRequest = new DeleteObjectRequest(bucket, mediaFile.getFileName());
+
+            amazonS3Client.deleteObject(deleteObjectRequest);
+        } catch (Exception e) {
+            throw new CustomException(ErrorCode.STORAGE_DELETE_FAILURE);
+        }
     }
 }
