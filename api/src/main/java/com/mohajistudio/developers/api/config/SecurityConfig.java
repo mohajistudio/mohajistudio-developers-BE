@@ -37,6 +37,7 @@ public class SecurityConfig {
     private static final String AUTHORITY_ADMIN = Role.ROLE_ADMIN.name();
     private static final String AUTHORITY_DEVELOPER = Role.ROLE_DEVELOPER.name();
     private static final String AUTHORITY_GUEST = Role.ROLE_GUEST.name();
+    private static final String AUTHORITY_UNREGISTERED = Role.ROLE_UNREGISTERED.name();
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
@@ -45,11 +46,12 @@ public class SecurityConfig {
             authorizeRequests.requestMatchers(HttpMethod.POST, "/auth/logout", "/media-files").hasAnyAuthority(AUTHORITY_ADMIN, AUTHORITY_DEVELOPER, AUTHORITY_GUEST);
             authorizeRequests.requestMatchers(HttpMethod.PATCH, "/users/*").hasAnyAuthority(AUTHORITY_ADMIN, AUTHORITY_DEVELOPER, AUTHORITY_GUEST);
 
-            // GUEST
-            authorizeRequests.requestMatchers(HttpMethod.POST, "/auth/register/password", "/auth/register/nickname").hasAuthority(AUTHORITY_GUEST);
-
             // DEVELOPER
-            authorizeRequests.requestMatchers(HttpMethod.POST, "/posts", "/posts/summary").hasAnyAuthority(AUTHORITY_ADMIN, AUTHORITY_DEVELOPER);
+            authorizeRequests.requestMatchers(HttpMethod.POST, "/posts", "/posts/generate-metadata").hasAnyAuthority(AUTHORITY_ADMIN, AUTHORITY_DEVELOPER);
+            authorizeRequests.requestMatchers(HttpMethod.PATCH, "/posts/*").hasAnyAuthority(AUTHORITY_ADMIN, AUTHORITY_DEVELOPER);
+
+            // UNREGISTERED
+            authorizeRequests.requestMatchers(HttpMethod.POST, "/auth/register/password", "/auth/register/nickname").hasAuthority(AUTHORITY_UNREGISTERED);
 
             authorizeRequests.anyRequest().permitAll();
         });

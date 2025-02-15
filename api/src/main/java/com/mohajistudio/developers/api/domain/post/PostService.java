@@ -9,6 +9,8 @@ import com.mohajistudio.developers.database.entity.*;
 import com.mohajistudio.developers.database.enums.PostStatus;
 import com.mohajistudio.developers.database.repository.mediafile.MediaFileRepository;
 import com.mohajistudio.developers.database.repository.post.PostRepository;
+import com.mohajistudio.developers.database.repository.posttag.PostTagRepository;
+import com.mohajistudio.developers.database.repository.tag.TagRepository;
 import com.mohajistudio.developers.database.utils.RedisUtil;
 import com.mohajistudio.developers.infra.service.MediaService;
 import com.mohajistudio.developers.infra.util.MediaUtil;
@@ -34,20 +36,21 @@ import java.util.concurrent.TimeUnit;
 @RequiredArgsConstructor
 public class PostService {
     private final RedisUtil redisUtil;
-    private final PostRepository postRepository;
-    private final MediaService mediaService;
     private final TagService tagService;
+    private final MediaService mediaService;
+    private final PostRepository postRepository;
+    private final TagRepository tagRepository;
+    private final PostTagRepository postTagRepository;
     private final MediaFileRepository mediaFileRepository;
 
     private static final String POST_VIEW_PREFIX = "post:view:";
+
 
     public Page<PostDto> findAllPost(Pageable pageable, UUID userId, String search, List<String> tags, PostStatus status) {
         return postRepository.findAllPostDto(pageable, userId, search, tags, status);
     }
 
-    public UUID publishPost(UUID userId, String title, String summary, String content, UUID thumbnailId, PostStatus status, List<String> tags) {
-        LocalDateTime publishedAt = LocalDateTime.now();
-
+    public UUID publishPost(UUID userId, String title, String summary, String content, UUID thumbnailId, LocalDateTime publishedAt, PostStatus status, List<String> tags) {
         Post post = Post.builder().userId(userId).title(title).summary(summary).content(content).publishedAt(publishedAt).status(status).build();
 
         if (thumbnailId != null) {
@@ -68,6 +71,12 @@ public class PostService {
         }
 
         return savedPost.getId();
+    }
+
+    public void removePostTagAndDecreaseTagCount(UUID postId, UUID tagId) {
+        tagRepository.decrementTagCount(tagId);
+
+        postTagRepository.deleteByTagIdAndPostId(tagId, postId);
     }
 
     public String processHtmlImagesForPermanentStorage(UUID userId, String htmlContent) {

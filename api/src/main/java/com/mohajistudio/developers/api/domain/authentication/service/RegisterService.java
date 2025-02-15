@@ -30,7 +30,7 @@ public class RegisterService {
         if (findUser.isPresent()) {
             user = findUser.get();
         } else {
-            user = User.builder().email(email).role(Role.ROLE_GUEST).build();
+            user = User.builder().email(email).role(Role.ROLE_UNREGISTERED).build();
             userRepository.save(user);
         }
 
@@ -94,11 +94,19 @@ public class RegisterService {
 
         User user = findUser.get();
 
+        if(user.getPassword() == null) {
+            throw new CustomException(ErrorCode.PASSWORD_NOT_SET);
+        }
+
         if (user.getNickname() != null) {
             throw new CustomException(ErrorCode.NICKNAME_ALREADY_SET);
         }
 
         user.setNickname(nickname);
+
+        /// 회원가입 성공
+        user.setRole(Role.ROLE_GUEST);
+
         userRepository.save(user);
     }
 }
