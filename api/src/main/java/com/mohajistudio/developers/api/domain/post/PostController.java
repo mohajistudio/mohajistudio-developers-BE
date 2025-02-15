@@ -14,12 +14,12 @@ import com.mohajistudio.developers.database.enums.PostStatus;
 import com.mohajistudio.developers.database.repository.post.PostRepository;
 import com.mohajistudio.developers.infra.service.AzureOpenAiService;
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
 import java.net.UnknownHostException;
@@ -42,6 +42,7 @@ public class PostController {
     }
 
     @PostMapping
+    @Transactional
     UUID addPost(@AuthenticationPrincipal CustomUserDetails userDetails, @Valid @RequestBody CreateAndUpdatePostRequest createPostRequest) {
         String updatedHtmlContent = postService.processHtmlImagesForPermanentStorage(userDetails.getUserId(), createPostRequest.getContent());
 
@@ -76,6 +77,7 @@ public class PostController {
     }
 
     @PatchMapping("/{postId}")
+    @Transactional
     UUID updatePost(@AuthenticationPrincipal CustomUserDetails userDetails, @PathVariable UUID postId, @RequestBody CreateAndUpdatePostRequest updatePostRequest) {
         PostDetailsDto post = postRepository.findByIdPostDetailsDto(postId);
 
@@ -93,7 +95,7 @@ public class PostController {
 
         post.getTags().forEach(tag -> {
             if(!updatePostRequest.getTags().contains(tag.getTitle())) {
-                postService.removePostTagAndDecreaseTagCount(postId, tag.getId());
+                postService.deletePostTagAndDecreaseTagCount(postId, tag.getId());
             }
         });
 
@@ -105,6 +107,22 @@ public class PostController {
     }
 
     @DeleteMapping("/{postId}")
-    void deletePost(@AuthenticationPrincipal UserDetails userDetails, @PathVariable UUID postId) {
+    @Transactional
+    void deletePost(@AuthenticationPrincipal CustomUserDetails userDetails, @PathVariable UUID postId) {
+        PostDetailsDto post = postRepository.findByIdPostDetailsDto(postId);
+
+        if(post == null) {
+            throw new CustomException(ErrorCode.ENTITY_NOT_FOUND, "알 수 없는 게시글");
+        }
+
+        if(!post.getUser().getId().equals(userDetails.getUserId())) {
+            throw new CustomException(ErrorCode.UNAUTHORIZED);
+        }
+
+        post.getTags().forEach(tag -> postService.deletePostTagAndDecreaseTagCount(postId, tag.getId()));
+
+        postService.deletePost(postId);
+
+        postService.deleteMediaFilesInHtml(userDetails.getUserId(), post.getContent());
     }
 }

@@ -32,6 +32,8 @@ public enum ErrorCode {
     STORAGE_UPLOAD_FAILURE(HttpStatus.INTERNAL_SERVER_ERROR, "MF0002", "스토리지 업로드 실패"),
     MAX_UPLOAD_SIZE_EXCEEDED(HttpStatus.BAD_REQUEST, "MF0003", "파일 최대 크기 초과"),
     INVALID_MEDIA_TYPE(HttpStatus.BAD_REQUEST, "MF0004", "잘못된 파일 형식"),
+    INVALID_MEDIA_FILE(HttpStatus.BAD_REQUEST, "MF0005", "잘못된 미디어 파일"),
+    STORAGE_DELETE_FAILURE(HttpStatus.INTERNAL_SERVER_ERROR, "MF0006", "스토리지 삭제 실패"),
 
     // Common
     INVALID_INPUT_VALUE(HttpStatus.BAD_REQUEST, "C0001", "유효하지 않은 입력 값"),

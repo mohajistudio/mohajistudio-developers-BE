@@ -73,10 +73,14 @@ public class PostService {
         return savedPost.getId();
     }
 
-    public void removePostTagAndDecreaseTagCount(UUID postId, UUID tagId) {
+    public void deletePostTagAndDecreaseTagCount(UUID postId, UUID tagId) {
         tagRepository.decrementTagCount(tagId);
 
         postTagRepository.deleteByTagIdAndPostId(tagId, postId);
+    }
+
+    public void deletePost(UUID postId) {
+        postRepository.deleteById(postId);
     }
 
     public String processHtmlImagesForPermanentStorage(UUID userId, String htmlContent) {
@@ -106,6 +110,38 @@ public class PostService {
         }
 
         return document.body().html();
+    }
+
+    public void deleteMediaFilesInHtml(UUID userId, String htmlContent) {
+        Document document = Jsoup.parse(htmlContent);
+        Elements imgTags = document.select("img[src]");
+        String awsS3BaseUrl = MediaUtil.getAwsS3BaseUrl();
+        document.outputSettings().prettyPrint(false);  // 개행 유지
+
+        for (Element img : imgTags) {
+            String src = img.attr("src");
+
+            if (src.startsWith(awsS3BaseUrl + "/media/images") || src.startsWith(awsS3BaseUrl + "/media/videos")) {
+                String extractedMediaFileId = MediaUtil.extractIdFromFileName(src);
+
+                try {
+                    UUID mediaFileId = UUID.fromString(extractedMediaFileId);
+
+                    MediaFile mediaFile = mediaFileRepository.findByIdAndUserId(mediaFileId, userId);
+
+                    if (mediaFile == null) {
+                        throw new CustomException(ErrorCode.ENTITY_NOT_FOUND, "알 수 없는 미디어 파일");
+                    }
+
+                    mediaService.remove(mediaFile.getFileName());
+
+                    mediaFileRepository.delete(mediaFile);
+
+                } catch (IllegalArgumentException e) {
+                    throw new CustomException(ErrorCode.INVALID_MEDIA_FILE);
+                }
+            }
+        }
     }
 
     public PostDetailsDto findPost(UUID postId) {
