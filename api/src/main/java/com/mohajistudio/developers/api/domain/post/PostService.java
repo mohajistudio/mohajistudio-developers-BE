@@ -133,7 +133,7 @@ public class PostService {
                         throw new CustomException(ErrorCode.ENTITY_NOT_FOUND, "알 수 없는 미디어 파일");
                     }
 
-                    mediaService.delete(mediaFile);
+                    mediaService.remove(mediaFile.getFileName());
 
                     mediaFileRepository.delete(mediaFile);
 

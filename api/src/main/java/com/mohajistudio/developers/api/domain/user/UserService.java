@@ -1,4 +1,4 @@
-package com.mohajistudio.developers.api.domain.user.service;
+package com.mohajistudio.developers.api.domain.user;
 
 import com.mohajistudio.developers.api.domain.user.dto.request.UpdateUserRequest;
 import com.mohajistudio.developers.common.enums.ErrorCode;
@@ -47,14 +47,40 @@ public class UserService {
 
         User user = findUser.get();
 
-        if(updateUserRequest.getProfileImageId() != null) {
+        /// 기존에 프로필 이미지가 있고 업데이트 할 프로필 이미지가 다르다면 기존 프로필 이미지를 삭제하고 새로운 MediaFile을 추가함
+        /// 기존에 프로필 이미지가 없고 업데이트 할 프로필 이미지가 있다면 MediaFile을 추가함
+        if(user.getProfileImageId() != null && !user.getProfileImageId().equals(updateUserRequest.getProfileImageId())) {
+            MediaFile findOldMediaFile = mediaFileRepository.findByIdAndUserId(user.getProfileImageId(), userId);
+
+            if(findOldMediaFile == null) {
+                throw new CustomException(ErrorCode.ENTITY_NOT_FOUND, "유효하지 않은 프로필 이미지");
+            }
+
+            mediaService.remove(findOldMediaFile.getFileName());
+
+            mediaFileRepository.delete(findOldMediaFile);
+
             MediaFile findMediaFile = mediaFileRepository.findByIdAndUserId(updateUserRequest.getProfileImageId(), userId);
 
             if(findMediaFile == null) {
-                throw new CustomException(ErrorCode.ENTITY_NOT_FOUND, "알 수 없는 MediaFile");
+                throw new CustomException(ErrorCode.ENTITY_NOT_FOUND, "유효하지 않은 프로필 이미지");
             }
 
             MediaFile mediaFile = mediaService.moveToPermanentFolder(findMediaFile);
+
+            mediaFileRepository.save(mediaFile);
+
+            user.setProfileImageId(mediaFile.getId());
+            user.setProfileImageUrl(mediaFile.getFileName());
+        } else if(user.getProfileImageId() == null && updateUserRequest.getProfileImageId() != null) {
+            MediaFile findMediaFile = mediaFileRepository.findByIdAndUserId(updateUserRequest.getProfileImageId(), userId);
+
+            if(findMediaFile == null) {
+                throw new CustomException(ErrorCode.ENTITY_NOT_FOUND, "유효하지 않은 프로필 이미지");
+            }
+
+            MediaFile mediaFile = mediaService.moveToPermanentFolder(findMediaFile);
+
             mediaFileRepository.save(mediaFile);
 
             user.setProfileImageId(mediaFile.getId());
@@ -77,6 +103,7 @@ public class UserService {
             contactRepository.save(newContact);
         });
     }
+
 
     public UserDetailsDto findUserDetails(String userId) {
         UserDetailsDto userDetails = userRepository.findUserDetailsDto(userId);

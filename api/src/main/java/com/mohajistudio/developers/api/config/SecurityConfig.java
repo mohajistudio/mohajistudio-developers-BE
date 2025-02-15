@@ -49,6 +49,7 @@ public class SecurityConfig {
             // DEVELOPER
             authorizeRequests.requestMatchers(HttpMethod.POST, "/posts", "/posts/generate-metadata").hasAnyAuthority(AUTHORITY_ADMIN, AUTHORITY_DEVELOPER);
             authorizeRequests.requestMatchers(HttpMethod.PATCH, "/posts/*").hasAnyAuthority(AUTHORITY_ADMIN, AUTHORITY_DEVELOPER);
+            authorizeRequests.requestMatchers(HttpMethod.DELETE, "/posts/*").hasAnyAuthority(AUTHORITY_ADMIN, AUTHORITY_DEVELOPER);
 
             // UNREGISTERED
             authorizeRequests.requestMatchers(HttpMethod.POST, "/auth/register/password", "/auth/register/nickname").hasAuthority(AUTHORITY_UNREGISTERED);

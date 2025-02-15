@@ -80,9 +80,9 @@ public class MediaService {
         return mediaFile;
     }
 
-    public void delete(MediaFile mediaFile) {
+    public void remove(String fileName) {
         try {
-            DeleteObjectRequest deleteObjectRequest = new DeleteObjectRequest(bucket, mediaFile.getFileName());
+            DeleteObjectRequest deleteObjectRequest = new DeleteObjectRequest(bucket, fileName);
 
             amazonS3Client.deleteObject(deleteObjectRequest);
         } catch (Exception e) {
