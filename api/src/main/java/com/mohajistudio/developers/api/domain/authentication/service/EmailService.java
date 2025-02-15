@@ -57,7 +57,7 @@ public class EmailService {
         context.setVariable("code", verificationCode);
         context.setVariable("expirationTime", EXPIRATION_TIME + "분");
 
-        String htmlContent = templateEngine.process("verification-email-template", context);
+        String htmlContent = templateEngine.process("email-verification-template", context);
 
         EmailVerification newEmailVerification = EmailVerification.builder().code(verificationCode).email(email).expiredAt(expiredAt).verificationType(verificationType).build();
 
