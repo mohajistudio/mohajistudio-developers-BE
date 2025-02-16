@@ -14,7 +14,6 @@ import org.springframework.stereotype.Service;
 
 import java.util.Optional;
 
-
 @Service
 @RequiredArgsConstructor
 public class RegisterService {
@@ -45,6 +44,11 @@ public class RegisterService {
         }
 
         User user = findUser.get();
+
+        if(user.getRole() != Role.ROLE_UNREGISTERED && user.getPassword() == null) {
+            throw new CustomException(ErrorCode.PASSWORD_RESET_REQUIRED);
+        }
+
         if (StringUtil.isNullOrEmpty(user.getPassword())) {
             throw new CustomException(ErrorCode.PASSWORD_NOT_SET);
         } else if (StringUtil.isNullOrEmpty(user.getNickname())) {

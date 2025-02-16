@@ -57,7 +57,10 @@ public class EmailService {
         context.setVariable("code", verificationCode);
         context.setVariable("expirationTime", EXPIRATION_TIME + "분");
 
-        String htmlContent = templateEngine.process("email-verification-template", context);
+        String htmlContent = switch (verificationType) {
+            case EMAIL_VERIFICATION -> templateEngine.process("email-verification-template", context);
+            case PASSWORD_RESET -> templateEngine.process("password-reset-template", context);
+        };
 
         EmailVerification newEmailVerification = EmailVerification.builder().code(verificationCode).email(email).expiredAt(expiredAt).verificationType(verificationType).build();
 
@@ -67,7 +70,13 @@ public class EmailService {
             MimeMessage mimeMessage = javaMailSender.createMimeMessage();
             MimeMessageHelper helper = new MimeMessageHelper(mimeMessage, "UTF-8");
             helper.setTo(email);
-            helper.setSubject("MohajiStudio Developers 이메일 인증");
+
+            String subject = switch (verificationType) {
+                case EMAIL_VERIFICATION -> "MohajiStudio Developers 이메일 인증";
+                case PASSWORD_RESET -> "MohajiStudio Developers 비밀번호 재설정";
+            };
+            
+            helper.setSubject(subject);
             helper.setText(htmlContent, true);
             helper.setFrom("mohajistudio@gmail.com");
 
@@ -91,14 +100,15 @@ public class EmailService {
             throw new CustomException(ErrorCode.EXCEEDED_VERIFICATION_ATTEMPTS);
         }
 
-        LocalDateTime now = LocalDateTime.now();
-        emailVerification.setAttempts(emailVerification.getAttempts() + 1);
-
         if (!emailVerification.getCode().equals(code)) {
             throw new CustomException(ErrorCode.INVALID_VERIFICATION_CODE);
         }
 
+        LocalDateTime now = LocalDateTime.now();
+        emailVerification.setAttempts(emailVerification.getAttempts() + 1);
+
         emailVerification.setVerifiedAt(now);
+
         emailVerificationRepository.save(emailVerification);
     }
 }

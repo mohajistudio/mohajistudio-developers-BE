@@ -16,6 +16,9 @@ public enum ErrorCode {
     PASSWORD_NOT_SET(HttpStatus.BAD_REQUEST, "R0005", "설정되지 않은 비밀번호"),
     NICKNAME_NOT_SET(HttpStatus.BAD_REQUEST, "R0006", "설정되지 않은 닉네임"),
 
+    // Authentication
+    PASSWORD_RESET_REQUIRED(HttpStatus.BAD_REQUEST, "A0001", "초기화 된 비밀번호로 재설정 필요"),
+
     // Email Verification
     EMAIL_SEND_FAILURE(HttpStatus.INTERNAL_SERVER_ERROR, "EV0001", "이메일 전송 실패"),
     INVALID_EMAIL(HttpStatus.BAD_REQUEST, "EV0002", "유효하지 않은 이메일"),

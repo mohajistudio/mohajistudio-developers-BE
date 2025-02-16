@@ -77,6 +77,22 @@ public class AuthenticationService {
         return (logoutTime != null) ? Long.parseLong(logoutTime) : null;
     }
 
+    public void resetPassword(User user) {
+        if (user.getPassword() == null) {
+            throw new CustomException(ErrorCode.PASSWORD_NOT_SET);
+        }
+
+        user.setPassword(null);
+
+        userRepository.save(user);
+    }
+
+    public void updatePassword(User user, String password) {
+        user.setPassword(passwordEncoder.encode(password));
+
+        userRepository.save(user);
+    }
+
     public GeneratedToken refreshToken(String refreshToken) {
         Map<String, Object> claims = jwtUtil.extractPayload(refreshToken);
 
@@ -98,8 +114,8 @@ public class AuthenticationService {
         return generateToken(user);
     }
 
-    public void deleteAccount(String email) {
-        Optional<User> findUser = userRepository.findByEmail(email);
+    public void deleteAccount(UUID userId) {
+        Optional<User> findUser = userRepository.findById(userId);
 
         if(findUser.isEmpty()) {
             throw new CustomException(ErrorCode.USER_NOT_FOUND);

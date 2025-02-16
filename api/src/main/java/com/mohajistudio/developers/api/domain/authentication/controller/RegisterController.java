@@ -33,7 +33,7 @@ public class RegisterController {
             throw new CustomException(ErrorCode.ALREADY_EXIST_USER);
         }
 
-        EmailVerification emailVerification = emailService.requestEmailVerification(emailRequest.getEmail(), VerificationType.SIGNUP);
+        EmailVerification emailVerification = emailService.requestEmailVerification(emailRequest.getEmail(), VerificationType.EMAIL_VERIFICATION);
 
         return EmailVerifyResponse.builder().expiredAt(emailVerification.getExpiredAt()).build();
     }
@@ -46,7 +46,7 @@ public class RegisterController {
             throw new CustomException(ErrorCode.ALREADY_EXIST_USER);
         }
 
-        emailService.verifyEmailCode(emailVerifyRequest.getEmail(), emailVerifyRequest.getCode(), VerificationType.SIGNUP);
+        emailService.verifyEmailCode(emailVerifyRequest.getEmail(), emailVerifyRequest.getCode(), VerificationType.EMAIL_VERIFICATION);
 
         return registerService.registerAndGenerateToken(emailVerifyRequest.getEmail());
     }

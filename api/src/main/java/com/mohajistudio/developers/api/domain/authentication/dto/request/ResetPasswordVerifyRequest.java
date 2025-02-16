@@ -9,7 +9,7 @@ import org.hibernate.validator.constraints.Length;
 
 @Getter
 @Setter
-public class ForgotPasswordVerifyRequest {
+public class ResetPasswordVerifyRequest {
     @Email
     @NotBlank
     @NotNull
