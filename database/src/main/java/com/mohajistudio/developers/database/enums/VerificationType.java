@@ -1,6 +1,6 @@
 package com.mohajistudio.developers.database.enums;
 
 public enum VerificationType {
-    SIGNUP,
+    EMAIL_VERIFICATION,
     PASSWORD_RESET
 }
