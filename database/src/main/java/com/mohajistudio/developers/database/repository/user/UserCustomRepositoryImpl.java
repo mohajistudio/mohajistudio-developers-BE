@@ -36,6 +36,7 @@ public class UserCustomRepositoryImpl implements UserCustomRepository {
                         user.nickname,
                         user.email,
                         user.profileImageUrl,
+                        user.jobRole,
                         user.role
                 )).from(user)
                 .where(eqRole(role))

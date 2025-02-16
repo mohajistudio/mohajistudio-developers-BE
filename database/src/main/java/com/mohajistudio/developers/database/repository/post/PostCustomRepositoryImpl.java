@@ -58,6 +58,7 @@ public class PostCustomRepositoryImpl implements PostCustomRepository {
                                                         user.nickname,
                                                         user.email,
                                                         user.profileImageUrl,
+                                                        user.jobRole,
                                                         user.role
                                                 ),
                                                 post.title,
@@ -104,6 +105,7 @@ public class PostCustomRepositoryImpl implements PostCustomRepository {
                                                         user.nickname,
                                                         user.email,
                                                         user.profileImageUrl,
+                                                        user.jobRole,
                                                         user.role
                                                 ),
                                                 post.title,
