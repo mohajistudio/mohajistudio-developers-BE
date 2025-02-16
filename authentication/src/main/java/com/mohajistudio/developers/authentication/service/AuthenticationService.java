@@ -129,7 +129,7 @@ public class AuthenticationService {
     }
 
     public GeneratedToken generateToken(User user) {
-        UserDto userDto = UserDto.builder().id(user.getId()).nickname(user.getNickname()).email(user.getEmail()).profileImageUrl(user.getProfileImageUrl()).role(user.getRole()).build();
+        UserDto userDto = UserDto.builder().id(user.getId()).nickname(user.getNickname()).email(user.getEmail()).profileImageUrl(user.getProfileImageUrl()).role(user.getRole()).jobRole(user.getJobRole()).build();
 
         GeneratedToken generatedToken = jwtUtil.generateToken(userDto);
 
