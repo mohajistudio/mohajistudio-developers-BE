@@ -25,7 +25,7 @@ public class RegisterController {
     private final RegisterService registerService;
     private final EmailService emailService;
 
-    @PostMapping("/email/request")
+    @PostMapping("/email-verification/request")
     public EmailVerifyResponse requestEmailVerification(@Valid @RequestBody EmailRequest emailRequest) {
         boolean isUserRegistrationComplete = registerService.isUserRegistrationComplete(emailRequest.getEmail());
 
@@ -38,7 +38,7 @@ public class RegisterController {
         return EmailVerifyResponse.builder().expiredAt(emailVerification.getExpiredAt()).build();
     }
 
-    @PostMapping("/email/verify")
+    @PostMapping("/email-verification/verify")
     public GeneratedToken verifyEmailCode(@Valid @RequestBody EmailVerifyRequest emailVerifyRequest) {
         boolean isUserRegistrationComplete = registerService.isUserRegistrationComplete(emailVerifyRequest.getEmail());
 

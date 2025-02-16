@@ -1,6 +1,7 @@
 package com.mohajistudio.developers.api.domain.authentication.controller;
 
 import com.mohajistudio.developers.api.domain.authentication.dto.request.*;
+import com.mohajistudio.developers.api.domain.authentication.dto.response.EmailVerifyResponse;
 import com.mohajistudio.developers.api.domain.authentication.service.RegisterService;
 import com.mohajistudio.developers.authentication.dto.CustomUserDetails;
 import com.mohajistudio.developers.common.dto.GeneratedToken;
@@ -8,7 +9,9 @@ import com.mohajistudio.developers.authentication.service.AuthenticationService;
 import com.mohajistudio.developers.api.domain.authentication.service.EmailService;
 import com.mohajistudio.developers.common.enums.ErrorCode;
 import com.mohajistudio.developers.common.exception.CustomException;
+import com.mohajistudio.developers.database.entity.EmailVerification;
 import com.mohajistudio.developers.database.entity.User;
+import com.mohajistudio.developers.database.enums.Role;
 import com.mohajistudio.developers.database.enums.VerificationType;
 import com.mohajistudio.developers.database.repository.user.UserRepository;
 import jakarta.transaction.Transactional;
@@ -48,10 +51,22 @@ public class AuthenticationController {
     }
 
     @PostMapping("/password-reset/request")
-    public void postResetPasswordRequest(@Valid @RequestBody ResetPasswordRequest forgotPasswordRequest) {
-        registerService.checkUserRegistered(forgotPasswordRequest.getEmail());
+    public EmailVerifyResponse postResetPasswordRequest(@Valid @RequestBody ResetPasswordRequest forgotPasswordRequest) {
+        Optional<User> findUser = userRepository.findByEmail(forgotPasswordRequest.getEmail());
 
-        emailService.requestEmailVerification(forgotPasswordRequest.getEmail(), VerificationType.PASSWORD_RESET);
+        if (findUser.isEmpty()) {
+            throw new CustomException(ErrorCode.USER_NOT_FOUND);
+        }
+
+        User user = findUser.get();
+
+        if(user.getRole() == Role.ROLE_UNREGISTERED) {
+            throw new CustomException(ErrorCode.INCOMPLETE_REGISTRATION);
+        }
+
+        EmailVerification emailVerification = emailService.requestEmailVerification(forgotPasswordRequest.getEmail(), VerificationType.PASSWORD_RESET);
+
+        return EmailVerifyResponse.builder().expiredAt(emailVerification.getExpiredAt()).build();
     }
 
     @PostMapping("/password-reset/verify")

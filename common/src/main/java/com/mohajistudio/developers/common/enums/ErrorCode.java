@@ -12,7 +12,7 @@ public enum ErrorCode {
     ALREADY_EXIST_USER(HttpStatus.BAD_REQUEST, "R0001", "이미 존재하는 유저"),
     PASSWORD_ALREADY_SET(HttpStatus.BAD_REQUEST, "R0002", "이미 설정된 비밀번호"),
     NICKNAME_ALREADY_SET(HttpStatus.BAD_REQUEST, "R0003", "이미 설정된 닉네임"),
-    INCOMPLETE_REGISTRATION(HttpStatus.BAD_REQUEST, "R0004", "회원가입이 완료되지 않은 유저"),
+    INCOMPLETE_REGISTRATION(HttpStatus.UNAUTHORIZED, "R0004", "회원가입이 완료되지 않은 유저"),
     PASSWORD_NOT_SET(HttpStatus.BAD_REQUEST, "R0005", "설정되지 않은 비밀번호"),
     NICKNAME_NOT_SET(HttpStatus.BAD_REQUEST, "R0006", "설정되지 않은 닉네임"),
 
