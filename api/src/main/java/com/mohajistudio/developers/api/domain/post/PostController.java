@@ -107,22 +107,7 @@ public class PostController {
     }
 
     @DeleteMapping("/{postId}")
-    @Transactional
     void deletePost(@AuthenticationPrincipal CustomUserDetails userDetails, @PathVariable UUID postId) {
-        PostDetailsDto post = postRepository.findByIdPostDetailsDto(postId);
-
-        if(post == null) {
-            throw new CustomException(ErrorCode.ENTITY_NOT_FOUND, "알 수 없는 게시글");
-        }
-
-        if(!post.getUser().getId().equals(userDetails.getUserId())) {
-            throw new CustomException(ErrorCode.UNAUTHORIZED);
-        }
-
-        post.getTags().forEach(tag -> postService.deletePostTagAndDecreaseTagCount(postId, tag.getId()));
-
-        postService.deletePost(postId);
-
-        postService.deleteMediaFilesInHtml(userDetails.getUserId(), post.getContent());
+        postService.deletePost(postId, userDetails.getUserId());
     }
 }

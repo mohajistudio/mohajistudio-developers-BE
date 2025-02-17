@@ -27,6 +27,7 @@ public class UserDto {
         this.nickname = nickname;
         this.email = email;
         this.profileImageUrl = profileImageUrl;
+        this.jobRole = jobRole;
         this.role = role;
     }
 }

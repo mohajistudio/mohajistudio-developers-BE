@@ -60,6 +60,7 @@ public class EmailService {
         String htmlContent = switch (verificationType) {
             case EMAIL_VERIFICATION -> templateEngine.process("email-verification-template", context);
             case PASSWORD_RESET -> templateEngine.process("password-reset-template", context);
+            case ACCOUNT_DELETE -> templateEngine.process("account-delete-template", context);
         };
 
         EmailVerification newEmailVerification = EmailVerification.builder().code(verificationCode).email(email).expiredAt(expiredAt).verificationType(verificationType).build();
@@ -74,6 +75,7 @@ public class EmailService {
             String subject = switch (verificationType) {
                 case EMAIL_VERIFICATION -> "MohajiStudio Developers 이메일 인증";
                 case PASSWORD_RESET -> "MohajiStudio Developers 비밀번호 재설정";
+                case ACCOUNT_DELETE -> "MohajiStudio Developers 회원탈퇴";
             };
             
             helper.setSubject(subject);
