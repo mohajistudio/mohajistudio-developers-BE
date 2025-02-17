@@ -114,20 +114,6 @@ public class AuthenticationService {
         return generateToken(user);
     }
 
-    public void deleteAccount(UUID userId) {
-        Optional<User> findUser = userRepository.findById(userId);
-
-        if(findUser.isEmpty()) {
-            throw new CustomException(ErrorCode.USER_NOT_FOUND);
-        }
-
-        User user = findUser.get();
-
-        userRepository.delete(user);
-
-        //TODO Kafka를 통해 HostedService로 이벤트를 발생시켜 처리 후 탈퇴 메일 전송
-    }
-
     public GeneratedToken generateToken(User user) {
         UserDto userDto = UserDto.builder().id(user.getId()).nickname(user.getNickname()).email(user.getEmail()).profileImageUrl(user.getProfileImageUrl()).role(user.getRole()).jobRole(user.getJobRole()).build();
 

@@ -116,7 +116,5 @@ public class AuthenticationController {
     @Transactional
     public void postDeleteAccountVerify(@AuthenticationPrincipal CustomUserDetails userDetails, @Valid @RequestBody DeleteAccountVerifyRequest deleteAccountVerifyRequest) {
         emailService.verifyEmailCode(userDetails.getUsername(), deleteAccountVerifyRequest.getCode(), VerificationType.ACCOUNT_DELETE);
-
-        authenticationService.deleteAccount(userDetails.getUserId());
     }
 }
