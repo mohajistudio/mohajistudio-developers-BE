@@ -79,8 +79,23 @@ public class PostService {
         postTagRepository.deleteByTagIdAndPostId(tagId, postId);
     }
 
-    public void deletePost(UUID postId) {
-        postRepository.deleteById(postId);
+    @Transactional
+    public void deletePost(UUID postId, UUID userId) {
+        PostDetailsDto post = postRepository.findByIdPostDetailsDto(postId);
+
+        if(post == null) {
+            throw new CustomException(ErrorCode.ENTITY_NOT_FOUND, "알 수 없는 게시글");
+        }
+
+        if(!post.getUser().getId().equals(userId)) {
+            throw new CustomException(ErrorCode.UNAUTHORIZED);
+        }
+
+        post.getTags().forEach(tag -> deletePostTagAndDecreaseTagCount(post.getId(), tag.getId()));
+
+        postRepository.deleteById(post.getId());
+
+        deleteMediaFilesInHtml(userId, post.getContent());
     }
 
     public String processHtmlImagesForPermanentStorage(UUID userId, String htmlContent) {

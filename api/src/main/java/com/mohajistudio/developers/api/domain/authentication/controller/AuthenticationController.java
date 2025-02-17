@@ -20,8 +20,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.Optional;
-import java.util.UUID;
+import java.util.*;
 
 @RestController
 @RequiredArgsConstructor
@@ -51,8 +50,8 @@ public class AuthenticationController {
     }
 
     @PostMapping("/password-reset/request")
-    public EmailVerifyResponse postResetPasswordRequest(@Valid @RequestBody ResetPasswordRequest forgotPasswordRequest) {
-        Optional<User> findUser = userRepository.findByEmail(forgotPasswordRequest.getEmail());
+    public EmailVerifyResponse postResetPasswordRequest(@Valid @RequestBody EmailRequest emailRequest) {
+        Optional<User> findUser = userRepository.findByEmail(emailRequest.getEmail());
 
         if (findUser.isEmpty()) {
             throw new CustomException(ErrorCode.USER_NOT_FOUND);
@@ -64,15 +63,15 @@ public class AuthenticationController {
             throw new CustomException(ErrorCode.INCOMPLETE_REGISTRATION);
         }
 
-        EmailVerification emailVerification = emailService.requestEmailVerification(forgotPasswordRequest.getEmail(), VerificationType.PASSWORD_RESET);
+        EmailVerification emailVerification = emailService.requestEmailVerification(emailRequest.getEmail(), VerificationType.PASSWORD_RESET);
 
         return EmailVerifyResponse.builder().expiredAt(emailVerification.getExpiredAt()).build();
     }
 
     @PostMapping("/password-reset/verify")
     @Transactional
-    public GeneratedToken postResetPasswordVerify(@Valid @RequestBody ResetPasswordVerifyRequest resetPasswordVerifyRequest) {
-        Optional<User> findUser = userRepository.findByEmail(resetPasswordVerifyRequest.getEmail());
+    public GeneratedToken postResetPasswordVerify(@Valid @RequestBody EmailVerifyRequest emailVerifyRequest) {
+        Optional<User> findUser = userRepository.findByEmail(emailVerifyRequest.getEmail());
 
         if (findUser.isEmpty()) {
             throw new CustomException(ErrorCode.USER_NOT_FOUND);
@@ -80,7 +79,7 @@ public class AuthenticationController {
 
         User user = findUser.get();
 
-        emailService.verifyEmailCode(resetPasswordVerifyRequest.getEmail(), resetPasswordVerifyRequest.getCode(), VerificationType.PASSWORD_RESET);
+        emailService.verifyEmailCode(emailVerifyRequest.getEmail(), emailVerifyRequest.getCode(), VerificationType.PASSWORD_RESET);
 
         authenticationService.saveLogoutTime(user.getId());
 
@@ -106,12 +105,18 @@ public class AuthenticationController {
         authenticationService.updatePassword(user, resetPasswordUpdateRequest.getPassword());
     }
 
-    @DeleteMapping("/{userId}")
-    public void deleteAccount(@AuthenticationPrincipal CustomUserDetails userDetails, @PathVariable UUID userId) {
-        if(!userId.equals(userDetails.getUserId())) {
-            throw new CustomException(ErrorCode.INVALID_INPUT_VALUE);
-        }
+    @PostMapping("/delete-account/request")
+    public EmailVerifyResponse postDeleteAccountRequest(@AuthenticationPrincipal CustomUserDetails userDetails) {
+        EmailVerification emailVerification = emailService.requestEmailVerification(userDetails.getUsername(), VerificationType.ACCOUNT_DELETE);
 
-        authenticationService.deleteAccount(userId);
+        return EmailVerifyResponse.builder().expiredAt(emailVerification.getExpiredAt()).build();
+    }
+
+    @PostMapping("/delete-account/verify")
+    @Transactional
+    public void postDeleteAccountVerify(@AuthenticationPrincipal CustomUserDetails userDetails, @Valid @RequestBody DeleteAccountVerifyRequest deleteAccountVerifyRequest) {
+        emailService.verifyEmailCode(userDetails.getUsername(), deleteAccountVerifyRequest.getCode(), VerificationType.ACCOUNT_DELETE);
+
+        authenticationService.deleteAccount(userDetails.getUserId());
     }
 }

@@ -41,9 +41,9 @@ public enum ErrorCode {
     // Common
     INVALID_INPUT_VALUE(HttpStatus.BAD_REQUEST, "C0001", "유효하지 않은 입력 값"),
     HTTP_MESSAGE_NOT_READABLE(HttpStatus.BAD_REQUEST, "C0002", "잘못된 JSON 요청 형식"),
-    MISSING_PARAMETER(HttpStatus.BAD_REQUEST, "C003", "필수 값인 매개변수를 찾을 수 없음"),
-    ENTITY_NOT_FOUND(HttpStatus.BAD_REQUEST, "C004", "알 수 없는 엔티티"),
-    UNAUTHORIZED(HttpStatus.UNAUTHORIZED, "C005", "권한 없음"),
+    MISSING_PARAMETER(HttpStatus.BAD_REQUEST, "C0003", "필수 값인 매개변수를 찾을 수 없음"),
+    ENTITY_NOT_FOUND(HttpStatus.BAD_REQUEST, "C0004", "알 수 없는 엔티티"),
+    UNAUTHORIZED(HttpStatus.UNAUTHORIZED, "C0005", "권한 없음"),
 
     UNKNOWN_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "C9999", "알 수 없는 에러");
 
