@@ -11,6 +11,6 @@ import lombok.Setter;
 public class SetNicknameRequest {
     @NotNull
     @NotEmpty
-    @Pattern(regexp = "^[a-z0-9_.](?:[a-z0-9]*[_.]?){1,19}$")
+    @Pattern(regexp = "^(?![0-9]+$)[a-zA-Z0-9_](?:[a-zA-Z0-9_]*(?:\\.[a-zA-Z0-9_]+)?){1,19}$")
     private String nickname;
 }
