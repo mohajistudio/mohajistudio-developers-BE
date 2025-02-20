@@ -14,7 +14,7 @@ import com.mohajistudio.developers.database.repository.contact.ContactRepository
 import com.mohajistudio.developers.database.repository.contacttype.ContactTypeRepository;
 import com.mohajistudio.developers.database.repository.mediafile.MediaFileRepository;
 import com.mohajistudio.developers.database.repository.user.UserRepository;
-import com.mohajistudio.developers.infra.service.MediaService;
+import com.mohajistudio.developers.infra.service.StorageService;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -27,7 +27,7 @@ import java.util.UUID;
 @Service
 @RequiredArgsConstructor
 public class UserService {
-    private final MediaService mediaService;
+    private final StorageService storageService;
     private final UserRepository userRepository;
     private final ContactRepository contactRepository;
     private final ContactTypeRepository contactTypeRepository;
@@ -56,7 +56,7 @@ public class UserService {
                 throw new CustomException(ErrorCode.ENTITY_NOT_FOUND, "유효하지 않은 프로필 이미지");
             }
 
-            mediaService.remove(findOldMediaFile.getFileName());
+            storageService.remove(findOldMediaFile.getFileName());
 
             mediaFileRepository.delete(findOldMediaFile);
 
@@ -66,7 +66,7 @@ public class UserService {
                 throw new CustomException(ErrorCode.ENTITY_NOT_FOUND, "유효하지 않은 프로필 이미지");
             }
 
-            MediaFile mediaFile = mediaService.moveToPermanentFolder(findMediaFile);
+            MediaFile mediaFile = storageService.copyToPermanentFolder(findMediaFile);
 
             mediaFileRepository.save(mediaFile);
 
@@ -79,7 +79,7 @@ public class UserService {
                 throw new CustomException(ErrorCode.ENTITY_NOT_FOUND, "유효하지 않은 프로필 이미지");
             }
 
-            MediaFile mediaFile = mediaService.moveToPermanentFolder(findMediaFile);
+            MediaFile mediaFile = storageService.copyToPermanentFolder(findMediaFile);
 
             mediaFileRepository.save(mediaFile);
 
@@ -105,13 +105,25 @@ public class UserService {
     }
 
 
-    public UserDetailsDto findUserDetails(String userId) {
-        UserDetailsDto userDetails = userRepository.findUserDetailsDto(userId);
+    public UserDetailsDto findUserDetails(String nickname) {
+        UserDetailsDto userDetails = userRepository.findUserDetailsDto(nickname);
 
         if (userDetails == null) {
             throw new CustomException(ErrorCode.USER_NOT_FOUND);
         }
 
         return userDetails;
+    }
+
+    public void deleteUser(UUID userId) {
+        UserDetailsDto user = userRepository.findUserDetailsDto(userId);
+
+        if(user == null) {
+            throw new CustomException(ErrorCode.USER_NOT_FOUND);
+        }
+
+        user.getContacts().forEach(contact -> contactRepository.deleteById(contact.getId()));
+
+        userRepository.deleteById(user.getId());
     }
 }

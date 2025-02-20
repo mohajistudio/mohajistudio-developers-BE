@@ -3,6 +3,9 @@ package com.mohajistudio.developers.api.domain.authentication.controller;
 import com.mohajistudio.developers.api.domain.authentication.dto.request.*;
 import com.mohajistudio.developers.api.domain.authentication.dto.response.EmailVerifyResponse;
 import com.mohajistudio.developers.api.domain.authentication.service.RegisterService;
+import com.mohajistudio.developers.api.domain.mediafile.MediaFileService;
+import com.mohajistudio.developers.api.domain.post.PostService;
+import com.mohajistudio.developers.api.domain.user.UserService;
 import com.mohajistudio.developers.authentication.dto.CustomUserDetails;
 import com.mohajistudio.developers.common.dto.GeneratedToken;
 import com.mohajistudio.developers.authentication.service.AuthenticationService;
@@ -26,10 +29,13 @@ import java.util.*;
 @RequiredArgsConstructor
 @RequestMapping("/auth")
 public class AuthenticationController {
+    private final UserService userService;
+    private final PostService postService;
     private final EmailService emailService;
-    private final UserRepository userRepository;
     private final RegisterService registerService;
+    private final MediaFileService mediaFileService;
     private final AuthenticationService authenticationService;
+    private final UserRepository userRepository;
 
     @PostMapping("/login")
     public GeneratedToken postLogin(@Valid @RequestBody LoginRequest loginRequest) {
@@ -113,8 +119,15 @@ public class AuthenticationController {
     }
 
     @PostMapping("/delete-account/verify")
-    @Transactional
     public void postDeleteAccountVerify(@AuthenticationPrincipal CustomUserDetails userDetails, @Valid @RequestBody DeleteAccountVerifyRequest deleteAccountVerifyRequest) {
         emailService.verifyEmailCode(userDetails.getUsername(), deleteAccountVerifyRequest.getCode(), VerificationType.ACCOUNT_DELETE);
+
+        emailService.deleteAllEmailVerifications(userDetails.getUsername());
+
+        mediaFileService.deleteAllMediaFiles(userDetails.getUserId());
+
+        postService.deleteAllPosts(userDetails.getUserId());
+
+        userService.deleteUser(userDetails.getUserId());
     }
 }

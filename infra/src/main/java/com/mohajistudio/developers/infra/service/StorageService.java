@@ -21,13 +21,13 @@ import java.util.UUID;
 @Slf4j
 @Service
 @RequiredArgsConstructor
-public class MediaService {
+public class StorageService {
     private final AmazonS3Client amazonS3Client;
 
     @Value("${cloud.aws.s3.bucket}")
     private String bucket;
 
-    public MediaFile uploadMediaFileToTempFolder(UUID memberId, MultipartFile file) {
+    public MediaFile uploadToTempFolder(UUID memberId, MultipartFile file) {
         String contentType = file.getContentType();
 
         if (contentType == null) {
@@ -55,7 +55,7 @@ public class MediaService {
         return MediaFile.builder().userId(memberId).fileName(fileName).contentType(ContentType.fromMimeType(contentType)).size(file.getSize()).build();
     }
 
-    public MediaFile moveToPermanentFolder(MediaFile mediaFile) {
+    public MediaFile copyToPermanentFolder(MediaFile mediaFile) {
         String sourceKey = mediaFile.getFileName();
         String mimeType = mediaFile.getContentType().getMimeType();
         String destinationKey;

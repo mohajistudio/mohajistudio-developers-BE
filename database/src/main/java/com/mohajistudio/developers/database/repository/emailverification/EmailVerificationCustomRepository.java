@@ -14,4 +14,6 @@ public interface EmailVerificationCustomRepository {
     List<EmailVerification> findAllRequestedToday(String email, VerificationType verificationType);
 
     EmailVerification findByEmail(String email, VerificationType verificationType);
+
+    Long deleteAllByEmail(String email);
 }

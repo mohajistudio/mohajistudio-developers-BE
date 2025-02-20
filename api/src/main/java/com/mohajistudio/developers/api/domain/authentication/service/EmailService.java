@@ -113,4 +113,10 @@ public class EmailService {
 
         emailVerificationRepository.save(emailVerification);
     }
+
+    public void deleteAllEmailVerifications(String email) {
+        Long deleteCount = emailVerificationRepository.deleteAllByEmail(email);
+
+        log.info(deleteCount.toString());
+    }
 }

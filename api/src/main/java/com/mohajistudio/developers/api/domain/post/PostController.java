@@ -44,10 +44,6 @@ public class PostController {
     @PostMapping
     @Transactional
     UUID addPost(@AuthenticationPrincipal CustomUserDetails userDetails, @Valid @RequestBody CreateAndUpdatePostRequest createPostRequest) {
-        String updatedHtmlContent = postService.processHtmlImagesForPermanentStorage(userDetails.getUserId(), createPostRequest.getContent());
-
-        createPostRequest.setContent(updatedHtmlContent);
-
         LocalDateTime publishedAt = null;
 
         if (createPostRequest.getStatus() == PostStatus.PUBLISHED) {
@@ -88,10 +84,6 @@ public class PostController {
         if(!post.getUser().getId().equals(userDetails.getUserId())) {
             throw new CustomException(ErrorCode.UNAUTHORIZED);
         }
-
-        String updatedHtmlContent = postService.processHtmlImagesForPermanentStorage(userDetails.getUserId(), updatePostRequest.getContent());
-
-        updatePostRequest.setContent(updatedHtmlContent);
 
         post.getTags().forEach(tag -> {
             if(!updatePostRequest.getTags().contains(tag.getTitle())) {
