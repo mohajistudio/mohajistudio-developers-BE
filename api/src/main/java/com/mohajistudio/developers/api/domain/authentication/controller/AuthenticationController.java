@@ -119,6 +119,7 @@ public class AuthenticationController {
     }
 
     @PostMapping("/delete-account/verify")
+    @Transactional
     public void postDeleteAccountVerify(@AuthenticationPrincipal CustomUserDetails userDetails, @Valid @RequestBody DeleteAccountVerifyRequest deleteAccountVerifyRequest) {
         emailService.verifyEmailCode(userDetails.getUsername(), deleteAccountVerifyRequest.getCode(), VerificationType.ACCOUNT_DELETE);
 

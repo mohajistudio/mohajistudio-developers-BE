@@ -13,7 +13,6 @@ import java.util.List;
 import java.util.UUID;
 
 import static com.mohajistudio.developers.database.entity.QMediaFile.mediaFile;
-import static com.mohajistudio.developers.database.entity.QPost.post;
 
 @RequiredArgsConstructor
 public class MediaFileCustomRepositoryImpl implements MediaFileCustomRepository {
@@ -34,7 +33,6 @@ public class MediaFileCustomRepositoryImpl implements MediaFileCustomRepository 
                 .where(
                         eqUserId(userId)
                 )
-                .orderBy(post.id.asc())
                 .offset(pageable.getOffset())
                 .limit(pageable.getPageSize())
                 .fetch();
