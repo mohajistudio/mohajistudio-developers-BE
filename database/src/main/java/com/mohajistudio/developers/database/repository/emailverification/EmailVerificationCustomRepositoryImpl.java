@@ -63,6 +63,7 @@ public class EmailVerificationCustomRepositoryImpl implements EmailVerificationC
                 .fetch();
     }
 
+    @Override
     public EmailVerification findByEmail(String email, VerificationType verificationType) {
         return jpaQueryFactory
                 .selectFrom(emailVerification)
@@ -71,6 +72,14 @@ public class EmailVerificationCustomRepositoryImpl implements EmailVerificationC
                         eqVerificationType(verificationType),
                         emailVerification.expiredAt.after(LocalDateTime.now()))
                 .fetchOne();
+    }
+
+    @Override
+    public Long deleteAllByEmail(String email) {
+        return jpaQueryFactory
+                .delete(emailVerification)
+                .where(eqEmail(email))
+                .execute();
     }
 
     private BooleanExpression eqEmail(String email) {

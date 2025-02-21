@@ -12,7 +12,7 @@ import com.mohajistudio.developers.database.repository.post.PostRepository;
 import com.mohajistudio.developers.database.repository.posttag.PostTagRepository;
 import com.mohajistudio.developers.database.repository.tag.TagRepository;
 import com.mohajistudio.developers.database.utils.RedisUtil;
-import com.mohajistudio.developers.infra.service.MediaService;
+import com.mohajistudio.developers.infra.service.StorageService;
 import com.mohajistudio.developers.infra.util.MediaUtil;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -22,6 +22,7 @@ import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
@@ -37,7 +38,7 @@ import java.util.concurrent.TimeUnit;
 public class PostService {
     private final RedisUtil redisUtil;
     private final TagService tagService;
-    private final MediaService mediaService;
+    private final StorageService storageService;
     private final PostRepository postRepository;
     private final TagRepository tagRepository;
     private final PostTagRepository postTagRepository;
@@ -45,12 +46,13 @@ public class PostService {
 
     private static final String POST_VIEW_PREFIX = "post:view:";
 
-
     public Page<PostDto> findAllPost(Pageable pageable, UUID userId, String search, List<String> tags, PostStatus status) {
         return postRepository.findAllPostDto(pageable, userId, search, tags, status);
     }
 
     public UUID publishPost(UUID userId, String title, String summary, String content, UUID thumbnailId, LocalDateTime publishedAt, PostStatus status, List<String> tags) {
+        content = updateMediaFilesInHtml(userId, content);
+
         Post post = Post.builder().userId(userId).title(title).summary(summary).content(content).publishedAt(publishedAt).status(status).build();
 
         if (thumbnailId != null) {
@@ -83,11 +85,11 @@ public class PostService {
     public void deletePost(UUID postId, UUID userId) {
         PostDetailsDto post = postRepository.findByIdPostDetailsDto(postId);
 
-        if(post == null) {
+        if (post == null) {
             throw new CustomException(ErrorCode.ENTITY_NOT_FOUND, "알 수 없는 게시글");
         }
 
-        if(!post.getUser().getId().equals(userId)) {
+        if (!post.getUser().getId().equals(userId)) {
             throw new CustomException(ErrorCode.UNAUTHORIZED);
         }
 
@@ -98,7 +100,7 @@ public class PostService {
         deleteMediaFilesInHtml(userId, post.getContent());
     }
 
-    public String processHtmlImagesForPermanentStorage(UUID userId, String htmlContent) {
+    public String updateMediaFilesInHtml(UUID userId, String htmlContent) {
         Document document = Jsoup.parse(htmlContent);
         Elements imgTags = document.select("img[src]");
         String awsS3BaseUrl = MediaUtil.getAwsS3BaseUrl();
@@ -116,7 +118,7 @@ public class PostService {
                     throw new CustomException(ErrorCode.ENTITY_NOT_FOUND, "알 수 없는 미디어 파일");
                 }
 
-                MediaFile mediaFile = mediaService.moveToPermanentFolder(findMediaFile);
+                MediaFile mediaFile = storageService.copyToPermanentFolder(findMediaFile);
 
                 MediaFile savedMediaFile = mediaFileRepository.save(mediaFile);
 
@@ -148,7 +150,7 @@ public class PostService {
                         throw new CustomException(ErrorCode.ENTITY_NOT_FOUND, "알 수 없는 미디어 파일");
                     }
 
-                    mediaService.remove(mediaFile.getFileName());
+                    storageService.remove(mediaFile.getFileName());
 
                     mediaFileRepository.delete(mediaFile);
 
@@ -183,5 +185,20 @@ public class PostService {
 
             redisUtil.setValue(redisKey, "1", 10, TimeUnit.MINUTES);
         }
+    }
+
+    public void deleteAllPosts(UUID userId) {
+        Pageable pageable = PageRequest.of(0, 10);
+        Page<PostDto> postsPage;
+
+        do {
+            postsPage = findAllPost(pageable, userId, null, null, null);
+            for (PostDto post : postsPage.getContent()) {
+                deletePostTagAndDecreaseTagCount(post.getId(), userId);
+
+                deletePost(post.getId(), userId);
+            }
+            pageable = postsPage.hasNext() ? postsPage.nextPageable() : null;
+        } while (postsPage.hasContent());
     }
 }

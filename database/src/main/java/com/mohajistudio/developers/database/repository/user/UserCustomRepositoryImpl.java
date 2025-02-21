@@ -21,6 +21,7 @@ import org.springframework.data.support.PageableExecutionUtils;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import java.util.UUID;
 
 import static com.mohajistudio.developers.database.entity.QContact.contact;
 import static com.mohajistudio.developers.database.entity.QContactType.contactType;
@@ -87,6 +88,40 @@ public class UserCustomRepositoryImpl implements UserCustomRepository {
         return userDetailsDto;
     }
 
+    @Override
+    public UserDetailsDto findUserDetailsDto(UUID userId) {
+        UserDetailsDto userDetailsDto = jpaQueryFactory
+                .select(new QUserDetailsDto(
+                        user.id,
+                        user.nickname,
+                        user.email,
+                        user.profileImageUrl,
+                        user.bio,
+                        user.role
+                ))
+                .from(user)
+                .where(
+                        eqId(userId)
+                )
+                .fetchOne();
+
+        List<ContactDto> contacts = jpaQueryFactory
+                .select(new QContactDto(
+                        contact.id,
+                        contact.displayName,
+                        contact.url,
+                        contactType.name,
+                        contactType.imageUrl
+                ))
+                .from(contact)
+                .leftJoin(contactType).on(contact.contactTypeId.eq(contactType.id))
+                .where(contact.userId.eq(Objects.requireNonNull(userDetailsDto).getId())).fetch();
+
+        userDetailsDto.setContacts(contacts);
+
+        return userDetailsDto;
+    }
+
     private BooleanExpression eqEmail(String email) {
         if (StringUtils.isNullOrEmpty(email)) return null;
         return user.email.eq(email);
@@ -95,6 +130,11 @@ public class UserCustomRepositoryImpl implements UserCustomRepository {
     private BooleanExpression eqPassword(String password) {
         if (StringUtils.isNullOrEmpty(password)) return null;
         return user.password.eq(password);
+    }
+
+    private BooleanExpression eqId(UUID id) {
+        if (id == null) return null;
+        return user.id.eq(id);
     }
 
     private BooleanExpression eqRole(Role role) {
