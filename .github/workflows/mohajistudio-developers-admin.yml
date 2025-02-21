@@ -56,3 +56,23 @@ jobs:
               -v /share/SSDContainer/mohajistudio-developers-BE:/config \
               -p 8083:8083 \
               ${{ secrets.DOCKERHUB_USERNAME }}/admin:${{ github.ref_name }}
+
+    # Discord Webhook on Success
+    - name: Discord Webhook Action (Success)
+      if: success()
+      uses: tsickert/discord-webhook@v6.0.0
+      with:
+        webhook-url: ${{ secrets.WEBHOOK_URL }}
+        embed-color: "388E3C"
+        embed-title: "MohajiStudio Developers Admin 배포 성공"
+        embed-description: "버전 ${{ github.ref_name }}이(가) 성공적으로 배포되었습니다."
+
+    # Discord Webhook on Failure
+    - name: Discord Webhook on Failure
+      if: failure()
+      uses: tsickert/discord-webhook@v6.0.0
+      with:
+        webhook-url: ${{ secrets.WEBHOOK_URL }}
+        embed-color: "E73322"
+        embed-title: "MohajiStudio Developers Admin 배포 실패"
+        embed-description: "버전 ${{ github.ref_name }}이(가) 배포 과정에서 오류가 발생하였습니다. 로그를 확인해 주세요."
