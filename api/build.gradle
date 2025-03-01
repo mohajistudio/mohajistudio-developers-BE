@@ -27,4 +27,9 @@ dependencies {
     implementation 'org.jsoup:jsoup:1.18.3'
 }
 
+// Logging
+repositories {
+    maven { url 'https://jitpack.io' }
+}
+
 tasks.register("prepareKotlinBuildScriptModel"){}
