@@ -39,12 +39,10 @@ public class UserController {
     @PatchMapping("/{userId}")
     @Transactional
     void patchUser(@AuthenticationPrincipal CustomUserDetails userDetails, @PathVariable UUID userId, @Valid @RequestBody UpdateUserRequest updateUserRequest) {
-        if(!userDetails.getUserId().equals(userId)) {
+        if (!userDetails.getUserId().equals(userId)) {
             throw new CustomException(ErrorCode.UNAUTHORIZED);
         }
 
         userService.updateUser(userId, updateUserRequest);
     }
-
-
 }

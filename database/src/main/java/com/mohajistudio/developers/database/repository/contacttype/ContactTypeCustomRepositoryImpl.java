@@ -6,5 +6,4 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class ContactTypeCustomRepositoryImpl implements ContactTypeCustomRepository {
     private final JPAQueryFactory jpaQueryFactory;
-
 }

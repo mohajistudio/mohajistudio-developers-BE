@@ -21,13 +21,16 @@ jobs:
           distribution: 'temurin'
           java-version: '17'
 
-        # Build api
+      - name: Extract version from tag (remove 'v')
+        run: echo "VERSION=$(echo ${{ github.ref_name }} | sed 's/^mohajistudio-developers-api-v//')" >> $GITHUB_ENV
+
+      # Build api
       - name: Build API
         run: ./gradlew :api:clean :api:build -x test
 
-        # Build Docker image
+      # Build Docker image
       - name: Build Docker image
-        run: docker build -t ${{ secrets.DOCKERHUB_USERNAME }}/api:${{ github.ref_name }} -f ./api/Dockerfile ./api
+        run: docker build -t ${{ secrets.DOCKERHUB_USERNAME }}/api:${{ env.VERSION }} -f ./api/Dockerfile ./api
 
       # Login DockerHub
       - name: Login to Docker Hub
@@ -38,7 +41,7 @@ jobs:
 
       # Push image to DockerHub
       - name: Push image to DockerHub
-        run: docker push ${{ secrets.DOCKERHUB_USERNAME }}/api:${{ github.ref_name }}
+        run: docker push ${{ secrets.DOCKERHUB_USERNAME }}/api:${{ env.VERSION }}
 
       # Deploy on Qnap NAS
       - name: Deploy on Qnap Nas
@@ -48,14 +51,16 @@ jobs:
           username: ${{ secrets.NAS_USERNAME }}
           password: ${{ secrets.NAS_PASSWORD }}
           script: |
-            /share/CACHEDEV2_DATA/.qpkg/container-station/bin/docker pull ${{ secrets.DOCKERHUB_USERNAME }}/api:${{ github.ref_name }}
+            /share/CACHEDEV2_DATA/.qpkg/container-station/bin/docker pull ${{ secrets.DOCKERHUB_USERNAME }}/api:${{ env.VERSION }}
             /share/CACHEDEV2_DATA/.qpkg/container-station/bin/docker stop api || true
             /share/CACHEDEV2_DATA/.qpkg/container-station/bin/docker rm api || true
             /share/CACHEDEV2_DATA/.qpkg/container-station/bin/docker run --restart always -d \
             --name api \
-              -v /share/SSDContainer/mohajistudio-developers-BE:/config \
+              -v /share/SSDContainer/mohajistudio-developers-BE/config:/config \
+              -v /share/SSDContainer/mohajistudio-developers-BE/logs:/var/log/spring-boot \
               -p 8082:8082 \
-              ${{ secrets.DOCKERHUB_USERNAME }}/api:${{ github.ref_name }}
+              ${{ secrets.DOCKERHUB_USERNAME }}/api:${{ env.VERSION }}
+            /share/CACHEDEV2_DATA/.qpkg/container-station/bin/docker image prune -af
 
       # Discord Webhook on Success
       - name: Discord Webhook Action (Success)
