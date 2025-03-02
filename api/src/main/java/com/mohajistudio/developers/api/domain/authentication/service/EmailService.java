@@ -63,7 +63,7 @@ public class EmailService {
             case ACCOUNT_DELETE -> templateEngine.process("account-delete-template", context);
         };
 
-        EmailVerification newEmailVerification = EmailVerification.builder().code(verificationCode).email(email).expiredAt(expiredAt).verificationType(verificationType).build();
+        EmailVerification newEmailVerification = EmailVerification.builder().code(verificationCode).email(email).attempts((short) 0).expiredAt(expiredAt).verificationType(verificationType).build();
 
         emailVerificationRepository.save(newEmailVerification);
 
