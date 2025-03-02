@@ -3,7 +3,6 @@ package com.mohajistudio.developers.database.entity;
 import com.mohajistudio.developers.database.enums.VerificationType;
 import jakarta.persistence.*;
 import lombok.*;
-import org.hibernate.annotations.ColumnDefault;
 
 import java.time.LocalDateTime;
 
@@ -24,7 +23,6 @@ public class EmailVerification extends BaseEntity {
     private String code;
 
     @Column(nullable = false, columnDefinition = "SMALLINT")
-    @ColumnDefault("0")
     private Short attempts;
 
     @Column(nullable = false, length = 20)
