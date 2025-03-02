@@ -14,7 +14,11 @@ import java.util.UUID;
 @AllArgsConstructor
 @Builder
 @Entity
-@Table(name = "post_tags")
+@Table(name = "post_tags", indexes = {
+        @Index(name = "idx_post_tag_post_id", columnList = "post_id"),
+        @Index(name = "idx_post_tag_tag_id", columnList = "tag_id"),
+        @Index(name = "idx_post_tag_user_id", columnList = "user_id"),
+})
 public class PostTag {
     @Id
     private UUID id;

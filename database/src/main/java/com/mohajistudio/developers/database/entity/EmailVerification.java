@@ -13,7 +13,9 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @Builder
 @Entity
-@Table(name = "email_verifications")
+@Table(name = "email_verifications", indexes = {
+        @Index(name = "idx_email_verification_email", columnList = "email"),
+})
 public class EmailVerification extends BaseEntity {
     @Column(nullable = false)
     private String email;
@@ -23,7 +25,7 @@ public class EmailVerification extends BaseEntity {
 
     @Column(nullable = false, columnDefinition = "SMALLINT")
     @ColumnDefault("0")
-    private int attempts;
+    private Short attempts;
 
     @Column(nullable = false, length = 20)
     @Enumerated(EnumType.STRING)

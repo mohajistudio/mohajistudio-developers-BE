@@ -14,7 +14,10 @@ import java.util.UUID;
 @AllArgsConstructor
 @Builder
 @Entity
-@Table(name = "posts")
+@Table(name = "posts", indexes = {
+        @Index(name = "idx_post_user_id", columnList = "user_id"),
+        @Index(name = "idx_post_status", columnList = "status"),
+})
 public class Post extends BaseEntity {
 
     @Column(nullable = false)

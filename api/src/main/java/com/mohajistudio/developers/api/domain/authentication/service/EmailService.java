@@ -107,7 +107,7 @@ public class EmailService {
         }
 
         LocalDateTime now = LocalDateTime.now();
-        emailVerification.setAttempts(emailVerification.getAttempts() + 1);
+        emailVerification.setAttempts((short) (emailVerification.getAttempts() + 1));
 
         emailVerification.setVerifiedAt(now);
 

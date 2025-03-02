@@ -24,7 +24,7 @@ public class EmailVerificationDto {
     private LocalDateTime updatedAt;
 
     @QueryProjection
-    public EmailVerificationDto(UUID id, String email, String code, int attempts, VerificationType verificationType, LocalDateTime expiredAt, LocalDateTime verifiedAt, LocalDateTime createdAt, LocalDateTime updatedAt) {
+    public EmailVerificationDto(UUID id, String email, String code, Short attempts, VerificationType verificationType, LocalDateTime expiredAt, LocalDateTime verifiedAt, LocalDateTime createdAt, LocalDateTime updatedAt) {
         this.id = id;
         this.email = email;
         this.code = code;
