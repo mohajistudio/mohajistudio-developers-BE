@@ -11,7 +11,9 @@ import java.util.UUID;
 @AllArgsConstructor
 @Builder
 @Entity
-@Table(name = "contacts")
+@Table(name = "contacts", indexes = {
+        @Index(name = "idx_contact_user_id", columnList = "user_id"),
+})
 public class Contact extends BaseEntity {
     @Column
     private UUID userId;

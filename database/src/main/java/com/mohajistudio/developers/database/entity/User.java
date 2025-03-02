@@ -14,6 +14,7 @@ import java.util.UUID;
 @Entity
 @Table(name = "users", indexes = {
         @Index(name = "idx_user_nickname", columnList = "nickname", unique = true),
+        @Index(name = "idx_user_email", columnList = "email", unique = true),
 })
 public class User extends BaseEntity {
     @Column(unique = true, length = 20)

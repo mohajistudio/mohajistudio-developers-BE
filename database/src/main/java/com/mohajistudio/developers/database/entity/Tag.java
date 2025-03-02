@@ -11,7 +11,9 @@ import java.util.UUID;
 @AllArgsConstructor
 @Builder
 @Entity
-@Table(name = "tags")
+@Table(name = "tags", indexes = {
+        @Index(name = "idx_tag_title", columnList = "title", unique = true),
+})
 public class Tag extends BaseEntity {
 
     @Column(nullable = false)

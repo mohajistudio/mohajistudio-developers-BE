@@ -12,7 +12,9 @@ import java.util.UUID;
 @AllArgsConstructor
 @Builder
 @Entity
-@Table(name = "media_files")
+@Table(name = "media_files", indexes = {
+        @Index(name = "idx_media_file_user_id", columnList = "user_id"),
+})
 public class MediaFile extends BaseEntity {
     @Column(nullable = false)
     private UUID userId;
