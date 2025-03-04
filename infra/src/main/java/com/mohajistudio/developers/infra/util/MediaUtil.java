@@ -7,7 +7,7 @@ import com.mohajistudio.developers.common.exception.CustomException;
 import java.util.UUID;
 
 public class MediaUtil {
-    private static final String AWS_S3_BASE_URL = "https://mohajistudio-developers.s3.ap-northeast-2.amazonaws.com";
+    private static final String AWS_S3_BASE_URL = "https://devs-storage.mohajistudio.com";
     private static final String FILE_EXTENSION_SEPARATOR = ".";
     private static final String IMAGES_DIR = "media/images/";
     private static final String VIDEOS_DIR = "media/videos/";
