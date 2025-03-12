@@ -61,6 +61,7 @@ public class UserCustomRepositoryImpl implements UserCustomRepository {
                         user.email,
                         user.profileImageUrl,
                         user.bio,
+                        user.jobRole,
                         user.role
                 ))
                 .from(user)
@@ -97,6 +98,7 @@ public class UserCustomRepositoryImpl implements UserCustomRepository {
                         user.email,
                         user.profileImageUrl,
                         user.bio,
+                        user.jobRole,
                         user.role
                 ))
                 .from(user)
