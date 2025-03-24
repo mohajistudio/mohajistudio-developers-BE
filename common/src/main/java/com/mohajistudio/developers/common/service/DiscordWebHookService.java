@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.mohajistudio.developers.common.dto.DiscordEmbedObjectDto;
 import com.mohajistudio.developers.common.dto.DiscordFieldDto;
 import com.mohajistudio.developers.common.dto.DiscordWebHookDto;
+import com.mohajistudio.developers.common.utils.HttpUtil;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -43,7 +44,13 @@ public class DiscordWebHookService {
 
         DiscordFieldDto accessTokenFieldDto = DiscordFieldDto.createField("AccessToken", accessToken == null ? "null" : accessToken);
 
-        DiscordFieldDto clientIpFieldDto = DiscordFieldDto.createInlineField("ClientIp", httpServletRequest.getRemoteAddr());
+        DiscordFieldDto clientIpFieldDto;
+        try {
+            clientIpFieldDto = DiscordFieldDto.createInlineField("ClientIp", HttpUtil.getClientIp(httpServletRequest));
+        } catch(Exception e) {
+            clientIpFieldDto = DiscordFieldDto.createInlineField("ClientIp", httpServletRequest.getRemoteAddr());
+            log.error("Failed to get client IP", e);
+        }
 
         DiscordFieldDto errorCodeFieldDto = DiscordFieldDto.createInlineField("ErrorCode", errorCode);
         DiscordFieldDto statusCodeFieldDto = DiscordFieldDto.createInlineField("StatusCode", statusCode);
