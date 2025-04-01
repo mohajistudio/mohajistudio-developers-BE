@@ -45,7 +45,7 @@ public class SecurityConfig {
             // ANY
             authorizeRequests.requestMatchers(HttpMethod.GET, "/contact-types").hasAnyAuthority(AUTHORITY_ADMIN, AUTHORITY_DEVELOPER, AUTHORITY_GUEST);
             authorizeRequests.requestMatchers(HttpMethod.POST, "/auth/logout", "/media-files", "/auth/password-reset/update").hasAnyAuthority(AUTHORITY_ADMIN, AUTHORITY_DEVELOPER, AUTHORITY_GUEST);
-            authorizeRequests.requestMatchers(HttpMethod.PATCH, "/users/*").hasAnyAuthority(AUTHORITY_ADMIN, AUTHORITY_DEVELOPER, AUTHORITY_GUEST);
+            authorizeRequests.requestMatchers(HttpMethod.PATCH, "/users/*", "/users/*/contacts").hasAnyAuthority(AUTHORITY_ADMIN, AUTHORITY_DEVELOPER, AUTHORITY_GUEST);
 
             // DEVELOPER
             authorizeRequests.requestMatchers(HttpMethod.POST, "/posts", "/posts/generate-metadata", "/media-files").hasAnyAuthority(AUTHORITY_ADMIN, AUTHORITY_DEVELOPER);

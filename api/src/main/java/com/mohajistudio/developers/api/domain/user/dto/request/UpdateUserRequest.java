@@ -6,7 +6,6 @@ import lombok.Getter;
 import lombok.Setter;
 import org.hibernate.validator.constraints.Length;
 
-import java.util.List;
 import java.util.UUID;
 
 @Getter
@@ -23,6 +22,4 @@ public class UpdateUserRequest {
 
     @Length(max = 100)
     private String bio;
-
-    private List<UpdateContactRequest> contacts;
 }
