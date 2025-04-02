@@ -60,6 +60,7 @@ public class UserCustomRepositoryImpl implements UserCustomRepository {
                         user.nickname,
                         user.email,
                         user.profileImageUrl,
+                        user.profileImageId,
                         user.bio,
                         user.jobRole,
                         user.role
@@ -97,6 +98,7 @@ public class UserCustomRepositoryImpl implements UserCustomRepository {
                         user.nickname,
                         user.email,
                         user.profileImageUrl,
+                        user.profileImageId,
                         user.bio,
                         user.jobRole,
                         user.role

@@ -19,16 +19,18 @@ public class UserDetailsDto {
     private String nickname;
     private String email;
     private String profileImageUrl;
+    private UUID profileImageId;
     private String bio;
     private String jobRole;
     private Role role;
     private List<ContactDto> contacts;
 
     @QueryProjection
-    public UserDetailsDto(UUID id, String nickname, String email, String profileImageUrl, String bio, String jobRole, Role role) {
+    public UserDetailsDto(UUID id, String nickname, String email, String profileImageUrl, UUID profileImageId, String bio, String jobRole, Role role) {
         this.id = id;
         this.nickname = nickname;
         this.email = email;
+        this.profileImageId = profileImageId;
         this.profileImageUrl = profileImageUrl;
         this.bio = bio;
         this.jobRole = jobRole;
