@@ -1,5 +1,7 @@
 package com.mohajistudio.developers.api.domain.user;
 
+import com.mohajistudio.developers.api.domain.user.dto.request.UpdateContactRequest;
+import com.mohajistudio.developers.api.domain.user.dto.request.UpdateUserContactsRequest;
 import com.mohajistudio.developers.api.domain.user.dto.request.UpdateUserRequest;
 import com.mohajistudio.developers.common.enums.ErrorCode;
 import com.mohajistudio.developers.common.exception.CustomException;
@@ -16,11 +18,13 @@ import com.mohajistudio.developers.database.repository.mediafile.MediaFileReposi
 import com.mohajistudio.developers.database.repository.user.UserRepository;
 import com.mohajistudio.developers.infra.service.StorageService;
 import jakarta.transaction.Transactional;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -49,10 +53,10 @@ public class UserService {
 
         /// 기존에 프로필 이미지가 있고 업데이트 할 프로필 이미지가 다르다면 기존 프로필 이미지를 삭제하고 새로운 MediaFile을 추가함
         /// 기존에 프로필 이미지가 없고 업데이트 할 프로필 이미지가 있다면 MediaFile을 추가함
-        if(user.getProfileImageId() != null && !user.getProfileImageId().equals(updateUserRequest.getProfileImageId())) {
+        if (user.getProfileImageId() != null && !user.getProfileImageId().equals(updateUserRequest.getProfileImageId())) {
             MediaFile findOldMediaFile = mediaFileRepository.findByIdAndUserId(user.getProfileImageId(), userId);
 
-            if(findOldMediaFile == null) {
+            if (findOldMediaFile == null) {
                 throw new CustomException(ErrorCode.ENTITY_NOT_FOUND, "유효하지 않은 프로필 이미지");
             }
 
@@ -62,7 +66,7 @@ public class UserService {
 
             MediaFile findMediaFile = mediaFileRepository.findByIdAndUserId(updateUserRequest.getProfileImageId(), userId);
 
-            if(findMediaFile == null) {
+            if (findMediaFile == null) {
                 throw new CustomException(ErrorCode.ENTITY_NOT_FOUND, "유효하지 않은 프로필 이미지");
             }
 
@@ -72,10 +76,10 @@ public class UserService {
 
             user.setProfileImageId(mediaFile.getId());
             user.setProfileImageUrl(mediaFile.getFileName());
-        } else if(user.getProfileImageId() == null && updateUserRequest.getProfileImageId() != null) {
+        } else if (user.getProfileImageId() == null && updateUserRequest.getProfileImageId() != null) {
             MediaFile findMediaFile = mediaFileRepository.findByIdAndUserId(updateUserRequest.getProfileImageId(), userId);
 
-            if(findMediaFile == null) {
+            if (findMediaFile == null) {
                 throw new CustomException(ErrorCode.ENTITY_NOT_FOUND, "유효하지 않은 프로필 이미지");
             }
 
@@ -91,8 +95,36 @@ public class UserService {
         user.setJobRole(updateUserRequest.getJobRole());
         user.setBio(updateUserRequest.getBio());
         userRepository.save(user);
+    }
 
-        updateUserRequest.getContacts().forEach(contact -> {
+    @Transactional
+    public void updateUserContacts(UUID userId, @Valid UpdateUserContactsRequest updateUserContactsRequest) {
+        List<Contact> userContacts = contactRepository.findByUserId(userId);
+        List<UpdateContactRequest> updateUserContacts = updateUserContactsRequest.getContacts();
+
+        // 만약 기존에 있던 userContact와 updateUserContact가 같다면 아무것도 하지 않음
+        userContacts.forEach(userContact -> {
+            Optional<UpdateContactRequest> findUpdateContact = updateUserContacts.stream().filter(updateContact -> updateContact.getContactTypeId().equals(userContact.getContactTypeId())).findFirst();
+
+            // 만약 기존에 있던 userContact가 updateUserContacts에 없다면 삭제
+            if (findUpdateContact.isEmpty()) {
+                contactRepository.deleteById(userContact.getId());
+            }
+            // 만약 기존에 있던 userContact와 updateUserContact가 다르다면 업데이트
+            else {
+                updateUserContacts.remove(findUpdateContact.get());
+
+                UpdateContactRequest updateContact = findUpdateContact.get();
+
+                userContact.setDisplayName(updateContact.getDisplayName());
+                userContact.setUrl(updateContact.getUrl());
+
+                contactRepository.save(userContact);
+            }
+        });
+
+        // 만약 새로운 updateUserContact가 있다면 추가
+        updateUserContacts.forEach(contact -> {
             Optional<ContactType> findContactType = contactTypeRepository.findById(contact.getContactTypeId());
 
             if (findContactType.isEmpty()) {
@@ -103,7 +135,6 @@ public class UserService {
             contactRepository.save(newContact);
         });
     }
-
 
     public UserDetailsDto findUserDetails(String nickname) {
         UserDetailsDto userDetails = userRepository.findUserDetailsDto(nickname);
@@ -118,7 +149,7 @@ public class UserService {
     public void deleteUser(UUID userId) {
         UserDetailsDto user = userRepository.findUserDetailsDto(userId);
 
-        if(user == null) {
+        if (user == null) {
             throw new CustomException(ErrorCode.USER_NOT_FOUND);
         }
 

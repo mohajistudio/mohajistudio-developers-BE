@@ -1,5 +1,6 @@
 package com.mohajistudio.developers.api.domain.user;
 
+import com.mohajistudio.developers.api.domain.user.dto.request.UpdateUserContactsRequest;
 import com.mohajistudio.developers.api.domain.user.dto.request.UpdateUserRequest;
 import com.mohajistudio.developers.authentication.dto.CustomUserDetails;
 import com.mohajistudio.developers.common.dto.response.CustomPageResponse;
@@ -44,5 +45,14 @@ public class UserController {
         }
 
         userService.updateUser(userId, updateUserRequest);
+    }
+
+    @PatchMapping("/{userId}/contacts")
+    void patchUserContacts(@AuthenticationPrincipal CustomUserDetails userDetails, @PathVariable UUID userId, @Valid @RequestBody UpdateUserContactsRequest updateUserContactsRequest) {
+        if (!userDetails.getUserId().equals(userId)) {
+            throw new CustomException(ErrorCode.UNAUTHORIZED);
+        }
+
+        userService.updateUserContacts(userId, updateUserContactsRequest);
     }
 }
